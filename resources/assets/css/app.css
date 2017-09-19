@@ -1,0 +1,226 @@
+@font-face {
+    font-family: Rockwell;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/Rockwell.ttf') format('truetype');
+}
+@font-face {
+    font-family: Rockwell;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/Rockwell-Bold.ttf') format('truetype');
+}
+@font-face {
+    font-family: "Sketch Rockwell";
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/SketchRockwell-Bold.ttf') format('truetype');
+}
+
+.clickable {
+    cursor: pointer;
+}
+.panel-heading {
+    line-height: 2.5em;
+}
+.panel-footer {
+    line-height: 2.5em;
+}
+.pagination {
+    display: block;
+    margin: 0;
+}
+.print-bw {
+    color: white;
+    background-color: gray;
+}
+.print-color {
+    color: black;
+    background: red; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left, orange , yellow, green, cyan, blue, violet); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, orange, yellow, green, cyan, blue, violet); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, orange, yellow, green, cyan, blue, violet); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet); /* Standard syntax (must be last) */
+}
+.sale-preview-wrapper-bw {
+    background-image: url('../img/bw-sale-bg-preview.png');
+    width: 300px;
+    height: 450px;
+    text-align: center;
+    line-height: 1px;
+    color: black;
+    text-transform: uppercase;
+}
+.sale-preview-table-bw {
+    width: 100%;
+    border-collapse: collapse;
+}
+.sale-preview-fix-wrap-bw {
+    width: 275px;
+    overflow: hidden;
+}
+.sale-preview-brand-bw {
+    font-family: "Sketch Rockwell";
+    vertical-align: middle;
+    line-height: 37px;
+    font-size: 37px;
+    padding: 0 12px;
+    text-align: center;
+    -webkit-text-stroke: 0.004em black;
+    position: relative;
+    top: -1px;
+}
+.sale-preview-desc-bw {
+    font-family: "Rockwell";
+    vertical-align: middle;
+    line-height: 25px;
+    font-size: 25px;
+    padding: 0 12px;
+    text-align: center;
+    position: relative;
+}
+.sale-preview-upc-bw {
+    font-family: "Rockwell";
+    vertical-align: middle;
+    font-size: 12px;
+    text-align: center;
+    position: relative;
+    top: 2px;
+}
+.sale-preview-price-bw {
+    font-family: "Sketch Rockwell";
+    vertical-align: middle;
+    line-height: 75px;
+    font-size: 75px;
+    position: relative;
+    top: 1px;
+    color: white;
+    -webkit-text-stroke: 0.009em white;
+    text-shadow: -1px -1px 0 #000,-2px -2px 0 #000,-3px -3px 0 #000,
+                 1px -1px 0 #000,2px -2px 0 #000,3px -3px 0 #000,
+                 -1px 1px 0 #000,-2px 2px 0 #000,-3px 3px 0 #000,
+                 1px 1px 0 #000,2px 2px 0 #000,3px 3px 0 #000;
+    text-align: center;
+    position: relative;
+    top: 3px;
+}
+.sale-preview-msrp-bw {
+    font-family: "Rockwell";
+    font-size: 25px;
+    text-align: center;
+    position: relative;
+    top: 1px;
+}
+.sale-preview-savings-bw {
+    font-family: "Rockwell";
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 49px;
+    text-align: center;
+    position: relative;
+    top: 3px;
+}
+.sale-preview-cat-bw {
+    font-family: "Sketch Rockwell";
+    font-size: 37px;
+    line-height: 33px;
+    padding: 0 12px;
+    color: white;
+    -webkit-text-stroke: 0.002em white;
+    text-shadow: -1px -1px 0 #000,-2px -2px 0 #000,
+                 1px -1px 0 #000,2px -2px 0 #000,
+                 -1px 1px 0 #000,-2px 2px 0 #000,
+                 1px 1px 0 #000,2px 2px 0 #000;
+    text-align: center;
+    position: relative;
+    top: 5px;
+}
+
+/* Color */
+
+.sale-preview-wrapper-color {
+    background-image: url('../img/color-sale-bg-preview.png');
+    width: 300px;
+    height: 450px;
+    text-align: center;
+    line-height: 1px;
+    color: white;
+    text-transform: uppercase;
+}
+.sale-preview-table-color {
+    width: 100%;
+    border-collapse: collapse;
+}
+.sale-preview-fix-wrap-color {
+    width: 275px;
+    overflow: hidden;
+}
+.sale-preview-brand-color {
+    font-family: "Sketch Rockwell";
+    vertical-align: middle;
+    line-height: 38px;
+    font-size: 38px;
+    padding: 0 12px;
+    text-align: center;
+    -webkit-text-stroke: 0.002em white;
+    position: relative;
+    top: 1px;
+}
+.sale-preview-desc-color {
+    font-family: "Rockwell";
+    vertical-align: middle;
+    line-height: 25px;
+    font-size: 25px;
+    padding: 0 12px;
+    text-align: center;
+    position: relative;
+    top: 1px;
+}
+.sale-preview-upc-color {
+    font-family: "Rockwell";
+    vertical-align: middle;
+    font-size: 13px;
+    text-align: center;
+    position: relative;
+    top: 2px;
+}
+.sale-preview-price-color {
+    font-family: "Sketch Rockwell";
+    vertical-align: middle;
+    line-height: 75px;
+    font-size: 75px;
+    position: relative;
+    top: 1px;
+    color: black;
+    -webkit-text-stroke: 0.006em #664b36;
+    text-align: center;
+    position: relative;
+    top: 4px;
+}
+.sale-preview-msrp-color {
+    font-family: "Rockwell";
+    font-size: 26px;
+    text-align: center;
+    position: relative;
+    top: 2px;
+}
+.sale-preview-savings-color {
+    font-family: "Rockwell";
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 49px;
+    text-align: center;
+    position: relative;
+    top: 3px;
+}
+.sale-preview-cat-color {
+    font-family: "Sketch Rockwell";
+    font-size: 37px;
+    line-height: 33px;
+    padding: 0 12px;
+    color: black;
+    -webkit-text-stroke: 0.002em black;
+    text-align: center;
+    position: relative;
+    top: 3px;
+}

@@ -1,0 +1,21 @@
+{
+  "name": "suzannes-sales",
+  "dependencies": {
+    "bootstrap": "~3.3.7",
+    "font-awesome": "~4.7.0"
+  },
+  "resolutions": {
+    "font-awesome": "~4.7.0"
+  },
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
