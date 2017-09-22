@@ -29,8 +29,8 @@ class CreateManualSalesTable extends Migration
             $table->boolean('imaged');
             $table->boolean('printed');
             $table->text('flags')->nullable();
-            $table->timestamp('sale_begin');
-            $table->timestamp('sale_end');
+            $table->timestamp('sale_begin')->nullable();
+            $table->timestamp('sale_end')->nullable();
             $table->timestamp('expires')->nullable();
             $table->softDeletes();
             $table->timestamps();
