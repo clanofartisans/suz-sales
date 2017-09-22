@@ -5,7 +5,11 @@
         </tr>
         <tr>
             <td class="sale-preview-brand-color" style="height: 77px;">
-                <div id="previewDispBrand" class="sale-preview-fix-wrap-color" style="max-height: 77px;"></div>
+                <div id="previewDispBrand" class="sale-preview-fix-wrap-color" style="max-height: 77px;">
+                    @isset($data['brand'])
+                        {{ $data['brand'] }}
+                    @endisset
+                </div>
             </td>
         </tr>
         <tr>
@@ -48,7 +52,11 @@
         </tr>
         <tr>
             <td class="sale-preview-cat-color" style="height: 62px;">
-                <div id="previewDispSaleCat" class="sale-preview-fix-wrap-color" style="max-height: 62px;"></div>
+                <div id="previewDispSaleCat" class="sale-preview-fix-wrap-color" style="max-height: 62px;">
+                    @isset($data['sale_cat'])
+                        {{ $data['sale_cat'] }}
+                    @endisset
+                </div>
             </td>
         </tr>
         <tr>

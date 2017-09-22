@@ -6,12 +6,15 @@
       <ul class="nav nav-pills nav-stacked" style="float: left;" data-spy="affix">
         <li><button type="submit" class="btn btn-success btn-block" name="process" value="add"><i class="fa fa-plus-circle"></i> Add Sales</button></li>
         <li><button type="submit" class="btn btn-info btn-block" name="process" value="print"><i class="fa fa-print"></i> Print Selected</button></li>
-        <li><button type="submit" class="btn btn-info btn-block" name="process" value="printall"><i class="fa fa-print"></i> Print All Ready</button></li>
+        <li><button type="submit" class="btn btn-info btn-block" name="process" value="printallbw"><i class="fa fa-print"></i> Print All B&W</button></li>
+        <li><button type="submit" class="btn btn-info btn-block" name="process" value="printallcolor"><i class="fa fa-print"></i> Print All Color</button></li>
         <li><button type="submit" class="btn btn-danger btn-block" name="process" value="delete"><i class="fa fa-trash-o"></i> Delete Selected</button></li>
         <li>&nbsp;</li>
         <li><input type="radio" name="filter" id="f_all" value="f_all" {{ $filter === 'f_all' ? 'checked="checked"' : '' }}> Show all items<br>
             <input type="radio" name="filter" id="f_processed" value="f_processed" {{ $filter === 'f_processed' ? 'checked="checked"' : '' }}> Show only processed<br>
             <input type="radio" name="filter" id="f_ready_to_print" value="f_ready_to_print" {{ $filter === 'f_ready_to_print' ? 'checked="checked"' : '' }}> Show ready to print<br>
+            <input type="radio" name="filter" id="f_img_bw" value="f_img_bw" {{ $filter === 'f_img_bw' ? 'checked="checked"' : '' }}> Show B&amp;W tags<br>
+            <input type="radio" name="filter" id="f_img_color" value="f_img_color" {{ $filter === 'f_img_color' ? 'checked="checked"' : '' }}> Show color tags<br>
             <input type="radio" name="filter" id="f_printed" value="f_printed" {{ $filter === 'f_printed' ? 'checked="checked"' : '' }}> Show only printed<br>
             <input type="radio" name="filter" id="f_flagged" value="f_flagged" {{ $filter === 'f_flagged' ? 'checked="checked"' : '' }}> Show only flagged</li>
             <input type="radio" name="filter" id="f_expired" value="f_expired" {{ $filter === 'f_expired' ? 'checked="checked"' : '' }}> Show only expired</li>
@@ -19,7 +22,12 @@
         <li><span id="job-count-processing">{{ $jobCounts['processing'] }}</span> sales being processed</li>
         <li><span id="job-count-imaging">{{ $jobCounts['imaging'] }}</span> tags being generated</li>
         <li>&nbsp;</li>
-        <li><img id="job-count-loader" src="{{ asset('img/ajax-loader.gif') }}"></li>
+        <li><img id="job-count-loader" src="{{ asset('img/ajax-loader.gif') }}"
+                 @if (($jobCounts['processing'] + $jobCounts['imaging']) == 0)
+                    style="display: none"
+                 @endif
+            >
+        </li>
       </ul>
     </nav>
     <div class="container">
@@ -74,7 +82,7 @@
                                         </td>
                                         <td class="text-nowrap text-center">
                                             @if ($item->imaged)
-                                                <button type="button" class="btn btn-xs print-bw" disabled="disabled" title="Ready to Print">
+                                                <button type="button" class="btn btn-xs @if($item->color) {{ 'print-color' }} @else {{ 'print-bw' }} @endif" disabled="disabled" title="Ready to Print">
                                                     <i class="fa fa-file-image-o" aria-hidden="true"></i>
                                                 </button>
                                             @else

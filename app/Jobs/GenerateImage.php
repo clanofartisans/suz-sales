@@ -19,7 +19,7 @@ class GenerateImage implements ShouldQueue
     /*
      * Serialize the given InfraItem into the job.
      */
-    public function __construct(InfraItem $item)
+    public function __construct($item)
     {
         $this->item = $item;
     }

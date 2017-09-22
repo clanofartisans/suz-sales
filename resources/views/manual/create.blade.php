@@ -13,7 +13,7 @@
                                         'route'  => 'manual.store',
                                         'class'  => 'form-horizontal',
                                         'role'   => 'form']) !!}
-                        @include('manual._form', ['submitButtonText' => 'Add Sale'])
+                        @include('manual._form', ['submitButtonText' => 'Add and Return', 'submitContinueButtonText' => 'Add and Continue'])
                         {!! Form::close() !!}
                     </div>
                     <!-- /.panel-body -->
@@ -25,7 +25,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Preview</div>
                     <div id="preview-container" class="panel-body">
-                        @include('saletags.previewbw')
+                        @if($data['color'])
+                            @include('saletags.previewcolor')
+                        @else
+                            @include('saletags.previewbw')
+                        @endif
                     </div>
                     <!-- /.panel-body -->
                 </div>

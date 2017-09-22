@@ -147,7 +147,7 @@
             <tr>
                 <td class="sale-desc" style="height: 151px;">
                     <div class="sale-fix-wrap" style="max-height: 151px; font-family: Rockwell;">
-                        {{ $data->desc }} {{ $data->size }}
+                        {{ $data->desc }} @isset($data->size){{ $data->size }}@endisset
                     </div>
                 </td>
             </tr>
@@ -166,25 +166,50 @@
             <tr>
                 <td style="height: 36px;">&nbsp;</td>
             </tr>
-            <tr>
-                <td class="sale-msrp" style="height: 42px;">Was ${{ $data->disp_msrp }}</td>
-            </tr>
+            @isset($data->disp_msrp)
+                <tr>
+                    <td class="sale-msrp" style="height: 42px;">Was ${{ (number_format($data->disp_msrp, 2)) }}</td>
+                </tr>
+            @endisset
+            @isset($data->reg_price)
+                <tr>
+                    <td class="sale-msrp" style="height: 42px;">Was ${{ (number_format($data->reg_price, 2)) }}</td>
+                </tr>
+            @endisset
             <tr>
                 <td style="height: 28px;">&nbsp;</td>
             </tr>
-            <tr>
-                <td class="sale-savings" style="height: 89px;">Save ${{ $data->disp_savings }}</td>
-            </tr>
+            @isset($data->disp_savings)
+                <tr>
+                    <td class="sale-savings" style="height: 89px;">Save ${{ (number_format($data->disp_savings, 2)) }}</td>
+                </tr>
+            @endisset
+            @isset($data->savings)
+                <tr>
+                    <td class="sale-savings" style="height: 89px;">Save ${{ (number_format($data->savings, 2)) }}</td>
+                </tr>
+            @endisset
             <tr>
                 <td style="height: 31px;">&nbsp;</td>
             </tr>
-            <tr>
-                <td class="sale-cat" style="height: 150px;">
-                    <div class="sale-fix-wrap" style="max-height: 150px;">
-                        {{ $data->infrasheet->month }} Savings
-                    </div>
-                </td>
-            </tr>
+            @isset($data->infrasheet)
+                <tr>
+                    <td class="sale-cat" style="height: 150px;">
+                        <div class="sale-fix-wrap" style="max-height: 150px;">
+                            {{ $data->infrasheet->month }} Savings
+                        </div>
+                    </td>
+                </tr>
+            @endisset
+            @isset($data->sale_cat)
+                <tr>
+                    <td class="sale-cat" style="height: 150px;">
+                        <div class="sale-fix-wrap" style="max-height: 150px;">
+                            {{ $data->sale_cat }}
+                        </div>
+                    </td>
+                </tr>
+            @endisset
         </table>
     </div>
 </body>

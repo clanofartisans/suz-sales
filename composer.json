@@ -14,7 +14,8 @@
         "laravelcollective/remote": "5.4.*",
         "maatwebsite/excel": "~2.1.0",
         "nesbot/carbon": "^1.22",
-        "tecnickcom/tcpdf": "^6.2"
+        "tecnickcom/tcpdf": "^6.2",
+        "knplabs/knp-snappy": "0.5.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

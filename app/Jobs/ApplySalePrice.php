@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\InfraItem;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -19,7 +18,7 @@ class ApplySalePrice implements ShouldQueue
     /*
      * Serialize the given InfraItem into the job.
      */
-    public function __construct(InfraItem $item)
+    public function __construct($item)
     {
         $this->item = $item;
     }

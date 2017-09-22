@@ -1,11 +1,23 @@
 <div class="form-group">
+    {!! Form::label('radioODUpdate', 'Update OrderDog?', ['class' => 'col-md-4 control-label']) !!}
+    <div class="col-md-6">
+        <label class="radio-inline">
+            {!! Form::radio('radioODUpdate', 'radioODYes', $data['ODUpdate'], ['id' => 'radioODYes']) !!} Yes
+        </label>
+        <label class="radio-inline">
+            {!! Form::radio('radioODUpdate', 'radioODNo', !$data['ODUpdate'], ['id' => 'radioODNo']) !!} No
+        </label>
+    </div>
+</div>
+
+<div class="form-group">
     {!! Form::label('radioBWColor', 'B&W or Color', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         <label class="radio-inline">
-            {!! Form::radio('radioBWColor', 'radioBW', true, ['id' => 'radioBW']) !!} B&W
+            {!! Form::radio('radioBWColor', 'radioBW', !$data['color'], ['id' => 'radioBW']) !!} B&W
         </label>
         <label class="radio-inline">
-            {!! Form::radio('radioBWColor', 'radioColor', false, ['id' => 'radioColor']) !!} Color
+            {!! Form::radio('radioBWColor', 'radioColor', $data['color'], ['id' => 'radioColor']) !!} Color
         </label>
     </div>
 </div>
@@ -25,7 +37,7 @@
 <div class="form-group">
     {!! Form::label('previewInputBrand', 'Brand', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputBrand', null, ['class' => 'form-control']) !!}
+        {!! Form::text('previewInputBrand', $data['brand'], ['class' => 'form-control']) !!}
     </div>
 </div>
 
@@ -67,26 +79,29 @@
 <div class="form-group">
     {!! Form::label('previewInputSaleCat', 'Sale Category', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputSaleCat', null, ['class' => 'form-control']) !!}
+        {!! Form::text('previewInputSaleCat', $data['sale_cat'], ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
     {!! Form::label('sale_begin', 'Sale Begins', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('sale_begin', null, ['class' => 'form-control']) !!}
+        {!! Form::text('sale_begin', $data['begin'], ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
     {!! Form::label('sale_end', 'Sale Ends', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('sale_end', null, ['class' => 'form-control']) !!}
+        {!! Form::text('sale_end', $data['end'], ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
     <div class="col-md-6 col-md-offset-4">
-        {!! Form::submit($submitButtonText, ['class' => 'btn btn-primary']) !!}
+        @if(!empty($submitContinueButtonText))
+            <input type="submit" name="submitContinue" value="{{ $submitContinueButtonText }}" class="btn btn-success">
+        @endif
+        <input type="submit" name="submitReturn" value="{{ $submitButtonText }}" class="btn btn-primary">
     </div>
 </div>

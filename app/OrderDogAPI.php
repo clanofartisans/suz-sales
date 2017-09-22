@@ -198,6 +198,15 @@ XML;
         return $final;
     }
 
+    public function applyDiscountToManualSale($item, $amount, $price, $start, $end)
+    {
+        $xml = "<ItemDiscounts><ItemDiscount><Level>0</Level><Type>Standard</Type><OverrideFlag>false</OverrideFlag><BuyQty>1.0000</BuyQty><MoreFlag>false</MoreFlag><PercentFlag>false</PercentFlag><Amount>$amount</Amount><FreeQty>0.0000</FreeQty><Price>$price</Price><StartDt>$start</StartDt><EndDt>$end</EndDt><DiscountRound>-1</DiscountRound></ItemDiscount></ItemDiscounts>";
+
+        $final = $this->insertDiscountAtCorrectPosition($item, $xml);
+
+        return $final;
+    }
+
     /*
      * Insert the discount info into the item's XML.
      *

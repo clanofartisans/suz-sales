@@ -2,7 +2,8 @@
   "name": "suzannes-sales",
   "dependencies": {
     "bootstrap": "~3.3.7",
-    "font-awesome": "~4.7.0"
+    "font-awesome": "~4.7.0",
+    "gasparesganga-jquery-loading-overlay": "^1.5.3"
   },
   "resolutions": {
     "font-awesome": "~4.7.0"

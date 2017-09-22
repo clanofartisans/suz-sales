@@ -219,7 +219,7 @@ class InfraController extends Controller
         }
 
         foreach($items as $item) {
-            $images[] = realpath(storage_path('app/images/infra')) . '\\' . $item->id . '.png';
+            $images[] = storage_path("app/images/infra/$item->id.png");
         }
 
         $this->printSheet($images);

@@ -117,7 +117,7 @@ class InfraItem extends Model
     {
         $image = SnappyImage::loadView('saletags.salebw', array('data' => $this));
 
-        $filename = realpath(storage_path('app/images/infra')) . '\\' . $this->id . '.png';
+        $filename = storage_path("app/images/infra/$this->id.png");
 
         $image->save($filename, true);
 
