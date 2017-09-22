@@ -121,4 +121,13 @@ class ManualSale extends Model
         $this->printed = true;
         $this->save();
     }
+
+    public function cleanup()
+    {
+        $filename = storage_path("app/images/manual/$this->id.png");
+
+        File::delete($filename);
+
+        return true;
+    }
 }

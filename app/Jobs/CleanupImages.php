@@ -8,26 +8,26 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class GenerateImage implements ShouldQueue
+class CleanupImages implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $item;
     public $tries = 5;
 
-    /*
-     * Serialize the given InfraItem into the job.
+    /**
+     * Create a new job instance.
      */
     public function __construct($item)
     {
         $this->item = $item;
     }
 
-    /*
-     * Call the processImage method on the job's InfraItem instance.
+    /**
+     * Execute the job.
      */
     public function handle()
     {
-        $this->item->processImage();
+        $this->item->cleanup();
     }
 }

@@ -191,4 +191,13 @@ class InfraItem extends Model
 
         return $expires;
     }
+
+    public function cleanup()
+    {
+        $filename = storage_path("app/images/infra/$this->id.png");
+
+        File::delete($filename);
+
+        return true;
+    }
 }

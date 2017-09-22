@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\CleanupInfra::class,
+        Commands\CleanupManual::class
     ];
 
     /**
@@ -24,8 +25,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('cleanup:infra')
+                 ->dailyAt('2:00')
+                 ->sundays();
+
+        $schedule->command('cleanup:manual')
+                 ->dailyAt('3:00')
+                 ->sundays();
     }
 
     /**
