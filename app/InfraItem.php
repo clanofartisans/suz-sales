@@ -81,7 +81,10 @@ class InfraItem extends Model
             $updateDisplayPrices = $this->updateWithOrderDogInfo($item);
 
             if($updateDisplayPrices === false) {
-                return false;
+                $this->flags = 'Item price is lower than sale price';
+                $this->save();
+
+                return true;
             }
 
             $discounted = $getAPI->applyDiscountToItem($item, $this->list_price_calc, $month, $year);
