@@ -5,14 +5,14 @@ return array(
 
     'pdf' => array(
         'enabled' => true,
-        'binary'  => '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"',
+        'binary'  => env('SNAPPY_PDF_BIN', '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"'),
         'timeout' => false,
         'options' => array('dpi' => '1200', 'image-dpi' => '1200', 'image-quality' => '100', 'page-size' => 'A0', 'disable-smart-shrinking' => true),
         'env'     => array(),
     ),
     'image' => array(
         'enabled' => true,
-        'binary'  => '"C:\Program Files\wkhtmltopdf-beta\bin\wkhtmltoimage.exe"',
+        'binary'  => env('SNAPPY_IMG_BIN', '"C:\Program Files\wkhtmltopdf-beta\bin\wkhtmltoimage.exe"'),
         'timeout' => false,
         'options' => array('format' => 'png',
                            'quality' => '100',
