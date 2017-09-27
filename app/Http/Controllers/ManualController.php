@@ -68,7 +68,7 @@ class ManualController extends Controller
                                ->where('expires', '>=', Carbon::now());;
                 break;
             case 'f_flagged':
-                $items = $items->where('flags', '!=', false)
+                $items = $items->whereNotNull('flags')
                                ->where('expires', '>=', Carbon::now());;
                 break;
             case 'f_expired':

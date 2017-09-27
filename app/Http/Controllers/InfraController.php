@@ -75,7 +75,7 @@ class InfraController extends Controller
                 $items = $items->where('printed', true);
                 break;
             case 'f_flagged':
-                $items = $items->where('flags', '!=', false);
+                $items = $items->whereNotNull('flags');
                 break;
         }
 
