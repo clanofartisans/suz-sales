@@ -9155,12 +9155,16 @@ button.close {
     width: 275px;
     overflow: hidden;
 }
+.sale-preview-fix-wrap-bw-brand {
+    width: 295px;
+    overflow: hidden;
+}
 .sale-preview-brand-bw {
     font-family: "Sketch Rockwell";
     vertical-align: middle;
     line-height: 37px;
     font-size: 37px;
-    padding: 0 12px;
+    padding: 0 2px;
     text-align: center;
     -webkit-text-stroke: 0.004em black;
     position: relative;
@@ -9251,12 +9255,16 @@ button.close {
     width: 275px;
     overflow: hidden;
 }
+.sale-preview-fix-wrap-color-brand {
+    width: 295px;
+    overflow: hidden;
+}
 .sale-preview-brand-color {
     font-family: "Sketch Rockwell";
     vertical-align: middle;
     line-height: 38px;
     font-size: 38px;
-    padding: 0 12px;
+    padding: 0 2px;
     text-align: center;
     -webkit-text-stroke: 0.002em white;
     position: relative;

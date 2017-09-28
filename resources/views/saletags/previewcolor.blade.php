@@ -5,7 +5,7 @@
         </tr>
         <tr>
             <td class="sale-preview-brand-color" style="height: 77px;">
-                <div id="previewDispBrand" class="sale-preview-fix-wrap-color" style="max-height: 77px;">
+                <div id="previewDispBrand" class="sale-preview-fix-wrap-color-brand" style="max-height: 77px;">
                     @isset($data['brand'])
                         {{ $data['brand'] }}
                     @endisset

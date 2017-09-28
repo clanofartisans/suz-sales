@@ -44,12 +44,16 @@
             width: 550px;
             overflow: hidden;
         }
+        .sale-fix-wrap-brand {
+            width: 590px;
+            overflow: hidden;
+        }
         .sale-brand {
             font-family: "Sketch Rockwell";
             vertical-align: middle;
             line-height: 75px;
             font-size: 75px;
-            padding: 0 25px;
+            padding: 0 5px;
             text-align: center;
             -webkit-text-stroke: 0.013em white;
             position: relative;
@@ -128,7 +132,7 @@
             </tr>
             <tr>
                 <td class="sale-brand" style="height: 155px;">
-                    <div class="sale-fix-wrap" style="max-height: 155px;">
+                    <div class="sale-fix-wrap-brand" style="max-height: 155px;">
                         Product Brand
                     </div>
                 </td>
