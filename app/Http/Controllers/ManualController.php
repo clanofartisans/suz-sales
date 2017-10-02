@@ -160,8 +160,8 @@ class ManualController extends Controller
                                     'processed'       => false,
                                     'imaged'          => false,
                                     'printed'         => false,
-                                    'sale_begin'      => $request->sale_begin,
-                                    'sale_end'        => $request->sale_end,
+                                    'sale_begin'      => new Carbon($request->sale_begin),
+                                    'sale_end'        => new Carbon($request->sale_end),
                                     'expires'         => $expires]);
         dispatch((new ApplySalePrice($sale))->onQueue('processing'));
 
