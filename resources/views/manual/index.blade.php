@@ -8,6 +8,7 @@
         <li><button type="submit" class="btn btn-info btn-block" name="process" value="print"><i class="fa fa-print"></i> Print Selected</button></li>
         <li><button type="submit" class="btn btn-info btn-block" name="process" value="printallbw"><i class="fa fa-print"></i> Print All B&W</button></li>
         <li><button type="submit" class="btn btn-info btn-block" name="process" value="printallcolor"><i class="fa fa-print"></i> Print All Color</button></li>
+        <li><button type="submit" class="btn btn-warning btn-block" name="process" value="reprocess"><i class="fa fa-refresh"></i> Reprocess Selected</button></li>
         <li><button type="submit" class="btn btn-danger btn-block" name="process" value="delete"><i class="fa fa-trash-o"></i> Delete Selected</button></li>
         <li>&nbsp;</li>
         <li><input type="radio" name="filter" id="f_all" value="f_all" {{ $filter === 'f_all' ? 'checked="checked"' : '' }}> Show all items<br>

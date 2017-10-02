@@ -102,12 +102,46 @@ class ManualController extends Controller
             case 'printallcolor':
                 $this->printAllColorItems($request);
                 break;
+            case 'reprocess':
+                $this->reprocessSelected($request);
+                break;
             case 'delete':
                 $this->deleteItems($request);
                 break;
         }
 
         return redirect()->route('manual.index');
+    }
+
+    public function reprocessSelected(Request $request)
+    {
+        if(!isset($request->checked)) {
+            flash()->warning('No items were selected.');
+            return;
+        }
+
+        $items = ManualSale::whereIn('id', $request->checked)
+                           ->get();
+
+        if($this->reprocessItems($items)) {
+
+            flash()->success('The selected items will be reprocessed.');
+        }
+    }
+
+    public function reprocessItems($items)
+    {
+        foreach($items as $item) {
+            $item->processed = false;
+            $item->imaged = false;
+            $item->printed = false;
+            $item->flags = null;
+            $item->save();
+
+            dispatch((new ApplySalePrice($item))->onQueue('processing'));
+        }
+
+        return true;
     }
 
     public function create()
