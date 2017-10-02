@@ -38,6 +38,8 @@ class ManualSale extends Model
                            'sale_end',
                            'expires'];
 
+    protected $dates = ['sale_begin', 'sale_end', 'expires'];
+
     /*
      * Process the item and update it in OrderDog. If everything
      * goes okay, queue another job to generate the printable

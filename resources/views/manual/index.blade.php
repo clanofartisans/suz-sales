@@ -68,8 +68,8 @@
                                         <td>{{ $item->desc }}</td>
                                         <td class="text-nowrap text-center">{{ $item->reg_price }}</td>
                                         <td class="text-nowrap text-center">{{ $item->disp_sale_price }}</td>
-                                        <td class="text-nowrap text-center">{{ $item->sale_begin }}</td>
-                                        <td class="text-nowrap text-center">{{ $item->sale_end }}</td>
+                                        <td class="text-nowrap text-center">{{ $item->sale_begin->toFormattedDateString() }}</td>
+                                        <td class="text-nowrap text-center">{{ $item->sale_end->toFormattedDateString() }}</td>
                                         <td class="text-nowrap text-center">
                                             @if ($item->processed)
                                                 <button type="button" class="btn btn-info btn-xs" disabled="disabled" title="Processed">
