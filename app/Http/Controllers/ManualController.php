@@ -188,6 +188,12 @@ class ManualController extends Controller
             $ODUpdate = false;
         }
 
+        if($request->previewInputSaleCat != '') {
+            $saleCat = $request->previewInputSaleCat;
+        } else {
+            $saleCat = 'Great Savings';
+        }
+
         $expires = new Carbon($request->sale_end);
         $expires = $expires->addDay();
 
@@ -198,7 +204,7 @@ class ManualController extends Controller
                                     'disp_sale_price' => $request->previewInputDispPrice,
                                     'reg_price'       => $request->previewInputRegPrice,
                                     'savings'         => $request->previewInputSavings,
-                                    'sale_cat'        => $request->previewInputSaleCat,
+                                    'sale_cat'        => $saleCat,
                                     'color'           => $colorBW,
                                     'od_update'       => $ODUpdate,
                                     'processed'       => false,
