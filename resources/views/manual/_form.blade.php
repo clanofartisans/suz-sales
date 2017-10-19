@@ -28,7 +28,7 @@
         <div class="input-group">
             {!! Form::text('previewInputUPC', null, ['class' => 'form-control']) !!}
             <span class="input-group-btn">
-                <button id="previewODFill" class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                <input type="submit" id="previewODFill" class="btn btn-default fa-input" value="&#xf002;" />
             </span>
         </div>
     </div>

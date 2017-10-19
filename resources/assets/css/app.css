@@ -232,6 +232,9 @@
     position: relative;
     top: 3px;
 }
+.fa-input {
+    font-family: FontAwesome, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
 .ui-datepicker {
     z-index: 99 !important
 }

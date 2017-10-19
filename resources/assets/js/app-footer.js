@@ -153,6 +153,7 @@ $('#previewODFill').click(function(){
             $('#odNotFound').show();
         }
 	}});
+	return false;
 });
 
 $(function() {
