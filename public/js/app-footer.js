@@ -99,6 +99,14 @@ $('.checkAll').on('click', function () {
     }
 });
 
+$('.checkAllManual').on('click', function () {
+    if ($(this).is(':checked')) {
+        $(this).closest('table').children('tbody').find('input[type="checkbox"]').prop('checked', 'checked');
+    } else {
+        $(this).closest('table').children('tbody').find('input[type="checkbox"]').prop('checked', '');
+    }
+});
+
 $(document).ready(function () {
     $('input[name=filter]').change(function () {
         $('form').submit();
@@ -108,20 +116,20 @@ $(document).ready(function () {
 $("#upsubmit").on("click", function (event) {
     $.LoadingOverlay("show");
 });
+/*
+window.setInterval(function(){
+	$.ajax({dataType: "json", url: '/ajax/jobCounts', success: function(result){
+        $('#job-count-processing').html(result.processing);
+		$('#job-count-imaging').html(result.imaging);
 
-window.setInterval(function () {
-    $.ajax({ dataType: "json", url: '/ajax/jobCounts', success: function success(result) {
-            $('#job-count-processing').html(result.processing);
-            $('#job-count-imaging').html(result.imaging);
-
-            if (result.processing + result.imaging > 0) {
-                $('#job-count-loader').show();
-            } else {
-                $('#job-count-loader').hide();
-            }
-        } });
+		if((result.processing + result.imaging) > 0) {
+            $('#job-count-loader').show();
+        } else {
+            $('#job-count-loader').hide();
+        }
+	}});
 }, 2000);
-
+*/
 // Manual Sale Tag Preview Scripts
 
 $('#previewInputUPC').keyup(function () {

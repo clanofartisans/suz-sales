@@ -46,7 +46,7 @@
                             <table class="table table-striped table-bordered table-hover nowrap">
                                 <thead>
                                     <tr>
-                                        <th>&nbsp;</th>
+                                        <th><input type="checkbox" class="checkAllManual" /></th>
                                         <th class="text-nowrap">UPC</th>
                                         <th class="text-nowrap">Brand</th>
                                         <th class="text-nowrap">Description</th>
@@ -60,6 +60,7 @@
                                         <th class="text-center"><i class="fa fa-flag" title="Flags" aria-hidden="true"></i></th>
                                     </tr>
                                 </thead>
+                                <tbody>
                                 @foreach ($items as $item)
                                     <tr>
                                         <td><input type="checkbox" name="checked[]" value="{{ $item->id }}" /></td>
