@@ -159,6 +159,7 @@ class ManualController extends Controller
         $data['sale_cat'] = session('manual_sale_cat');
         $data['begin']    = session('manual_sale_begin');
         $data['end']      = session('manual_sale_end');
+        $data['percent']  = session('manual_sale_percent');
 
         if(session('manual_sale_color') == 'radioColor') {
             $data['color'] = true;
@@ -215,6 +216,7 @@ class ManualController extends Controller
             session(['manual_sale_color'     => $request->radioBWColor]);
             session(['manual_sale_begin'     => $request->sale_begin]);
             session(['manual_sale_end'       => $request->sale_end]);
+            session(['manual_sale_percent'   => $request->previewInputPercentOff]);
 
             return redirect()->route('manual.create');
         } else {
@@ -253,6 +255,7 @@ class ManualController extends Controller
         session()->forget('manual_sale_color');
         session()->forget('manual_sale_begin');
         session()->forget('manual_sale_end');
+        session()->forget('previewInputPercentOff');
     }
 
     /**

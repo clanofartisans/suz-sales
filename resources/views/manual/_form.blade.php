@@ -82,6 +82,16 @@
 </div>
 
 <div class="form-group">
+    {!! Form::label('previewInputPercentOff', 'Discount % (optional)', ['class' => 'col-md-4 control-label']) !!}
+    <div class="col-md-6">
+        <div class="input-group">
+            {!! Form::text('previewInputPercentOff', $data['percent'], ['class' => 'form-control']) !!}
+            <div class="input-group-addon">% Off</div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
     {!! Form::label('previewInputSaleCat', 'Sale Category', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         {!! Form::text('previewInputSaleCat', $data['sale_cat'], ['class' => 'form-control']) !!}

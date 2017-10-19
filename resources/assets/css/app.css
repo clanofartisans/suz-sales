@@ -232,3 +232,6 @@
     position: relative;
     top: 3px;
 }
+.ui-datepicker {
+    z-index: 99 !important
+}

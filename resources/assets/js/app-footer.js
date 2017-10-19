@@ -69,6 +69,7 @@ $('#previewInputSalePrice').keyup(function() {
     $('#previewDispSalePrice').html('$' + $(this).val());
     $('#previewInputSavings').val(savings);
     $('#previewDispSavings').html(savings);
+    $('#previewInputPercentOff').val('');
 });
 
 $('#previewInputDispPrice').keyup(function() {
@@ -80,10 +81,21 @@ $('#previewInputRegPrice').keyup(function() {
     $('#previewDispRegPrice').html($(this).val());
     $('#previewInputSavings').val(savings);
     $('#previewDispSavings').html(savings);
+    $('#previewInputPercentOff').val('');
 });
 
 $('#previewInputSavings').keyup(function() {
     $('#previewDispSavings').html($(this).val());
+});
+
+$('#previewInputPercentOff').keyup(function() {
+    var savings = (($('#previewInputRegPrice').val() * ($(this).val() / 100.00)).toFixed(2));
+    var salePrice = (($('#previewInputRegPrice').val() - savings).toFixed(2));
+    $('#previewInputSalePrice').val(salePrice);
+    $('#previewInputDispPrice').val('$' + salePrice);
+    $('#previewDispSalePrice').html('$' + salePrice);
+    $('#previewInputSavings').val(savings);
+    $('#previewDispSavings').html(savings);
 });
 
 $('#previewInputSaleCat').keyup(function() {
@@ -128,6 +140,15 @@ $('#previewODFill').click(function(){
             $('#previewDispDesc').html(result.desc);
             $('#previewInputRegPrice').val(result.price);
             $('#previewDispRegPrice').html(result.price);
+            if($('#previewInputPercentOff').val() != '') {
+                var savings = ((result.price * ($('#previewInputPercentOff').val() / 100.00)).toFixed(2));
+                var salePrice = ((result.price - savings).toFixed(2));
+                $('#previewInputSalePrice').val(salePrice);
+                $('#previewInputDispPrice').val('$' + salePrice);
+                $('#previewDispSalePrice').html('$' + salePrice);
+                $('#previewInputSavings').val(savings);
+                $('#previewDispSavings').html(savings);
+            }
         } else {
             $('#odNotFound').show();
         }
