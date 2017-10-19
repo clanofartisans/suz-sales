@@ -32,6 +32,11 @@
             </span>
         </div>
     </div>
+    <div class="col-md-2">
+        <small id="odNotFound" class="text-danger" style="display: none;">
+            Not found
+        </small>
+    </div>
 </div>
 
 <div class="form-group">

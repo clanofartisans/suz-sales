@@ -241,6 +241,8 @@ class ManualController extends Controller
 
             return $result;
         }
+
+        return 'false';
     }
 
     public function clearFormCookies()
