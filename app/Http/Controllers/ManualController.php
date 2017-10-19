@@ -255,7 +255,7 @@ class ManualController extends Controller
         session()->forget('manual_sale_color');
         session()->forget('manual_sale_begin');
         session()->forget('manual_sale_end');
-        session()->forget('previewInputPercentOff');
+        session()->forget('manual_sale_percent');
     }
 
     /**
