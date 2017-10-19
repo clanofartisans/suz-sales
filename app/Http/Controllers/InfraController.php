@@ -83,6 +83,10 @@ class InfraController extends Controller
             $items = $items->paginate(100);
             session(['page' => $items->currentPage()]);
         } else {
+            $page = session('page', 1);
+            if($page > 1 && (((float) $items->count()) / ($page - 1.0)) <= 100.0) {
+                session(['page' => 1]);
+            }
             $items = $items->paginate(100, ['*'], 'page', session('page', 1));
         }
 

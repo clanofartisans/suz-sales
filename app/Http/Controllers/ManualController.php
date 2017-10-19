@@ -39,7 +39,7 @@ class ManualController extends Controller
 
         $items = ManualSale::orderBy('brand', 'asc')
                            ->orderBy('upc', 'asc');
-//f_img_bw
+
         switch($filter) {
             case 'f_all':
                 $items = $items->where('expires', '>=', Carbon::now());
@@ -76,7 +76,16 @@ class ManualController extends Controller
                 break;
         }
 
-        $items = $items->paginate(100);
+        if(request()->has('page')) {
+            $items = $items->paginate(100);
+            session(['page' => $items->currentPage()]);
+        } else {
+            $page = session('page', 1);
+            if($page > 1 && (((float) $items->count()) / ($page - 1.0)) <= 100.0) {
+                session(['page' => 1]);
+            }
+            $items = $items->paginate(100, ['*'], 'page', session('page', 1));
+        }
 
         $jobCounts['processing'] = DB::table('jobs')->where('queue', 'processing')->count();
         $jobCounts['imaging']    = DB::table('jobs')->where('queue', 'imaging')->count();
