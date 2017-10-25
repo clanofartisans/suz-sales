@@ -188,6 +188,12 @@ class ManualController extends Controller
             $ODUpdate = false;
         }
 
+        if($request->previewInputSalePrice != '') {
+            $salePrice = $request->previewInputSalePrice;
+        } else {
+            $salePrice = 0.00;
+        }
+
         if($request->previewInputSaleCat != '') {
             $saleCat = $request->previewInputSaleCat;
         } else {
@@ -200,7 +206,7 @@ class ManualController extends Controller
         $sale = ManualSale::create(['upc'             => $request->previewInputUPC,
                                     'brand'           => $request->previewInputBrand,
                                     'desc'            => $request->previewInputDesc,
-                                    'sale_price'      => $request->previewInputSalePrice,
+                                    'sale_price'      => $salePrice,
                                     'disp_sale_price' => $request->previewInputDispPrice,
                                     'reg_price'       => $request->previewInputRegPrice,
                                     'savings'         => $request->previewInputSavings,
