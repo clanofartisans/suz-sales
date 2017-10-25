@@ -217,23 +217,59 @@ XML;
      */
     public function insertDiscountAtCorrectPosition($item, $discountXML)
     {
+        if(!isset($item->ItemDiscounts)) {
+            $discounted = $this->insertDiscountWithoutExistingDiscounts($item, $discountXML);
+        } else {
+            $discounted = $this->insertDiscountWithExistingDiscounts($item, $discountXML);
+        }
+
+        return $discounted;
+    }
+
+    public function insertDiscountWithoutExistingDiscounts($item, $discountXML)
+    {
         $itemXML = $item->asXML();
 
-        if(!isset($item->ItemDiscounts)) {
-            if(isset($item->PackPrices)) {
-                $insertAfter = "</PackPrices>";
-            } else {
-                $insertAfter = "</RevenueAcct>";
-            }
+        if(isset($item->PackPrices)) {
+            $insertAfter = "</PackPrices>";
         } else {
-            return false;
+            $insertAfter = "</RevenueAcct>";
         }
 
         $discountXML = $insertAfter . $discountXML;
 
         $discounted = str_replace($insertAfter, $discountXML, $itemXML);
 
-        return($discounted);
+        return $discounted;
+    }
+
+    public function insertDiscountWithExistingDiscounts($item, $discountXML)
+    {
+        $itemXML = $item->asXML();
+
+        $discStatus = 'none';
+        foreach($item->ItemDiscounts->ItemDiscount as $discount) {
+            if($discount->Type == 'Employee') {
+                $discStatus = 'ignore';
+                continue;
+            }
+            if($discount->Type == 'Standard') {
+                $discStatus = 'fail';
+                break;
+            }
+        }
+
+        switch ($discStatus) {
+            case 'ignore':
+                $discountXML = substr($discountXML, 15);
+                $discounted = str_replace("</ItemDiscounts>", $discountXML, $itemXML);
+                break;
+            default:
+                $discounted = false;
+                break;
+        }
+
+        return $discounted;
     }
 
     /*
