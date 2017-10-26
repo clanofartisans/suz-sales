@@ -6,6 +6,7 @@
     <nav class="col-sm-1">
       <ul class="nav nav-pills nav-stacked" style="float: left;" data-spy="affix">
         <li><button type="submit" class="btn btn-success btn-block" name="process" value="approve"><i class="fa fa-thumbs-o-up"></i> Approve</button></li>
+        <li><button type="submit" class="btn btn-success btn-block" name="process" value="approveall"><i class="fa fa-thumbs-o-up"></i> Approve All</button></li>
         <li><button type="submit" class="btn btn-info btn-block" name="process" value="queue"><i class="fa fa-print"></i> Queue Selected</button></li>
         <li><button type="submit" class="btn btn-info btn-block" name="process" value="print"><i class="fa fa-print"></i> Print Queued Items</button></li>
         <li>&nbsp;</li>

@@ -141,6 +141,9 @@ class InfraController extends Controller
             case 'approve':
                 $this->approveItems($request);
                 break;
+            case 'approveall':
+                $this->approveAllItems($request);
+                break;
             case 'queue':
                 $this->queueSelectedItems($request);
                 break;
@@ -150,6 +153,18 @@ class InfraController extends Controller
         }
 
         return redirect()->route('infra.show', ['id' => $id]);
+    }
+
+    protected function approveAllItems(Request $request)
+    {
+        $items = InfraItem::where('infrasheet_id', $request->infrasheet)
+                          ->get();
+
+        foreach($items as $item) {
+            $item->approve();
+        }
+
+        flash()->success('All items have been approved.');
     }
 
     /**
