@@ -410,8 +410,6 @@ class ManualController extends Controller
 
             $pdf->AddPage();
 
-            $pdf = $this->addAllCropMarks($pdf);
-
             $x = 0.25;
             $y = 0.5;
 
@@ -436,6 +434,8 @@ class ManualController extends Controller
                 $y += 3.5;
             }
 
+            $pdf = $this->addAllCropMarks($pdf);
+
             if($i > ($count - 1)) {
 
                 break;
@@ -458,30 +458,38 @@ class ManualController extends Controller
      */
     protected function addAllCropMarks(TCPDF $pdf)
     {
-        $pdf->cropMark(0.25, 0.5, 0.2, 0.2, 'TL');
-        $pdf->cropMark(2.25, 0.5, 0.2, 0.2, 'TOP');
-        $pdf->cropMark(4.25, 0.5, 0.2, 0.2, 'TOP');
-        $pdf->cropMark(6.25, 0.5, 0.2, 0.2, 'TOP');
-        $pdf->cropMark(8.25, 0.5, 0.2, 0.2, 'TR');
-        $pdf->cropMark(0.25, 3.5, 0.2, 0.2, 'LEFT');
-        $pdf->cropMark(0.25, 4.0, 0.2, 0.2, 'LEFT');
-        $pdf->cropMark(2.25, 3.75, 0.2, 0.2, 'TOP,BOTTOM');
-        $pdf->cropMark(4.25, 3.75, 0.2, 0.2, 'TOP,BOTTOM');
-        $pdf->cropMark(6.25, 3.75, 0.2, 0.2, 'TOP,BOTTOM');
-        $pdf->cropMark(8.25, 3.5, 0.2, 0.2, 'RIGHT');
-        $pdf->cropMark(8.25, 4.0, 0.2, 0.2, 'RIGHT');
-        $pdf->cropMark(0.25, 7.0, 0.2, 0.2, 'LEFT');
-        $pdf->cropMark(0.25, 7.5, 0.2, 0.2, 'LEFT');
-        $pdf->cropMark(2.25, 7.25, 0.2, 0.2, 'TOP,BOTTOM');
-        $pdf->cropMark(4.25, 7.25, 0.2, 0.2, 'TOP,BOTTOM');
-        $pdf->cropMark(6.25, 7.25, 0.2, 0.2, 'TOP,BOTTOM');
-        $pdf->cropMark(8.25, 7.0, 0.2, 0.2, 'RIGHT');
-        $pdf->cropMark(8.25, 7.5, 0.2, 0.2, 'RIGHT');
-        $pdf->cropMark(0.25, 10.5, 0.2, 0.2, 'BL');
-        $pdf->cropMark(2.25, 10.5, 0.2, 0.2, 'BOTTOM');
-        $pdf->cropMark(4.25, 10.5, 0.2, 0.2, 'BOTTOM');
-        $pdf->cropMark(6.25, 10.5, 0.2, 0.2, 'BOTTOM');
-        $pdf->cropMark(8.25, 10.5, 0.2, 0.2, 'BR');
+        $pdf->SetAlpha(0.25);
+        $pdf->cropMark(0.25, 0.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(2.25, 0.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(4.25, 0.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(6.25, 0.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(8.25, 0.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(0.25, 3.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(2.25, 3.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(4.25, 3.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(6.25, 3.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(8.25, 3.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(0.25, 4.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(2.25, 4.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(4.25, 4.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(6.25, 4.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(8.25, 4.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(0.25, 7.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(2.25, 7.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(4.25, 7.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(6.25, 7.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(8.25, 7.0, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(0.25, 7.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(2.25, 7.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(4.25, 7.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(6.25, 7.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(8.25, 7.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(0.25, 10.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(2.25, 10.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(4.25, 10.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(6.25, 10.5, 0.2, 0.2, 'A,D');
+        $pdf->cropMark(8.25, 10.5, 0.2, 0.2, 'A,D');
+        $pdf->SetAlpha(1);
 
         return $pdf;
     }
