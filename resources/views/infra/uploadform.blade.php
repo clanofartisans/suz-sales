@@ -38,7 +38,7 @@
             <label for="upworkbook">Workbook File</label>
             <input type="file" id="upworkbook" name="upworkbook">
         </div>
-        <button type="submit" class="btn btn-primary" name="upsubmit" id="upsubmit">Upload</button>
+        <button type="submit" class="btn btn-primary" name="upsubmit" id="upsubmit"><i class="fa fa-cloud-upload"></i> Upload</button>
     </div>
 </div>
 
