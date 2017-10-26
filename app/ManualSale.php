@@ -117,6 +117,7 @@ class ManualSale extends Model
 
     public function queue()
     {
+        $this->printed = false;
         $this->queued = true;
         $this->save();
     }

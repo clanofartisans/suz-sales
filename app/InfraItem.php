@@ -140,7 +140,8 @@ class InfraItem extends Model
 
     public function queue()
     {
-        $this->queued = true;
+        $this->printed = false;
+        $this->queued  = true;
         $this->save();
     }
 
