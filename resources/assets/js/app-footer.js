@@ -49,6 +49,19 @@ window.setInterval(function(){
 	}});
 }, 2000);
 
+window.setInterval(function(){
+	$.ajax({dataType: "json", url: '/ajax/queueCountInfra', success: function(result){
+        $('#queue-count-infra').html(result.infra);
+	}});
+}, 10000);
+
+window.setInterval(function(){
+	$.ajax({dataType: "json", url: '/ajax/queueCountsManual', success: function(result){
+        $('#queue-count-bw').html(result.bw);
+		$('#queue-count-color').html(result.color);
+	}});
+}, 10000);
+
 // Manual Sale Tag Preview Scripts
 
 $('#previewInputUPC').keyup(function() {

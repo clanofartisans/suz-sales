@@ -6,15 +6,17 @@
     <nav class="col-sm-1">
       <ul class="nav nav-pills nav-stacked" style="float: left;" data-spy="affix">
         <li><button type="submit" class="btn btn-success btn-block" name="process" value="approve"><i class="fa fa-thumbs-o-up"></i> Approve</button></li>
-        <li><button type="submit" class="btn btn-info btn-block" name="process" value="print"><i class="fa fa-print"></i> Print Selected</button></li>
-        <li><button type="submit" class="btn btn-info btn-block" name="process" value="printall"><i class="fa fa-print"></i> Print All Ready</button></li>
+        <li><button type="submit" class="btn btn-info btn-block" name="process" value="queue"><i class="fa fa-print"></i> Queue Selected</button></li>
+        <li><button type="submit" class="btn btn-info btn-block" name="process" value="print"><i class="fa fa-print"></i> Print Queued Items</button></li>
         <li>&nbsp;</li>
         <li><input type="radio" name="filter" id="f_all" value="f_all" {{ $filter === 'f_all' ? 'checked="checked"' : '' }}> Show all items<br>
             <input type="radio" name="filter" id="f_approved" value="f_approved" {{ $filter === 'f_approved' ? 'checked="checked"' : '' }}> Show only approved<br>
             <input type="radio" name="filter" id="f_processed" value="f_processed" {{ $filter === 'f_processed' ? 'checked="checked"' : '' }}> Show only processed<br>
-            <input type="radio" name="filter" id="f_ready_to_print" value="f_ready_to_print" {{ $filter === 'f_ready_to_print' ? 'checked="checked"' : '' }}> Show ready to print<br>
+            <input type="radio" name="filter" id="f_queued" value="f_queued" {{ $filter === 'f_queued' ? 'checked="checked"' : '' }}> Show queued for printing<br>
             <input type="radio" name="filter" id="f_printed" value="f_printed" {{ $filter === 'f_printed' ? 'checked="checked"' : '' }}> Show only printed<br>
             <input type="radio" name="filter" id="f_flagged" value="f_flagged" {{ $filter === 'f_flagged' ? 'checked="checked"' : '' }}> Show only flagged</li>
+        <li>&nbsp;</li>
+        <li><span id="queue-count-infra">{{ $queueCount }}</span> tags in print queue</li>
         <li>&nbsp;</li>
         <li><span id="job-count-processing">{{ $jobCounts['processing'] }}</span> sales being processed</li>
         <li><span id="job-count-imaging">{{ $jobCounts['imaging'] }}</span> tags being generated</li>
@@ -118,6 +120,10 @@
                                             @if ($item->printed)
                                                 <button type="button" class="btn btn-primary btn-xs" disabled="disabled" title="Printed">
                                                     <i class="fa fa-print" aria-hidden="true"></i>
+                                                </button>
+                                            @elseif ($item->queued)
+                                                <button type="button" class="btn btn-primary btn-xs" disabled="disabled" title="Queued">
+                                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
                                                 </button>
                                             @else
                                                 <button type="button" class="btn btn-default btn-xs" disabled="disabled" title="Not Printed">

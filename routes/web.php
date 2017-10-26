@@ -37,6 +37,8 @@ Route::group(['middleware' => ['web']], function () {
 
     // Special AJAX Routes
     Route::group(['prefix' => 'ajax'], function() {
+        Route::get('queueCountInfra', 'AjaxController@queueCountInfra')->name('ajax.queuecount.infra');
+        Route::get('queueCountsManual', 'AjaxController@queueCountsManual')->name('ajax.queuecounts.manual');
         Route::get('jobCounts', 'AjaxController@jobCounts')->name('ajax.jobcounts');
     });
 });

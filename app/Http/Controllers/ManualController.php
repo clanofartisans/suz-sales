@@ -48,9 +48,8 @@ class ManualController extends Controller
                 $items = $items->where('processed', true)
                                ->where('expires', '>=', Carbon::now());;
                 break;
-            case 'f_ready_to_print':
-                $items = $items->where('imaged', true)
-                               ->where('printed', false)
+            case 'f_queued':
+                $items = $items->where('queued', true)
                                ->where('expires', '>=', Carbon::now());;
                 break;
             case 'f_img_bw':
@@ -87,10 +86,13 @@ class ManualController extends Controller
             $items = $items->paginate(100, ['*'], 'page', session('page', 1));
         }
 
+        $queueCounts['bw']    = DB::table('manual_sales')->where('queued', true)->where('color', false)->count();
+        $queueCounts['color'] = DB::table('manual_sales')->where('queued', true)->where('color', true)->count();
+
         $jobCounts['processing'] = DB::table('jobs')->where('queue', 'processing')->count();
         $jobCounts['imaging']    = DB::table('jobs')->where('queue', 'imaging')->count();
 
-        return view('manual.index', compact('items', 'filter', 'jobCounts'));
+        return view('manual.index', compact('items', 'filter', 'queueCounts', 'jobCounts'));
     }
 
     public function process(Request $request)
@@ -102,14 +104,14 @@ class ManualController extends Controller
             case 'add':
                 return redirect()->route('manual.create');
                 break;
-            case 'print':
-                $this->printSelectedItems($request);
+            case 'queue':
+                $this->queueSelectedItems($request);
                 break;
-            case 'printallbw':
-                $this->printAllBWItems($request);
+            case 'printbwqueue':
+                $this->printBWQueue($request);
                 break;
-            case 'printallcolor':
-                $this->printAllColorItems($request);
+            case 'printcolorqueue':
+                $this->printColorQueue($request);
                 break;
             case 'reprocess':
                 $this->reprocessSelected($request);
@@ -280,7 +282,7 @@ class ManualController extends Controller
     protected function printItems($items)
     {
         if(count($items) == 0) {
-            flash()->warning('No items are ready to be printed.');
+            flash()->warning('No items are queued for printing.');
 
             return false;
         }
@@ -298,12 +300,27 @@ class ManualController extends Controller
         return true;
     }
 
+    protected function queueItems($items)
+    {
+        if(count($items) == 0) {
+            flash()->warning('No items are ready to be printed.');
+
+            return false;
+        }
+
+        foreach($items as $item) {
+            $item->queue();
+        }
+
+        return true;
+    }
+
     /**
      * Loop through and print user selected INFRA items.
      *
      * @param Request $request
      */
-    protected function printSelectedItems(Request $request)
+    protected function queueSelectedItems(Request $request)
     {
         if(!isset($request->checked)) {
             flash()->warning('No items were selected.');
@@ -314,9 +331,9 @@ class ManualController extends Controller
                            ->where('imaged', true)
                            ->get();
 
-        if($this->printItems($items)) {
+        if($this->queueItems($items)) {
 
-            flash()->success('The selected items have been printed.');
+            flash()->success('The selected items have been queued for printing.');
         }
     }
 
@@ -325,10 +342,9 @@ class ManualController extends Controller
      *
      * @param Request $request
      */
-    protected function printAllBWItems(Request $request)
+    protected function printBWQueue(Request $request)
     {
-        $items = ManualSale::where('imaged', true)
-                           ->where('printed', false)
+        $items = ManualSale::where('queued', true)
                            ->where('color', false)
                            ->orderBy('brand', 'asc')
                            ->orderBy('id', 'asc')
@@ -336,7 +352,7 @@ class ManualController extends Controller
 
         if($this->printItems($items)) {
 
-            flash()->success('All B&amp;W items that were ready to print have been printed.');
+            flash()->success('All B&amp;W items that were queued for printing have been printed.');
         }
     }
 
@@ -345,10 +361,9 @@ class ManualController extends Controller
      *
      * @param Request $request
      */
-    protected function printAllColorItems(Request $request)
+    protected function printColorQueue(Request $request)
     {
-        $items = ManualSale::where('imaged', true)
-                           ->where('printed', false)
+        $items = ManualSale::where('queued', true)
                            ->where('color', true)
                            ->orderBy('brand', 'asc')
                            ->orderBy('id', 'asc')
@@ -356,7 +371,7 @@ class ManualController extends Controller
 
         if($this->printItems($items)) {
 
-            flash()->success('All color items that were ready to print have been printed.');
+            flash()->success('All color items that were queued for printing have been printed.');
         }
     }
 

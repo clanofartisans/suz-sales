@@ -115,11 +115,18 @@ class ManualSale extends Model
         return false;
     }
 
+    public function queue()
+    {
+        $this->queued = true;
+        $this->save();
+    }
+
     /*
      * Flag the item as having been printed.
      */
     public function print()
     {
+        $this->queued  = false;
         $this->printed = true;
         $this->save();
     }
