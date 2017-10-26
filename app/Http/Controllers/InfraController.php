@@ -181,8 +181,6 @@ class InfraController extends Controller
         return true;
     }
 
-
-
     /**
      * Loop through and print user selected INFRA items.
      *

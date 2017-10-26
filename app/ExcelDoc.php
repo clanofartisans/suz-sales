@@ -144,7 +144,7 @@ class ExcelDoc
                         $newRow['brand'] = $cellVal;
                     }
                     if($cellNum === $this->dataCols['desc']) {
-                        $newRow['desc'] = $cellVal;
+                        $newRow['desc'] = $this->cleanDesc($cellVal);
                     }
                     if($cellNum === $this->dataCols['size']) {
                         $newRow['size'] = $cellVal;
@@ -223,5 +223,51 @@ class ExcelDoc
             }
         }
         return '20%';
+    }
+
+    public function cleanDesc($desc)
+    {
+        if(preg_match("/\xc2\xae/u", $desc, $result)) {
+
+            // Ends with character
+            if(preg_match("/\xc2\xae$/u", $desc, $result)) {
+
+                $clean = rtrim($desc, "\xc2\xae ");
+
+                return $clean;
+            }
+
+            // Begins with character
+            if(preg_match("/^\xc2\xae/u", $desc, $result)) {
+
+                $clean = ltrim($desc, "\xc2\xae ");
+
+                return $clean;
+            }
+
+            // symbol immediately preceeded by non-whitespace character (delete symbol only)
+            if(preg_match("/\S\xc2\xae.+/u", $desc, $result)) {
+
+                $pattern = "/\xc2\xae/u";
+                $replacement = '';
+
+                $clean = preg_replace($pattern, $replacement, $desc);
+
+                return $clean;
+            }
+
+            // symbol surrounded on either side by whitespace character (replace symbol and all surrounding whitespace with one space)
+            if(preg_match("/\s+\xc2\xae\s+/u", $desc, $result)) {
+
+                $pattern = "/\s+\xc2\xae\s+/u";
+                $replacement = ' ';
+
+                $clean = preg_replace($pattern, $replacement, $desc);
+
+                return $clean;
+            }
+        }
+
+        return $desc;
     }
 }
