@@ -17,7 +17,10 @@
             <input type="radio" name="filter" id="f_img_bw" value="f_img_bw" {{ $filter === 'f_img_bw' ? 'checked="checked"' : '' }}> Show B&amp;W tags<br>
             <input type="radio" name="filter" id="f_img_color" value="f_img_color" {{ $filter === 'f_img_color' ? 'checked="checked"' : '' }}> Show color tags<br>
             <input type="radio" name="filter" id="f_printed" value="f_printed" {{ $filter === 'f_printed' ? 'checked="checked"' : '' }}> Show only printed<br>
-            <input type="radio" name="filter" id="f_flagged" value="f_flagged" {{ $filter === 'f_flagged' ? 'checked="checked"' : '' }}> Show only flagged</li>
+            <input type="radio" name="filter" id="f_flagged" value="f_flagged" {{ $filter === 'f_flagged' ? 'checked="checked"' : '' }}> Show only flagged<br>
+            <input type="radio" name="filter" id="f_flagged_discounted" value="f_flagged_discounted" {{ $filter === 'f_flagged_discounted' ? 'checked="checked"' : '' }}> &bull; Already discounted<br>
+            <input type="radio" name="filter" id="f_flagged_lowprice" value="f_flagged_lowprice" {{ $filter === 'f_flagged_lowprice' ? 'checked="checked"' : '' }}> &bull; Price &lt; sale<br>
+            <input type="radio" name="filter" id="f_flagged_notfound" value="f_flagged_notfound" {{ $filter === 'f_flagged_notfound' ? 'checked="checked"' : '' }}> &bull; Not in OD<br>
             <input type="radio" name="filter" id="f_expired" value="f_expired" {{ $filter === 'f_expired' ? 'checked="checked"' : '' }}> Show only expired</li>
         <li>&nbsp;</li>
         <li><span id="queue-count-bw">{{ $queueCounts['bw'] }}</span> B&amp;W tags in print queue</li>

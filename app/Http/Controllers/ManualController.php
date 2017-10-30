@@ -70,6 +70,15 @@ class ManualController extends Controller
                 $items = $items->whereNotNull('flags')
                                ->where('expires', '>=', Carbon::now());;
                 break;
+            case 'f_flagged_discounted':
+                $items = $items->where('flags', 'Item already has discounts');
+                break;
+            case 'f_flagged_lowprice':
+                $items = $items->where('flags', 'Item price is lower than sale price');
+                break;
+            case 'f_flagged_notfound':
+                $items = $items->where('flags', 'Item not found in OrderDog');
+                break;
             case 'f_expired':
                 $items = $items->where('expires', '<', Carbon::now());
                 break;

@@ -76,6 +76,15 @@ class InfraController extends Controller
             case 'f_flagged':
                 $items = $items->whereNotNull('flags');
                 break;
+            case 'f_flagged_discounted':
+                $items = $items->where('flags', 'Item already has discounts');
+                break;
+            case 'f_flagged_lowprice':
+                $items = $items->where('flags', 'Item price is lower than sale price');
+                break;
+            case 'f_flagged_notfound':
+                $items = $items->where('flags', 'Item not found in OrderDog');
+                break;
         }
 
         if(request()->has('page')) {
