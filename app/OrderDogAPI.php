@@ -247,17 +247,7 @@ XML;
     {
         $itemXML = $item->asXML();
 
-        $discStatus = 'none';
-        foreach($item->ItemDiscounts->ItemDiscount as $discount) {
-            if($discount->Type == 'Employee') {
-                $discStatus = 'ignore';
-                continue;
-            }
-            if($discount->Type == 'Standard') {
-                $discStatus = 'fail';
-                break;
-            }
-        }
+        $discStatus = $this->checkExistingDiscounts($item, $discountXML);
 
         switch ($discStatus) {
             case 'ignore':
@@ -271,6 +261,86 @@ XML;
 
         return $discounted;
     }
+
+    public function checkExistingDiscounts($item, $discountXML)
+    {
+        $discStatus = 'none';
+        foreach($item->ItemDiscounts->ItemDiscount as $discount) {
+            if($discount->Type == 'Employee') {
+                $discStatus = 'ignore';
+                continue;
+            }
+            if($discount->Type == 'Standard') {
+                if($this->checkExpiredDiscount($discount) || $this->checkDuplicateDiscount($discount, $discountXML)) {
+                    $discStatus = 'ignore';
+                    continue;
+                }
+                $discStatus = 'fail';
+                break;
+            }
+        }
+
+        return $discStatus;
+    }
+
+    public function checkExpiredDiscount($discount)
+    {
+        $curEndDate       = $discount->EndDt;
+        $curEndDateCarbon = new Carbon($curEndDate);
+
+        $carbonNow = Carbon::now();
+
+        if($curEndDateCarbon < $carbonNow) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function checkDuplicateDiscount($discount, $discountXML)
+    {
+        $current['Amount']  = (float) $discount->Amount;
+        $current['Price']   = (float) $discount->Price;
+        $current['StartDt'] = new Carbon($discount->StartDt);
+        $current['EndDt']   = new Carbon($discount->EndDt);
+
+        $newDiscount = simplexml_load_string($discountXML);
+
+        $new['Amount']  = (float) $newDiscount->ItemDiscount->Amount;
+        $new['Price']   = (float) $newDiscount->ItemDiscount->Price;
+        $new['StartDt'] = new Carbon($newDiscount->ItemDiscount->StartDt);
+        $new['EndDt']   = new Carbon($newDiscount->ItemDiscount->EndDt);
+
+        if($current['Amount']  == $new['Amount']  &&
+           $current['Price']   == $new['Price']   &&
+           $current['StartDt'] == $new['StartDt'] &&
+           $current['EndDt']   == $new['EndDt'])
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+/*
+
+OrderDog Get
+
+Amount  = "1.8000"
+Price   = "2.9900"
+StartDt = "9/1/2017"
+EndDt   = "9/30/2017"
+
+-----
+
+Sales Manager Post
+
+Amount  = "0.1"
+Price   = "4.69"
+StartDt = "2017-12-01 00:00:00"
+EndDt   = "2017-12-31 00:00:00"
+
+ */
 
     /*
      * Check to make sure we got a good response back from OrderDog.
