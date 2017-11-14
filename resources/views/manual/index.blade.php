@@ -66,8 +66,23 @@
                                         <th class="text-center"><i class="fa fa-flag" title="Flags" aria-hidden="true"></i></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <?php $brandHeader = ''; $first = true; ?>
                                 @foreach ($items as $item)
+                                    @if ($item->brand != $brandHeader)
+                                        @if (!$first)
+                                            </tbody>
+                                        @else
+                                            <?php $first = false; ?>
+                                        @endif
+                                        <tbody>
+                                        <?php $brandHeader = $item->brand; ?>
+                                        <tr>
+                                            <th><input type="checkbox" class="checkAll" /></th>
+                                            <th style="white-space: nowrap" colspan="11">
+                                                {{ $brandHeader }}
+                                            </th>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <td><input type="checkbox" name="checked[]" value="{{ $item->id }}" /></td>
                                         <td class="text-nowrap">{{ $item->upc }}</td>
