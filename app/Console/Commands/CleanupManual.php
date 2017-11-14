@@ -43,5 +43,13 @@ class CleanupManual extends Command
         foreach($items as $item) {
             dispatch((new CleanupImages($item))->onQueue('cleanup'));
         }
+
+        $items = ManualSale::onlyTrashed()
+                           ->where('imaged', true)
+                           ->get();
+
+        foreach($items as $item) {
+            dispatch((new CleanupImages($item))->onQueue('cleanup'));
+        }
     }
 }
