@@ -36,7 +36,8 @@ class CleanupManual extends Command
      */
     public function handle()
     {
-        $items = ManualSale::where('expires', '<', Carbon::now())
+        $items = ManualSale::withTrashed()
+                           ->where('expires', '<', Carbon::now())
                            ->get();
 
         foreach($items as $item) {
