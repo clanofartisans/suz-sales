@@ -26,7 +26,7 @@ class AddQueuedColumnToInfraTable extends Migration
     public function down()
     {
         Schema::table('infra_items', function($table) {
-            $table->boolean('queued')->default(false);
+            $table->dropColumn('queued');
         });
     }
 }

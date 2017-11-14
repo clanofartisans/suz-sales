@@ -26,7 +26,7 @@ class AddQueuedColumnToManualTable extends Migration
     public function down()
     {
         Schema::table('manual_sales', function($table) {
-            $table->boolean('queued')->default(false);
+            $table->dropColumn('queued');
         });
     }
 }

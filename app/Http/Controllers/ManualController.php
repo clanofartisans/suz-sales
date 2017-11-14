@@ -193,9 +193,24 @@ class ManualController extends Controller
         } else {
             $colorBW = false;
         }
+
         if($request->radioODUpdate == 'radioODYes') {
+
             $ODUpdate = true;
+
+            $sale_begin = new Carbon($request->sale_begin);
+            $sale_end   = new Carbon($request->sale_end);
+
+            $expires = new Carbon($request->sale_end);
+            $expires = $expires->addDay();
         } else {
+
+            $sale_begin = null;
+            $sale_end   = null;
+
+            $expires = Carbon::now('America/Chicago');
+            $expires = $expires->addMonth();
+
             $ODUpdate = false;
         }
 
@@ -211,9 +226,6 @@ class ManualController extends Controller
             $saleCat = 'Great Savings';
         }
 
-        $expires = new Carbon($request->sale_end);
-        $expires = $expires->addDay();
-
         $sale = ManualSale::create(['upc'             => $request->previewInputUPC,
                                     'brand'           => $request->previewInputBrand,
                                     'desc'            => $request->previewInputDesc,
@@ -227,8 +239,8 @@ class ManualController extends Controller
                                     'processed'       => false,
                                     'imaged'          => false,
                                     'printed'         => false,
-                                    'sale_begin'      => new Carbon($request->sale_begin),
-                                    'sale_end'        => new Carbon($request->sale_end),
+                                    'sale_begin'      => $sale_begin,
+                                    'sale_end'        => $sale_end,
                                     'expires'         => $expires]);
         dispatch((new ApplySalePrice($sale))->onQueue('processing'));
 
