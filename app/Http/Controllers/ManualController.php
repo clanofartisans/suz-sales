@@ -368,7 +368,7 @@ class ManualController extends Controller
         $items = ManualSale::where('queued', true)
                            ->where('color', false)
                            ->orderBy('brand', 'asc')
-                           ->orderBy('id', 'asc')
+                           ->orderBy('upc', 'asc')
                            ->get();
 
         if($this->printItems($items)) {
@@ -387,7 +387,7 @@ class ManualController extends Controller
         $items = ManualSale::where('queued', true)
                            ->where('color', true)
                            ->orderBy('brand', 'asc')
-                           ->orderBy('id', 'asc')
+                           ->orderBy('upc', 'asc')
                            ->get();
 
         if($this->printItems($items)) {
