@@ -457,6 +457,13 @@ EndDt   = "2017-12-31 00:00:00"
             $return['desc']   = ((string) $item->Description) . ' ' . ((string) $item->Size) . ' ' . ((string) $item->Form);
             $return['price']  = (string) (number_format($price, 2));
 
+            if($return['brand'] == "PRIVATE LABEL" ||
+               $return['brand'] == "VITALITY WORKS" ||
+               $return['brand'] == "RELIANCE PRIVATE LABEL")
+            {
+                $return['brand'] = "Suzanne's";
+            }
+
             return $return;
         }
 
