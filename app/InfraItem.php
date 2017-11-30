@@ -132,6 +132,8 @@ class InfraItem extends Model
 
             $this->save();
 
+            $this->queue();
+
             return true;
         }
 

@@ -106,8 +106,9 @@ class ManualSale extends Model
 
         if (File::exists($filename)) {
             $this->imaged = true;
-
             $this->save();
+
+            $this->queue();
 
             return true;
         }
