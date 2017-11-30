@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use DB;
-use Illuminate\Database\Eloquent\Collection;
+use POS;
 use TCPDF;
 use App\ExcelDoc;
 use Carbon\Carbon;
 use App\InfraItem;
 use App\InfraSheet;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 
 class InfraController extends Controller
 {
@@ -83,7 +84,7 @@ class InfraController extends Controller
                 $items = $items->where('flags', 'Item price is lower than sale price');
                 break;
             case 'f_flagged_notfound':
-                $items = $items->where('flags', 'Item not found in OrderDog');
+                $items = $items->where('flags', 'Item not found in OrderDog'); // ODREF
                 break;
         }
 

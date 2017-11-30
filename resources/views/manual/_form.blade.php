@@ -1,11 +1,11 @@
 <div class="form-group">
-    {!! Form::label('radioODUpdate', 'Update OrderDog?', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('radioODUpdate', 'Update OrderDog?', ['class' => 'col-md-4 control-label']) !!} {{-- ODREF --}}
     <div class="col-md-6">
         <label class="radio-inline">
-            {!! Form::radio('radioODUpdate', 'radioODYes', $data['ODUpdate'], ['id' => 'radioODYes']) !!} Yes
+            {!! Form::radio('radioODUpdate', 'radioODYes', $data['ODUpdate'], ['id' => 'radioODYes']) !!} Yes {{-- ODREF --}}
         </label>
         <label class="radio-inline">
-            {!! Form::radio('radioODUpdate', 'radioODNo', !$data['ODUpdate'], ['id' => 'radioODNo']) !!} No
+            {!! Form::radio('radioODUpdate', 'radioODNo', !$data['ODUpdate'], ['id' => 'radioODNo']) !!} No {{-- ODREF --}}
         </label>
     </div>
 </div>
@@ -28,12 +28,12 @@
         <div class="input-group">
             {!! Form::text('previewInputUPC', null, ['class' => 'form-control']) !!}
             <span class="input-group-btn">
-                <input type="submit" id="previewODFill" class="btn btn-default fa-input" value="&#xf002;" />
+                <input type="submit" id="previewODFill" class="btn btn-default fa-input" value="&#xf002;" /> {{-- ODREF --}}
             </span>
         </div>
     </div>
     <div class="col-md-2">
-        <small id="odNotFound" class="text-danger" style="display: none;">
+        <small id="odNotFound" class="text-danger" style="display: none;"> {{-- ODREF --}}
             Not found
         </small>
     </div>

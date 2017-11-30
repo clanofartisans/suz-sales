@@ -14,7 +14,7 @@ class AddOdUpdateToManualSalesTable extends Migration
     public function up()
     {
         Schema::table('manual_sales', function($table) {
-            $table->boolean('od_update')->default(false);
+            $table->boolean('od_update')->default(false); // ODREF
         });
     }
 
@@ -26,7 +26,7 @@ class AddOdUpdateToManualSalesTable extends Migration
     public function down()
     {
         Schema::table('manual_sales', function($table) {
-            $table->dropColumn('od_update');
+            $table->dropColumn('od_update'); // ODREF
         });
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\InfraItem;
 use DB;
+use POS;
 use TCPDF;
 use SnappyImage;
 use Carbon\Carbon;
+use App\InfraItem;
 use App\ManualSale;
-use App\OrderDogAPI;
 use Illuminate\Http\Request;
 use App\Jobs\ApplySalePrice;
 
@@ -77,7 +77,7 @@ class ManualController extends Controller
                 $items = $items->where('flags', 'Item price is lower than sale price');
                 break;
             case 'f_flagged_notfound':
-                $items = $items->where('flags', 'Item not found in OrderDog');
+                $items = $items->where('flags', 'Item not found in OrderDog'); // ODREF
                 break;
             case 'f_expired':
                 $items = $items->where('expires', '<', Carbon::now());
@@ -178,9 +178,9 @@ class ManualController extends Controller
             $data['color'] = false;
         }
         if(session('manual_sale_od_update') == 'radioODNo') {
-            $data['ODUpdate'] = false;
+            $data['ODUpdate'] = false; // ODREF
         } else {
-            $data['ODUpdate'] = true;
+            $data['ODUpdate'] = true; // ODREF
         }
 
         return view('manual.create', compact('data'));
@@ -194,9 +194,9 @@ class ManualController extends Controller
             $colorBW = false;
         }
 
-        if($request->radioODUpdate == 'radioODYes') {
+        if($request->radioODUpdate == 'radioODYes') { // ODREF
 
-            $ODUpdate = true;
+            $ODUpdate = true; // ODREF
 
             $sale_begin = new Carbon($request->sale_begin);
             $sale_end   = new Carbon($request->sale_end);
@@ -235,7 +235,7 @@ class ManualController extends Controller
                                     'savings'         => $request->previewInputSavings,
                                     'sale_cat'        => $saleCat,
                                     'color'           => $colorBW,
-                                    'od_update'       => $ODUpdate,
+                                    'od_update'       => $ODUpdate, // ODREF
                                     'processed'       => false,
                                     'imaged'          => false,
                                     'printed'         => false,
@@ -247,7 +247,7 @@ class ManualController extends Controller
         if(isset($request->submitContinue)) {
             session(['manual_sale_brand'     => $request->previewInputBrand]);
             session(['manual_sale_cat'       => $request->previewInputSaleCat]);
-            session(['manual_sale_od_update' => $request->radioODUpdate]);
+            session(['manual_sale_od_update' => $request->radioODUpdate]); // ODREF
             session(['manual_sale_color'     => $request->radioBWColor]);
             session(['manual_sale_begin'     => $request->sale_begin]);
             session(['manual_sale_end'       => $request->sale_end]);
@@ -268,11 +268,9 @@ class ManualController extends Controller
         flash()->success('The selected items have been deleted.');
     }
 
-    public function ODQuery($upc)
+    public function ODQuery($upc) // ODREF - Should also probably be refactored over to the AjaxController
     {
-        $api = new OrderDogAPI;
-
-        $result = $api->quickQuery($upc);
+        $result = POS::quickQuery($upc);
 
         if($result !== false) {
 
@@ -286,7 +284,7 @@ class ManualController extends Controller
     {
         session()->forget('manual_sale_brand');
         session()->forget('manual_sale_cat');
-        session()->forget('manual_sale_od_update');
+        session()->forget('manual_sale_od_update'); // ODREF
         session()->forget('manual_sale_color');
         session()->forget('manual_sale_begin');
         session()->forget('manual_sale_end');

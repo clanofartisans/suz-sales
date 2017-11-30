@@ -181,6 +181,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * POS Service Provider
+         */
+        App\POS\POSServiceProvider::class,
+
     ],
 
     /*
@@ -235,6 +240,8 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
         'SnappyImage' => Barryvdh\Snappy\Facades\SnappyImage::class,
+
+        'POS' => App\POS\POSFacade::class
 
     ],
 

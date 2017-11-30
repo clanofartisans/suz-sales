@@ -2,9 +2,9 @@
 
 namespace App;
 
+use POS;
 use File;
 use SnappyImage;
-use App\OrderDogAPI;
 use App\Jobs\GenerateImage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,7 +29,7 @@ class ManualSale extends Model
                            'savings',
                            'sale_cat',
                            'color',
-                           'od_update',
+                           'od_update', // ODREF
                            'processed',
                            'imaged',
                            'printed',
@@ -41,7 +41,7 @@ class ManualSale extends Model
     protected $dates = ['sale_begin', 'sale_end', 'expires'];
 
     /*
-     * Process the item and update it in OrderDog. If everything
+     * Process the item and update it in OrderDog. If everything // ODREF
      * goes okay, queue another job to generate the printable
      * sale tag image we'll use to generate PDF documents.
      *
@@ -49,16 +49,15 @@ class ManualSale extends Model
      */
     public function process()
     {
-        if($this->od_update) {
-            $getAPI = new OrderDogAPI;
+        if($this->od_update) { // ODREF
 
-            $item = $getAPI->getItem($this->upc);
+            $item = POS::getItem($this->upc);
 
             if($item === false) {
-                $this->flags = 'Item not found in OrderDog';
+                $this->flags = 'Item not found in OrderDog'; // ODREF
                 $this->save();
             } else {
-                $discounted = $getAPI->applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end);
+                $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end);
 
                 if($discounted === false) {
                     $this->flags = 'Item already has discounts';
@@ -66,9 +65,7 @@ class ManualSale extends Model
                 } else {
                     dispatch((new GenerateImage($this))->onQueue('imaging'));
 
-                    $updateAPI = new OrderDogAPI;
-
-                    if($updateAPI->updateItem($discounted)) {
+                    if(POS::updateItem($discounted)) {
                         $this->processed = true;
                         $this->flags     = null;
                         $this->save();

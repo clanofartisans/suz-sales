@@ -2,6 +2,7 @@
 
 namespace App;
 
+use POS;
 use File;
 use SnappyImage;
 use Carbon\Carbon;
@@ -49,7 +50,7 @@ class InfraItem extends Model
 
     /*
      * The sale has been approved. Update the database
-     * and queue it up for processing for OrderDog.
+     * and queue it up for processing for OrderDog. // ODREF
      */
     public function approve()
     {
@@ -59,7 +60,7 @@ class InfraItem extends Model
     }
 
     /*
-     * Process the item and update it in OrderDog. If everything
+     * Process the item and update it in OrderDog. If everything // ODREF
      * goes okay, queue another job to generate the printable
      * sale tag image we'll use to generate PDF documents.
      *
@@ -67,18 +68,16 @@ class InfraItem extends Model
      */
     public function process()
     {
-        $getAPI = new OrderDogAPI;
-
-        $item = $getAPI->getItem($this->upc);
+        $item = POS::getItem($this->upc);
 
         if($item === false) {
-            $this->flags = 'Item not found in OrderDog';
+            $this->flags = 'Item not found in OrderDog'; // ODREF
             $this->save();
         } else {
             $month = $this->infrasheet->month;
             $year  = $this->infrasheet->year;
 
-            $updateDisplayPrices = $this->updateWithOrderDogInfo($item);
+            $updateDisplayPrices = $this->updateWithOrderDogInfo($item); // ODREF
 
             if($updateDisplayPrices === false) {
                 $this->flags = 'Item price is lower than sale price';
@@ -87,7 +86,7 @@ class InfraItem extends Model
                 return true;
             }
 
-            $discounted = $getAPI->applyDiscountToItem($item, $this->list_price_calc, $month, $year);
+            $discounted = POS::applyDiscountToItem($item, $this->list_price_calc, $month, $year);
 
             if($discounted === false) {
                 $this->flags = 'Item already has discounts';
@@ -98,9 +97,7 @@ class InfraItem extends Model
             } else {
                 dispatch((new GenerateImage($this))->onQueue('imaging'));
 
-                $updateAPI = new OrderDogAPI;
-
-                if($updateAPI->updateItem($discounted)) {
+                if(POS::updateItem($discounted)) {
                     $this->processed = true;
                     $this->flags = null;
                     $this->save();
@@ -156,7 +153,7 @@ class InfraItem extends Model
     }
 
     /*
-     * Get the base pricing info from OrderDog, then
+     * Get the base pricing info from OrderDog, then // ODREF
      * calculate all the sale and display prices,
      * and then save the info to the database.
      *
@@ -164,9 +161,9 @@ class InfraItem extends Model
      *
      * @return bool
      */
-    public function updateWithOrderDogInfo($info)
+    public function updateWithOrderDogInfo($info) // ODREF
     {
-        $prices = OrderDogAPI::getDisplayPricesFromItem($info, $this->list_price_calc);
+        $prices = POS::getDisplayPricesFromItem($info, $this->list_price_calc); // ODREF-Fixed?
 
         if($prices === false) {
             return false;
