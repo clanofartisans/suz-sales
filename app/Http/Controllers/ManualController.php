@@ -95,8 +95,8 @@ class ManualController extends Controller
             $items = $items->paginate(100, ['*'], 'page', session('page', 1));
         }
 
-        $queueCounts['bw']    = DB::table('manual_sales')->where('queued', true)->where('color', false)->count();
-        $queueCounts['color'] = DB::table('manual_sales')->where('queued', true)->where('color', true)->count();
+        $queueCounts['bw']    = DB::table('manual_sales')->where('queued', true)->where('color', false)->whereNull('deleted_at')->count();
+        $queueCounts['color'] = DB::table('manual_sales')->where('queued', true)->where('color', true)->whereNull('deleted_at')->count();
 
         $jobCounts['processing'] = DB::table('jobs')->where('queue', 'processing')->count();
         $jobCounts['imaging']    = DB::table('jobs')->where('queue', 'imaging')->count();
