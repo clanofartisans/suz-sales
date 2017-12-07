@@ -84,7 +84,7 @@ class InfraController extends Controller
                 $items = $items->where('flags', 'Item price is lower than sale price');
                 break;
             case 'f_flagged_notfound':
-                $items = $items->where('flags', 'Item not found in OrderDog'); // ODREF
+                $items = $items->where('flags', 'Item not found in point of sale system');
                 break;
         }
 

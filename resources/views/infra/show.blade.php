@@ -18,7 +18,7 @@
             <input type="radio" name="filter" id="f_flagged" value="f_flagged" {{ $filter === 'f_flagged' ? 'checked="checked"' : '' }}> Show only flagged<br>
             <input type="radio" name="filter" id="f_flagged_discounted" value="f_flagged_discounted" {{ $filter === 'f_flagged_discounted' ? 'checked="checked"' : '' }}> &bull; Already discounted<br>
             <input type="radio" name="filter" id="f_flagged_lowprice" value="f_flagged_lowprice" {{ $filter === 'f_flagged_lowprice' ? 'checked="checked"' : '' }}> &bull; Price &lt; sale<br>
-            <input type="radio" name="filter" id="f_flagged_notfound" value="f_flagged_notfound" {{ $filter === 'f_flagged_notfound' ? 'checked="checked"' : '' }}> &bull; Not in OD</li> {{-- ODREF --}}
+            <input type="radio" name="filter" id="f_flagged_notfound" value="f_flagged_notfound" {{ $filter === 'f_flagged_notfound' ? 'checked="checked"' : '' }}> &bull; Not in {{ config('pos.shortname') }}</li>
         <li>&nbsp;</li>
         <li><span id="queue-count-infra">{{ $queueCount }}</span> tags in print queue</li>
         <li>&nbsp;</li>

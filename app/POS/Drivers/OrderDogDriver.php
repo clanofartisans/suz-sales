@@ -2,7 +2,6 @@
 
 use App\POS\POS;
 use Carbon\Carbon;
-use App\POS\Drivers\OrderDogCurl;
 use App\POS\Contracts\POSDriverInterface as POSDriverContract;
 
 /**
@@ -42,9 +41,9 @@ class OrderDogDriver extends POS implements POSDriverContract
     /*
      * Start building the curl session we need for our API calls.
      */
-    public function __construct(OrderDogCurl $curl)
+    public function __construct()
     {
-        $this->curl = $curl;
+        $this->startCurl();
     }
 
     /*
@@ -66,8 +65,6 @@ class OrderDogDriver extends POS implements POSDriverContract
      */
     protected function executeCurl() {
         $response = curl_exec($this->curl);
-
-        curl_close($this->curl);
 
         return $response;
     }

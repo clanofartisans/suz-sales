@@ -1,11 +1,11 @@
 <div class="form-group">
-    {!! Form::label('radioODUpdate', 'Update OrderDog?', ['class' => 'col-md-4 control-label']) !!} {{-- ODREF --}}
+    {!! Form::label('radioPOSUpdate', 'Update '.config('pos.name').'?', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         <label class="radio-inline">
-            {!! Form::radio('radioODUpdate', 'radioODYes', $data['ODUpdate'], ['id' => 'radioODYes']) !!} Yes {{-- ODREF --}}
+            {!! Form::radio('radioPOSUpdate', 'radioPOSYes', $data['POSUpdate'], ['id' => 'radioPOSYes']) !!} Yes
         </label>
         <label class="radio-inline">
-            {!! Form::radio('radioODUpdate', 'radioODNo', !$data['ODUpdate'], ['id' => 'radioODNo']) !!} No {{-- ODREF --}}
+            {!! Form::radio('radioPOSUpdate', 'radioPOSNo', !$data['POSUpdate'], ['id' => 'radioPOSNo']) !!} No
         </label>
     </div>
 </div>
@@ -28,12 +28,12 @@
         <div class="input-group">
             {!! Form::text('previewInputUPC', null, ['class' => 'form-control']) !!}
             <span class="input-group-btn">
-                <input type="submit" id="previewODFill" class="btn btn-default fa-input" value="&#xf002;" /> {{-- ODREF --}}
+                <input type="submit" id="previewPOSFill" class="btn btn-default fa-input" value="&#xf002;" />
             </span>
         </div>
     </div>
     <div class="col-md-2">
-        <small id="odNotFound" class="text-danger" style="display: none;"> {{-- ODREF --}}
+        <small id="posNotFound" class="text-danger" style="display: none;">
             Not found
         </small>
     </div>
@@ -54,7 +54,7 @@
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputSalePrice', 'Sale Price (for OrderDog)', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('previewInputSalePrice', 'Sale Price (for '.config('pos.name', 'POS System').')', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         {!! Form::text('previewInputSalePrice', null, ['class' => 'form-control']) !!}
     </div>

@@ -71,13 +71,13 @@ class InfraItem extends Model
         $item = POS::getItem($this->upc);
 
         if($item === false) {
-            $this->flags = 'Item not found in OrderDog'; // ODREF
+            $this->flags = 'Item not found in point of sale system';
             $this->save();
         } else {
             $month = $this->infrasheet->month;
             $year  = $this->infrasheet->year;
 
-            $updateDisplayPrices = $this->updateWithOrderDogInfo($item); // ODREF
+            $updateDisplayPrices = $this->updateWithPOSInfo($item);
 
             if($updateDisplayPrices === false) {
                 $this->flags = 'Item price is lower than sale price';
@@ -161,9 +161,9 @@ class InfraItem extends Model
      *
      * @return bool
      */
-    public function updateWithOrderDogInfo($info) // ODREF
+    public function updateWithPOSInfo($info)
     {
-        $prices = POS::getDisplayPricesFromItem($info, $this->list_price_calc); // ODREF-Fixed?
+        $prices = POS::getDisplayPricesFromItem($info, $this->list_price_calc);
 
         if($prices === false) {
             return false;

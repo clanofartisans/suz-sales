@@ -77,7 +77,7 @@ class ManualController extends Controller
                 $items = $items->where('flags', 'Item price is lower than sale price');
                 break;
             case 'f_flagged_notfound':
-                $items = $items->where('flags', 'Item not found in OrderDog'); // ODREF
+                $items = $items->where('flags', 'Item not found in point of sale system');
                 break;
             case 'f_expired':
                 $items = $items->where('expires', '<', Carbon::now());
@@ -177,10 +177,10 @@ class ManualController extends Controller
         } else {
             $data['color'] = false;
         }
-        if(session('manual_sale_od_update') == 'radioODNo') {
-            $data['ODUpdate'] = false; // ODREF
+        if(session('manual_sale_pos_update') == 'radioPOSNo') {
+            $data['POSUpdate'] = false;
         } else {
-            $data['ODUpdate'] = true; // ODREF
+            $data['POSUpdate'] = true;
         }
 
         return view('manual.create', compact('data'));
@@ -194,9 +194,9 @@ class ManualController extends Controller
             $colorBW = false;
         }
 
-        if($request->radioODUpdate == 'radioODYes') { // ODREF
+        if($request->radioPOSUpdate == 'radioPOSYes') {
 
-            $ODUpdate = true; // ODREF
+            $POSUpdate = true;
 
             $sale_begin = new Carbon($request->sale_begin);
             $sale_end   = new Carbon($request->sale_end);
@@ -211,7 +211,7 @@ class ManualController extends Controller
             $expires = Carbon::now('America/Chicago');
             $expires = $expires->addMonth();
 
-            $ODUpdate = false;
+            $POSUpdate = false;
         }
 
         if($request->previewInputSalePrice != '') {
@@ -235,7 +235,7 @@ class ManualController extends Controller
                                     'savings'         => $request->previewInputSavings,
                                     'sale_cat'        => $saleCat,
                                     'color'           => $colorBW,
-                                    'od_update'       => $ODUpdate, // ODREF
+                                    'pos_update'      => $POSUpdate,
                                     'processed'       => false,
                                     'imaged'          => false,
                                     'printed'         => false,
@@ -245,13 +245,13 @@ class ManualController extends Controller
         dispatch((new ApplySalePrice($sale))->onQueue('processing'));
 
         if(isset($request->submitContinue)) {
-            session(['manual_sale_brand'     => $request->previewInputBrand]);
-            session(['manual_sale_cat'       => $request->previewInputSaleCat]);
-            session(['manual_sale_od_update' => $request->radioODUpdate]); // ODREF
-            session(['manual_sale_color'     => $request->radioBWColor]);
-            session(['manual_sale_begin'     => $request->sale_begin]);
-            session(['manual_sale_end'       => $request->sale_end]);
-            session(['manual_sale_percent'   => $request->previewInputPercentOff]);
+            session(['manual_sale_brand'      => $request->previewInputBrand]);
+            session(['manual_sale_cat'        => $request->previewInputSaleCat]);
+            session(['manual_sale_pos_update' => $request->radioPOSUpdate]);
+            session(['manual_sale_color'      => $request->radioBWColor]);
+            session(['manual_sale_begin'      => $request->sale_begin]);
+            session(['manual_sale_end'        => $request->sale_end]);
+            session(['manual_sale_percent'    => $request->previewInputPercentOff]);
 
             return redirect()->route('manual.create');
         } else {
@@ -268,7 +268,7 @@ class ManualController extends Controller
         flash()->success('The selected items have been deleted.');
     }
 
-    public function ODQuery($upc) // ODREF - Should also probably be refactored over to the AjaxController
+    public function POSQuery($upc) // Should probably be refactored over to the AjaxController
     {
         $result = POS::quickQuery($upc);
 
@@ -284,7 +284,7 @@ class ManualController extends Controller
     {
         session()->forget('manual_sale_brand');
         session()->forget('manual_sale_cat');
-        session()->forget('manual_sale_od_update'); // ODREF
+        session()->forget('manual_sale_pos_update');
         session()->forget('manual_sale_color');
         session()->forget('manual_sale_begin');
         session()->forget('manual_sale_end');

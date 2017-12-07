@@ -29,7 +29,7 @@ class ManualSale extends Model
                            'savings',
                            'sale_cat',
                            'color',
-                           'od_update', // ODREF
+                           'pos_update',
                            'processed',
                            'imaged',
                            'printed',
@@ -49,12 +49,12 @@ class ManualSale extends Model
      */
     public function process()
     {
-        if($this->od_update) { // ODREF
+        if($this->pos_update) {
 
             $item = POS::getItem($this->upc);
 
             if($item === false) {
-                $this->flags = 'Item not found in OrderDog'; // ODREF
+                $this->flags = 'Item not found in point of sale system';
                 $this->save();
             } else {
                 $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end);

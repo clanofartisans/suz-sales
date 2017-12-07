@@ -143,10 +143,10 @@ $('#radioColor').click(function() {
     }
 });
 
-$('#previewODFill').click(function(){ // ODREF
-	$.ajax({dataType: "json", url: ('/manual/preview/odquery/' + ($('#previewInputUPC').val())), success: function(result){ // ODREF
+$('#previewPOSFill').click(function(){
+	$.ajax({dataType: "json", url: ('/manual/preview/posquery/' + ($('#previewInputUPC').val())), success: function(result){
 	    if(result) {
-            $('#odNotFound').hide(); // ODREF
+            $('#posNotFound').hide();
             $('#previewInputBrand').val(result.brand);
             $('#previewDispBrand').html(result.brand);
             $('#previewInputDesc').val(result.desc);
@@ -163,7 +163,7 @@ $('#previewODFill').click(function(){ // ODREF
                 $('#previewDispSavings').html(savings);
             }
         } else {
-            $('#odNotFound').show(); // ODREF
+            $('#posNotFound').show();
         }
 	}});
 	return false;

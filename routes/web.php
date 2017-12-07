@@ -31,7 +31,7 @@ Route::group(['middleware' => ['web']], function () {
             Route::get('color', function() {
                 return View::make('saletags.previewcolor');
             })->name('preview.color');
-            Route::get('odquery/{upc}', 'ManualController@ODQuery')->name('manual.odquery'); // ODREF
+            Route::get('posquery/{upc}', 'ManualController@POSQuery')->name('manual.posquery');
         });
     });
 
