@@ -157,7 +157,7 @@ class InfraItem extends Model
      * calculate all the sale and display prices,
      * and then save the info to the database.
      *
-     * @param SimpleXML|bool $info
+     * @param SimpleXML $info
      *
      * @return bool
      */

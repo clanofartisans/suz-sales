@@ -129,6 +129,8 @@ class InfraController extends Controller
 
         $excelDoc->prepareAndSaveItemData($infrasheet->id);
 
+        POS::StartInfraSheet($infrasheet);
+
         flash()->success('The INFRA workbook was uploaded successfully.');
 
         return redirect()->route('infra.index');

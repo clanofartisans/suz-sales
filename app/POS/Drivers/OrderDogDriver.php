@@ -1,5 +1,6 @@
 <?php namespace App\POS\Drivers;
 
+use App\InfraSheet;
 use App\POS\POS;
 use Carbon\Carbon;
 use App\POS\Contracts\POSDriverInterface as POSDriverContract;
@@ -127,7 +128,7 @@ XML;
      *
      * @return bool
      */
-    public function updateItem(string $discounted)
+    public function updateItem($discounted)
     {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -176,14 +177,14 @@ XML;
      * item and add the necessary XML to the XML
      * we originally received from OrderDog.
      *
-     * @param SimpleXMLElement $item
-     * @param string           $realPrice
-     * @param string           $month
-     * @param string           $year
+     * @param mixed  $item
+     * @param string $realPrice
+     * @param string $month
+     * @param string $year
      *
      * @return string|bool
      */
-    public function applyDiscountToItem(\SimpleXMLElement $item, string $realPrice, string $month, string $year)
+    public function applyDiscountToItem($item, string $realPrice, string $month, string $year)
     {
         $args = $this->calcItemDiscountsFromInfra($item, $realPrice);
         $dates = $this->calcItemDiscountDates($month, $year);
@@ -208,7 +209,7 @@ XML;
     /*
      * ?
      */
-    public function applyDiscountToManualSale(\SimpleXMLElement $item, string $amount, string $price, Carbon $start, Carbon $end)
+    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end)
     {
         $xml = "<ItemDiscounts><ItemDiscount><Level>0</Level><Type>Standard</Type><OverrideFlag>false</OverrideFlag><BuyQty>1.0000</BuyQty><MoreFlag>false</MoreFlag><PercentFlag>false</PercentFlag><Amount>$amount</Amount><FreeQty>0.0000</FreeQty><Price>$price</Price><StartDt>$start</StartDt><EndDt>$end</EndDt><DiscountRound>-1</DiscountRound></ItemDiscount></ItemDiscounts>";
 
@@ -436,12 +437,12 @@ EndDt   = "2017-12-31 00:00:00"
      * Sets the "display" prices based on the
      * calculated prices and INFRA's info.
      *
-     * @param SimpleXMLElement $item
-     * @param string           $infraPrice
+     * @param mixed  $item
+     * @param string $infraPrice
      *
      * @return array|bool
      */
-    public function getDisplayPricesFromItem(\SimpleXMLElement $item, string $infraPrice)
+    public function getDisplayPricesFromItem($item, string $infraPrice)
     {
         $prices = self::calcItemDiscountsFromInfra($item, $infraPrice);
 
@@ -481,5 +482,12 @@ EndDt   = "2017-12-31 00:00:00"
         }
 
         return false;
+    }
+
+    /*
+     * ?
+     */
+    public function startInfraSheet(InfraSheet $infrasheet) {
+        return true;
     }
 }

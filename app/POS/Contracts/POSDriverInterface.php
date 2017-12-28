@@ -1,6 +1,7 @@
 <?php namespace App\POS\Contracts;
 
 use Carbon\Carbon;
+use App\InfraSheet;
 
 /**
  * Interface POSDriverInterface
@@ -24,7 +25,7 @@ interface POSDriverInterface
      *
      * @return bool
      */
-    public function updateItem(string $discounted);
+    public function updateItem($discounted);
 
 
     /*
@@ -32,33 +33,38 @@ interface POSDriverInterface
      * item and add the necessary XML to the XML
      * we originally received from OrderDog.
      *
-     * @param SimpleXMLElement $item
-     * @param string           $realPrice
-     * @param string           $month
-     * @param string           $year
+     * @param mixed  $item
+     * @param string $realPrice
+     * @param string $month
+     * @param string $year
      *
      * @return string|bool
      */
-    public function applyDiscountToItem(\SimpleXMLElement $item, string $realPrice, string $month, string $year);
+    public function applyDiscountToItem($item, string $realPrice, string $month, string $year);
 
     /*
      * ?
      */
-    public function applyDiscountToManualSale(\SimpleXMLElement $item, string $amount, string $price, Carbon $start, Carbon $end);
+    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end);
 
     /*
      * Sets the "display" prices based on the
      * calculated prices and INFRA's info.
      *
-     * @param SimpleXMLElement $item
-     * @param string           $infraPrice
+     * @param mixed  $item
+     * @param string $infraPrice
      *
      * @return array|bool
      */
-    public function getDisplayPricesFromItem(\SimpleXMLElement $item, string $infraPrice);
+    public function getDisplayPricesFromItem($item, string $infraPrice);
 
     /*
      * ?
      */
     public function quickQuery(string $upc);
+
+    /*
+     * ?
+     */
+    public function startInfraSheet(InfraSheet $infrasheet);
 }
