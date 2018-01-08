@@ -45,7 +45,7 @@ interface POSDriverInterface
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end);
+    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end, $id);
 
     /*
      * Sets the "display" prices based on the

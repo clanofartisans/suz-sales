@@ -209,7 +209,7 @@ XML;
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end)
+    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end, $id = null)
     {
         $xml = "<ItemDiscounts><ItemDiscount><Level>0</Level><Type>Standard</Type><OverrideFlag>false</OverrideFlag><BuyQty>1.0000</BuyQty><MoreFlag>false</MoreFlag><PercentFlag>false</PercentFlag><Amount>$amount</Amount><FreeQty>0.0000</FreeQty><Price>$price</Price><StartDt>$start</StartDt><EndDt>$end</EndDt><DiscountRound>-1</DiscountRound></ItemDiscount></ItemDiscounts>";
 

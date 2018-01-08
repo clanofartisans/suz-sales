@@ -57,7 +57,7 @@ class ManualSale extends Model
                 $this->flags = 'Item not found in point of sale system';
                 $this->save();
             } else {
-                $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end);
+                $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end, $this->id);
 
                 if($discounted === false) {
                     $this->flags = 'Item already has discounts';

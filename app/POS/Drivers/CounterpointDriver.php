@@ -41,10 +41,10 @@ class CounterpointDriver extends POS implements POSDriverContract
      */
     public function updateItem($discounted)
     {
-        if($discounted['sale_type'] = 'INFRA') {
+        if($discounted['sale_type'] == 'INFRA') {
             $this->updateInfraItem($discounted);
         }
-        if($discounted['sale_type'] = 'Manual') {
+        if($discounted['sale_type'] == 'Manual') {
             $this->updateManualItem($discounted);
         }
 
@@ -127,6 +127,43 @@ class CounterpointDriver extends POS implements POSDriverContract
              'MIX_MATCH_COD'    => null]
             ]);
 
+        DB::connection('sqlsrv')->table('IM_PRC_RUL')->insert([
+            ['GRP_TYP'          => 'C',
+             'GRP_COD'          => $discounted['IM_PRC_RUL']['GRP_COD'],
+             'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL']['RUL_SEQ_NO'],
+             'DESCR'            => $discounted['IM_PRC_RUL']['DESCR'],
+             'DESCR_UPR'        => $discounted['IM_PRC_RUL']['DESCR_UPPR'],
+             'CUST_FILT'        => null,
+             'CUST_FILT_TMPLT'  => null,
+             'ITEM_FILT'        => $discounted['IM_PRC_RUL']['ITEM_FILT'],
+             'ITEM_FILT_TMPLT'  => $discounted['IM_PRC_RUL']['ITEM_FILT_TMPLT'],
+             'SAL_FILT'         => null,
+             'SAL_FILT_TMPLT'   => null,
+             'MIN_QTY'          => 0.0000,
+             'LST_MAINT_DT'     => $now,
+             'LST_MAINT_USR_ID' => 'BTURNER',
+             'LST_LCK_DT'       => null,
+             'CUSTOM_SP'        => null,
+             'CUST_FILT_TEXT'   => '*** All ***',
+             'ITEM_FILT_TEXT'   => $discounted['IM_PRC_RUL']['ITEM_FILT_TEXT'],
+             'SAL_FILT_TEXT'    => '*** All ***',
+             'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL']['PRC_BRK_DESCR'],
+             'CUST_NO'          => null,
+             'ITEM_NO'          => $discounted['IM_PRC_RUL']['ITEM_NO']]
+            ]);
+
+        DB::connection('sqlsrv')->table('IM_PRC_RUL_BRK')->insert([
+            ['GRP_TYP'          => 'C',
+             'GRP_COD'          => $discounted['IM_PRC_RUL_BRK']['GRP_COD'],
+             'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL_BRK']['RUL_SEQ_NO'],
+             'PRC_METH'         => 'F',
+             'AMT_OR_PCT'       => $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT'],
+             'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL_BRK']['PRC_BRK_DESCR'],
+             'LST_MAINT_DT'     => null,
+             'LST_MAINT_USR_ID' => null,
+             'LST_LCK_DT'       => null]
+            ]);
+
         return true;
     }
 
@@ -187,26 +224,22 @@ Operation=and";
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end)
+    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end, $id)
     {
         $data['sale_type']      = 'Manual';
 
-        $data['IM_PRC_GRP']['GRP_COD'] = 'SM' . $item->id;
+        $data['IM_PRC_GRP']['GRP_COD'] = 'SM' . $id;
 
         $YYMMDD = Carbon::now('America/Chicago')->format('ymd');
-        $descr   = $item->upc . ' '. $YYMMDD. ' ' . $item->brand . ' ' . $item->desc;
+        $descr   = $item->ITEM_NO . ' '. $YYMMDD. ' ' . $item->PROF_ALPHA_2 . ' ' . $item->DESCR;
         $data['IM_PRC_GRP']['DESCR']   = substr($descr, 0, 30);
 
         $data['IM_PRC_GRP']['DESCR_UPR'] = strtoupper($data['IM_PRC_GRP']['DESCR']);
 
         $data['IM_PRC_GRP']['BEG_DAT'] = $start->format('Y-m-d') . ' 00:00:00.000';
-        $data['IM_PRC_GRP']['BEG_DT']  = $data['begDate'];
+        $data['IM_PRC_GRP']['BEG_DT']  = $data['IM_PRC_GRP']['BEG_DAT'];
         $data['IM_PRC_GRP']['END_DAT'] = $end->format('Y-m-d') . ' 00:00:00.000';
         $data['IM_PRC_GRP']['END_DT']  = $end->format('Y-m-d') . ' 23:59:59.000';
-
-        /*
-         *
-         */
 
         $data['IM_PRC_RUL']['GRP_COD']    = $data['IM_PRC_GRP']['GRP_COD'];
         $data['IM_PRC_RUL']['RUL_SEQ_NO'] = 1;
@@ -227,38 +260,10 @@ Operation=and";
         $data['IM_PRC_RUL']['PRC_BRK_DESCR']  = "Min qty $price";
         $data['IM_PRC_RUL']['ITEM_NO']        = $item->ITEM_NO;
 
-        /*
-         *
-         */
-
-        $test = DB::connection('sqlsrv')->table('IM_PRC_RUL')->insert([
-            ['GRP_TYP'          => 'P',
-             'GRP_COD'          => $discounted['IM_PRC_RUL']['GRP_COD'],
-             'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL']['RUL_SEQ_NO'],
-             'DESCR'            => $discounted['IM_PRC_RUL']['DESCR'],
-             'DESCR_UPR'        => $discounted['IM_PRC_RUL']['DESCR_UPPR'],
-             'CUST_FILT'        => null,
-             'CUST_FILT_TMPLT'  => null,
-             'ITEM_FILT'        => $discounted['IM_PRC_RUL']['ITEM_FILT'],
-             'ITEM_FILT_TMPLT'  => $discounted['IM_PRC_RUL']['ITEM_FILT_TMPLT'],
-             'SAL_FILT'         => null,
-             'SAL_FILT_TMPLT'   => null,
-             'MIN_QTY'          => 0.0000,
-             'LST_MAINT_DT'     => $now,
-             'LST_MAINT_USR_ID' => 'BTURNER',
-             'LST_LCK_DT'       => null,
-             'CUSTOM_SP'        => null,
-             'CUST_FILT_TEXT'   => '*** All ***',
-             'ITEM_FILT_TEXT'   => $discounted['IM_PRC_RUL']['ITEM_FILT_TEXT'],
-             'SAL_FILT_TEXT'    => '*** All ***',
-             'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL']['PRC_BRK_DESCR'],
-             'CUST_NO'          => null,
-             'ITEM_NO'          => $discounted['IM_PRC_RUL']['ITEM_NO']]
-            ]);
-
-        /*
-         *
-         */
+        $data['IM_PRC_RUL_BRK']['GRP_COD']       = $data['IM_PRC_RUL']['GRP_COD'];
+        $data['IM_PRC_RUL_BRK']['RUL_SEQ_NO']    = 1;
+        $data['IM_PRC_RUL_BRK']['AMT_OR_PCT']    = $price;
+        $data['IM_PRC_RUL_BRK']['PRC_BRK_DESCR'] = "$item->ITEM_NO $price";
 
         return $data;
     }
