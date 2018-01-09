@@ -109,6 +109,7 @@ class ManualController extends Controller
         if($request->filter) {
             session(['filter' => $request->filter]);
         }
+
         switch($request->process) {
             case 'add':
                 return redirect()->route('manual.create');
@@ -242,6 +243,7 @@ class ManualController extends Controller
                                     'sale_begin'      => $sale_begin,
                                     'sale_end'        => $sale_end,
                                     'expires'         => $expires]);
+
         dispatch((new ApplySalePrice($sale))->onQueue('processing'));
 
         if(isset($request->submitContinue)) {
