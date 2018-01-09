@@ -16,7 +16,6 @@ class OrderDogDriver extends POS implements POSDriverContract
      * @var string
      */
     protected $baseURL = 'http://services.orderdog.com/webservice.asmx';
-
     /**
      * The required request headers for our API calls.
      *
@@ -24,14 +23,12 @@ class OrderDogDriver extends POS implements POSDriverContract
      */
     protected $fields = array('Content-Type: text/xml; charset=utf-8',
                               'SOAPAction: http://services.orderdog.com/Request');
-
     /*
      * The curl instance we'll be using for our API calls.
      *
      * @var resource
      */
     protected $curl;
-
     /*
      * The response we received back from our API call.
      *
@@ -50,21 +47,23 @@ class OrderDogDriver extends POS implements POSDriverContract
     /*
      * Set up the basic options we need for our API calls.
      */
-    protected function startCurl() {
+    protected function startCurl()
+    {
 
         $this->curl = curl_init();
 
-        curl_setopt($this->curl,CURLOPT_URL, $this->baseURL);
-        curl_setopt($this->curl,CURLOPT_TIMEOUT, 30);
-        curl_setopt($this->curl,CURLOPT_POST, true);
-        curl_setopt($this->curl,CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curl,CURLOPT_HTTPHEADER, $this->fields);
+        curl_setopt($this->curl, CURLOPT_URL, $this->baseURL);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
+        curl_setopt($this->curl, CURLOPT_POST, true);
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->fields);
     }
 
     /*
      * Send our curl query to OrderDog and return their response.
      */
-    protected function executeCurl() {
+    protected function executeCurl()
+    {
         $response = curl_exec($this->curl);
 
         return $response;
@@ -104,7 +103,7 @@ class OrderDogDriver extends POS implements POSDriverContract
 </soap:Envelope>
 XML;
 
-        curl_setopt($this->curl,CURLOPT_POSTFIELDS, $xml);
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $xml);
 
         $response = $this->executeCurl();
 
@@ -155,11 +154,9 @@ XML;
 </soap:Envelope>
 XML;
 
-        curl_setopt($this->curl,CURLOPT_POSTFIELDS, $xml);
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $xml);
 
         //return true;
-
-
 
         $response = $this->executeCurl();
 
@@ -168,8 +165,6 @@ XML;
         $check = $simple->children('soap', true)->Body->children()->RequestResponse->RequestResult->ItemUpdate01Results;
 
         return $this->checkUpdateResponse($check);
-
-
     }
 
     /*
@@ -186,7 +181,7 @@ XML;
      */
     public function applyDiscountToItem($item, string $realPrice, string $month, string $year)
     {
-        $args = $this->calcItemDiscountsFromInfra($item, $realPrice);
+        $args  = $this->calcItemDiscountsFromInfra($item, $realPrice);
         $dates = $this->calcItemDiscountDates($month, $year);
 
         if($args === false) {
@@ -260,10 +255,10 @@ XML;
 
         $discStatus = $this->checkExistingDiscounts($item, $discountXML);
 
-        switch ($discStatus) {
+        switch($discStatus) {
             case 'ignore':
                 $discountXML = substr($discountXML, 15);
-                $discounted = str_replace("</ItemDiscounts>", $discountXML, $itemXML);
+                $discounted  = str_replace("</ItemDiscounts>", $discountXML, $itemXML);
                 break;
             default:
                 $discounted = false;
@@ -322,36 +317,35 @@ XML;
         $new['StartDt'] = new Carbon($newDiscount->ItemDiscount->StartDt);
         $new['EndDt']   = new Carbon($newDiscount->ItemDiscount->EndDt);
 
-        if($current['Amount']  == $new['Amount']  &&
-           $current['Price']   == $new['Price']   &&
+        if($current['Amount'] == $new['Amount'] &&
+           $current['Price'] == $new['Price'] &&
            $current['StartDt'] == $new['StartDt'] &&
-           $current['EndDt']   == $new['EndDt'])
-        {
+           $current['EndDt'] == $new['EndDt']) {
             return true;
         }
 
         return false;
     }
 
-/*
+    /*
 
-OrderDog Get
+    OrderDog Get
 
-Amount  = "1.8000"
-Price   = "2.9900"
-StartDt = "9/1/2017"
-EndDt   = "9/30/2017"
+    Amount  = "1.8000"
+    Price   = "2.9900"
+    StartDt = "9/1/2017"
+    EndDt   = "9/30/2017"
 
------
+    -----
 
-Sales Manager Post
+    Sales Manager Post
 
-Amount  = "0.1"
-Price   = "4.69"
-StartDt = "2017-12-01 00:00:00"
-EndDt   = "2017-12-31 00:00:00"
+    Amount  = "0.1"
+    Price   = "4.69"
+    StartDt = "2017-12-01 00:00:00"
+    EndDt   = "2017-12-31 00:00:00"
 
- */
+     */
 
     /*
      * Check to make sure we got a good response back from OrderDog.
@@ -367,6 +361,7 @@ EndDt   = "2017-12-31 00:00:00"
                 return true;
             }
         }
+
         return false;
     }
 
@@ -385,7 +380,7 @@ EndDt   = "2017-12-31 00:00:00"
 
             $realPrice = round(($price * 0.8), 2);
 
-            $amount    = $price - $realPrice;
+            $amount = $price - $realPrice;
 
             $args['disp_msrp']       = (string) (number_format($price, 2));
             $args['disp_sale_price'] = (string) (number_format($realPrice, 2));
@@ -466,21 +461,41 @@ EndDt   = "2017-12-31 00:00:00"
 
         if($item = $this->getItem($upc)) {
 
-            $price = (float) $item->Price;
-            $return['brand']  = (string) $item->Brand;
-            $return['desc']   = ((string) $item->Description) . ' ' . ((string) $item->Size) . ' ' . ((string) $item->Form);
-            $return['price']  = (string) (number_format($price, 2));
+            $price           = (float) $item->Price;
+            $return['brand'] = (string) $item->Brand;
+            $return['desc']  = ((string) $item->Description) . ' ' . ((string) $item->Size) . ' ' . ((string) $item->Form);
+            $return['price'] = (string) (number_format($price, 2));
 
             if($return['brand'] == "PRIVATE LABEL" ||
                $return['brand'] == "VITALITY WORKS" ||
-               $return['brand'] == "RELIANCE PRIVATE LABEL")
-            {
+               $return['brand'] == "RELIANCE PRIVATE LABEL") {
                 $return['brand'] = "Suzanne's";
             }
 
             return $return;
         }
 
+        return false;
+    }
+
+    /*
+     * ?
+     */
+    public function getBrands()
+    {
+        return false;
+    }
+
+    public static function escapeBrand($brand)
+    {
+        return false;
+    }
+
+    /*
+     * ?
+     */
+    public function applyLineDrive($brand, $discount, $begin, $end, $id)
+    {
         return false;
     }
 

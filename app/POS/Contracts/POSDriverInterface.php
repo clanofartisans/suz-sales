@@ -66,5 +66,14 @@ interface POSDriverInterface
     /*
      * ?
      */
+    public function getBrands();
+
+    public static function escapeBrand($brand);
+
+    public function applyLineDrive($brand, $discount, $begin, $end, $id);
+
+    /*
+     * ?
+     */
     public function startInfraSheet(InfraSheet $infrasheet);
 }

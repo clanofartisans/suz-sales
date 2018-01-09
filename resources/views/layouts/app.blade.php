@@ -50,6 +50,7 @@
                     <ul class="nav navbar-nav">
                         <li><a href="{{ url('/infra') }}">INFRA Sales</a></li>
                         <li><a href="{{ url('/manual') }}">Manual Sales</a></li>
+                        <li><a href="{{ url('/linedrive') }}">Line Drives</a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

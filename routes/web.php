@@ -35,6 +35,14 @@ Route::group(['middleware' => ['web']], function () {
         });
     });
 
+    // Line Drive Routes
+    Route::group(['prefix' => 'linedrive'], function() {
+        Route::get('/', 'LineDriveController@index')->name('linedrive.index');
+        Route::post('/', 'LineDriveController@process')->name('linedrive.process');
+        Route::get('create', 'LineDriveController@create')->name('linedrive.create');
+        Route::post('store', 'LineDriveController@store')->name('linedrive.store');
+    });
+
     // Special AJAX Routes
     Route::group(['prefix' => 'ajax'], function() {
         Route::get('queueCountInfra', 'AjaxController@queueCountInfra')->name('ajax.queuecount.infra');
