@@ -2,44 +2,44 @@
 
 @section('content')
     {!! Form::open() !!}
-    <nav class="col-sm-1">
-      <ul class="nav nav-pills nav-stacked" style="float: left;" data-spy="affix">
-        <li><button type="submit" class="btn btn-success btn-block" name="process" value="add"><i class="fa fa-plus-circle"></i> Add Sales</button></li>
-        <li><button type="submit" class="btn btn-info btn-block" name="process" value="queue"><i class="fa fa-print"></i> Queue Selected</button></li>
-        <li><button type="submit" class="btn btn-info btn-block" name="process" value="printbwqueue"><i class="fa fa-print"></i> Print B&amp;W Queue</button></li>
-        <li><button type="submit" class="btn btn-info btn-block" name="process" value="printcolorqueue"><i class="fa fa-print"></i> Print Color Queue</button></li>
-        <li><button type="submit" class="btn btn-warning btn-block" name="process" value="reprocess"><i class="fa fa-refresh"></i> Reprocess Selected</button></li>
-        <li><button type="submit" class="btn btn-danger btn-block" name="process" value="delete"><i class="fa fa-trash-o"></i> Delete Selected</button></li>
-        <li>&nbsp;</li>
-        <li><input type="radio" name="filter" id="f_all" value="f_all" {{ $filter === 'f_all' ? 'checked="checked"' : '' }}> Show all items<br>
-            <input type="radio" name="filter" id="f_processed" value="f_processed" {{ $filter === 'f_processed' ? 'checked="checked"' : '' }}> Show only processed<br>
-            <input type="radio" name="filter" id="f_queued" value="f_queued" {{ $filter === 'f_queued' ? 'checked="checked"' : '' }}> Show queued for printing<br>
-            <input type="radio" name="filter" id="f_img_bw" value="f_img_bw" {{ $filter === 'f_img_bw' ? 'checked="checked"' : '' }}> Show B&amp;W tags<br>
-            <input type="radio" name="filter" id="f_img_color" value="f_img_color" {{ $filter === 'f_img_color' ? 'checked="checked"' : '' }}> Show color tags<br>
-            <input type="radio" name="filter" id="f_printed" value="f_printed" {{ $filter === 'f_printed' ? 'checked="checked"' : '' }}> Show only printed<br>
-            <input type="radio" name="filter" id="f_flagged" value="f_flagged" {{ $filter === 'f_flagged' ? 'checked="checked"' : '' }}> Show only flagged<br>
-            <input type="radio" name="filter" id="f_flagged_discounted" value="f_flagged_discounted" {{ $filter === 'f_flagged_discounted' ? 'checked="checked"' : '' }}> &bull; Already discounted<br>
-            <input type="radio" name="filter" id="f_flagged_lowprice" value="f_flagged_lowprice" {{ $filter === 'f_flagged_lowprice' ? 'checked="checked"' : '' }}> &bull; Price &lt; sale<br>
-            <input type="radio" name="filter" id="f_flagged_notfound" value="f_flagged_notfound" {{ $filter === 'f_flagged_notfound' ? 'checked="checked"' : '' }}> &bull; Not in {{ config('pos.shortname') }}<br>
-            <input type="radio" name="filter" id="f_expired" value="f_expired" {{ $filter === 'f_expired' ? 'checked="checked"' : '' }}> Show only expired</li>
-        <li>&nbsp;</li>
-        <li><span id="queue-count-bw">{{ $queueCounts['bw'] }}</span> B&amp;W tags in print queue</li>
-        <li><span id="queue-count-color">{{ $queueCounts['color'] }}</span> color tags in print queue</li>
-        <li>&nbsp;</li>
-        <li><span id="job-count-processing">{{ $jobCounts['processing'] }}</span> sales being processed</li>
-        <li><span id="job-count-imaging">{{ $jobCounts['imaging'] }}</span> tags being generated</li>
-        <li>&nbsp;</li>
-        <li><img id="job-count-loader" src="{{ asset('img/ajax-loader.gif') }}"
-                 @if (($jobCounts['processing'] + $jobCounts['imaging']) == 0)
-                    style="display: none"
-                 @endif
-            >
-        </li>
-      </ul>
-    </nav>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <nav class="col-md-2 col-sm-2 col-xs-2">
+                <ul class="nav nav-pills nav-stacked" style="float: left;">
+                    <li><button type="submit" class="btn btn-success btn-block" name="process" value="add"><i class="fa fa-plus-circle"></i> Add Sales</button></li>
+                    <li><button type="submit" class="btn btn-info btn-block" name="process" value="queue"><i class="fa fa-print"></i> Queue Selected</button></li>
+                    <li><button type="submit" class="btn btn-info btn-block" name="process" value="printbwqueue"><i class="fa fa-print"></i> Print B&amp;W Queue</button></li>
+                    <li><button type="submit" class="btn btn-info btn-block" name="process" value="printcolorqueue"><i class="fa fa-print"></i> Print Color Queue</button></li>
+                    <li><button type="submit" class="btn btn-warning btn-block" name="process" value="reprocess"><i class="fa fa-refresh"></i> Reprocess Selected</button></li>
+                    <li><button type="submit" class="btn btn-danger btn-block" name="process" value="delete"><i class="fa fa-trash-o"></i> Delete Selected</button></li>
+                    <li>&nbsp;</li>
+                    <li><input type="radio" name="filter" id="f_all" value="f_all" {{ $filter === 'f_all' ? 'checked="checked"' : '' }}> Show all items<br>
+                    <input type="radio" name="filter" id="f_processed" value="f_processed" {{ $filter === 'f_processed' ? 'checked="checked"' : '' }}> Show only processed<br>
+                    <input type="radio" name="filter" id="f_queued" value="f_queued" {{ $filter === 'f_queued' ? 'checked="checked"' : '' }}> Show queued for printing<br>
+                    <input type="radio" name="filter" id="f_img_bw" value="f_img_bw" {{ $filter === 'f_img_bw' ? 'checked="checked"' : '' }}> Show B&amp;W tags<br>
+                    <input type="radio" name="filter" id="f_img_color" value="f_img_color" {{ $filter === 'f_img_color' ? 'checked="checked"' : '' }}> Show color tags<br>
+                    <input type="radio" name="filter" id="f_printed" value="f_printed" {{ $filter === 'f_printed' ? 'checked="checked"' : '' }}> Show only printed<br>
+                    <input type="radio" name="filter" id="f_flagged" value="f_flagged" {{ $filter === 'f_flagged' ? 'checked="checked"' : '' }}> Show only flagged<br>
+                    <input type="radio" name="filter" id="f_flagged_discounted" value="f_flagged_discounted" {{ $filter === 'f_flagged_discounted' ? 'checked="checked"' : '' }}> &bull; Already discounted<br>
+                    <input type="radio" name="filter" id="f_flagged_lowprice" value="f_flagged_lowprice" {{ $filter === 'f_flagged_lowprice' ? 'checked="checked"' : '' }}> &bull; Price &lt; sale<br>
+                    <input type="radio" name="filter" id="f_flagged_notfound" value="f_flagged_notfound" {{ $filter === 'f_flagged_notfound' ? 'checked="checked"' : '' }}> &bull; Not in {{ config('pos.shortname') }}<br>
+                    <input type="radio" name="filter" id="f_expired" value="f_expired" {{ $filter === 'f_expired' ? 'checked="checked"' : '' }}> Show only expired</li>
+                    <li>&nbsp;</li>
+                    <li><span id="queue-count-bw">{{ $queueCounts['bw'] }}</span> B&amp;W tags in print queue</li>
+                    <li><span id="queue-count-color">{{ $queueCounts['color'] }}</span> color tags in print queue</li>
+                    <li>&nbsp;</li>
+                    <li><span id="job-count-processing">{{ $jobCounts['processing'] }}</span> sales being processed</li>
+                    <li><span id="job-count-imaging">{{ $jobCounts['imaging'] }}</span> tags being generated</li>
+                    <li>&nbsp;</li>
+                    <li><img id="job-count-loader" src="{{ asset('img/ajax-loader.gif') }}"
+                        @if (($jobCounts['processing'] + $jobCounts['imaging']) == 0)
+                            style="display: none"
+                        @endif
+                    >
+                    </li>
+                </ul>
+            </nav>
+            <div class="col-md-10 col-sm-9 col-xs-9 col-md-offset-0 col-sm-offset-1 col-xs-offset-1">
                 <!-- /.panel-default -->
                 <div class="panel panel-default">
                     <div class="panel-heading">
