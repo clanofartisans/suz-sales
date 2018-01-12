@@ -72,7 +72,7 @@ class CounterpointDriver extends POS implements POSDriverContract
              'SAL_FILT_TMPLT'   => null,
              'MIN_QTY'          => 0.0000,
              'LST_MAINT_DT'     => $now,
-             'LST_MAINT_USR_ID' => 'BTURNER',
+             'LST_MAINT_USR_ID' => config('pos.counterpoint.user'),
              'LST_LCK_DT'       => null,
              'CUSTOM_SP'        => null,
              'CUST_FILT_TEXT'   => '*** All ***',
@@ -106,63 +106,63 @@ class CounterpointDriver extends POS implements POSDriverContract
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
         DB::connection('sqlsrv')->table('IM_PRC_GRP')->insert([
-                                                                  ['GRP_TYP'          => 'C',
-                                                                   'GRP_COD'          => $discounted['IM_PRC_GRP']['GRP_COD'],
-                                                                   'GRP_SEQ_NO'       => null,
-                                                                   'DESCR'            => $discounted['IM_PRC_GRP']['DESCR'],
-                                                                   'DESCR_UPR'        => $discounted['IM_PRC_GRP']['DESCR_UPR'],
-                                                                   'CUST_FILT'        => null,
-                                                                   'BEG_DAT'          => $discounted['IM_PRC_GRP']['BEG_DAT'],
-                                                                   'NO_BEG_DAT'       => 'N',
-                                                                   'BEG_DT'           => $discounted['IM_PRC_GRP']['BEG_DT'],
-                                                                   'END_DAT'          => $discounted['IM_PRC_GRP']['END_DAT'],
-                                                                   'NO_END_DAT'       => 'N',
-                                                                   'END_DT'           => $discounted['IM_PRC_GRP']['END_DT'],
-                                                                   'CUST_FILT_TMPLT'  => null,
-                                                                   'LST_MAINT_DT'     => $now,
-                                                                   'LST_MAINT_USR_ID' => 'BTURNER',
-                                                                   'LST_LCK_DT'       => null,
-                                                                   'CUST_FILT_TEXT'   => '*** All ***',
-                                                                   'CUST_NO'          => null,
-                                                                   'MIX_MATCH_COD'    => null]
-                                                              ]);
+            ['GRP_TYP'          => 'C',
+            'GRP_COD'          => $discounted['IM_PRC_GRP']['GRP_COD'],
+            'GRP_SEQ_NO'       => null,
+            'DESCR'            => $discounted['IM_PRC_GRP']['DESCR'],
+            'DESCR_UPR'        => $discounted['IM_PRC_GRP']['DESCR_UPR'],
+            'CUST_FILT'        => null,
+            'BEG_DAT'          => $discounted['IM_PRC_GRP']['BEG_DAT'],
+            'NO_BEG_DAT'       => 'N',
+            'BEG_DT'           => $discounted['IM_PRC_GRP']['BEG_DT'],
+            'END_DAT'          => $discounted['IM_PRC_GRP']['END_DAT'],
+            'NO_END_DAT'       => 'N',
+            'END_DT'           => $discounted['IM_PRC_GRP']['END_DT'],
+            'CUST_FILT_TMPLT'  => null,
+            'LST_MAINT_DT'     => $now,
+            'LST_MAINT_USR_ID' => config('pos.counterpoint.user'),
+            'LST_LCK_DT'       => null,
+            'CUST_FILT_TEXT'   => '*** All ***',
+            'CUST_NO'          => null,
+            'MIX_MATCH_COD'    => null]
+        ]);
 
         DB::connection('sqlsrv')->table('IM_PRC_RUL')->insert([
-                                                                  ['GRP_TYP'          => 'C',
-                                                                   'GRP_COD'          => $discounted['IM_PRC_RUL']['GRP_COD'],
-                                                                   'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL']['RUL_SEQ_NO'],
-                                                                   'DESCR'            => $discounted['IM_PRC_RUL']['DESCR'],
-                                                                   'DESCR_UPR'        => $discounted['IM_PRC_RUL']['DESCR_UPPR'],
-                                                                   'CUST_FILT'        => null,
-                                                                   'CUST_FILT_TMPLT'  => null,
-                                                                   'ITEM_FILT'        => $discounted['IM_PRC_RUL']['ITEM_FILT'],
-                                                                   'ITEM_FILT_TMPLT'  => $discounted['IM_PRC_RUL']['ITEM_FILT_TMPLT'],
-                                                                   'SAL_FILT'         => null,
-                                                                   'SAL_FILT_TMPLT'   => null,
-                                                                   'MIN_QTY'          => 0.0000,
-                                                                   'LST_MAINT_DT'     => $now,
-                                                                   'LST_MAINT_USR_ID' => 'BTURNER',
-                                                                   'LST_LCK_DT'       => null,
-                                                                   'CUSTOM_SP'        => null,
-                                                                   'CUST_FILT_TEXT'   => '*** All ***',
-                                                                   'ITEM_FILT_TEXT'   => $discounted['IM_PRC_RUL']['ITEM_FILT_TEXT'],
-                                                                   'SAL_FILT_TEXT'    => '*** All ***',
-                                                                   'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL']['PRC_BRK_DESCR'],
-                                                                   'CUST_NO'          => null,
-                                                                   'ITEM_NO'          => $discounted['IM_PRC_RUL']['ITEM_NO']]
-                                                              ]);
+            ['GRP_TYP'          => 'C',
+            'GRP_COD'          => $discounted['IM_PRC_RUL']['GRP_COD'],
+            'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL']['RUL_SEQ_NO'],
+            'DESCR'            => $discounted['IM_PRC_RUL']['DESCR'],
+            'DESCR_UPR'        => $discounted['IM_PRC_RUL']['DESCR_UPPR'],
+            'CUST_FILT'        => null,
+            'CUST_FILT_TMPLT'  => null,
+            'ITEM_FILT'        => $discounted['IM_PRC_RUL']['ITEM_FILT'],
+            'ITEM_FILT_TMPLT'  => $discounted['IM_PRC_RUL']['ITEM_FILT_TMPLT'],
+            'SAL_FILT'         => null,
+            'SAL_FILT_TMPLT'   => null,
+            'MIN_QTY'          => 0.0000,
+            'LST_MAINT_DT'     => $now,
+            'LST_MAINT_USR_ID' => config('pos.counterpoint.user'),
+            'LST_LCK_DT'       => null,
+            'CUSTOM_SP'        => null,
+            'CUST_FILT_TEXT'   => '*** All ***',
+            'ITEM_FILT_TEXT'   => $discounted['IM_PRC_RUL']['ITEM_FILT_TEXT'],
+            'SAL_FILT_TEXT'    => '*** All ***',
+            'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL']['PRC_BRK_DESCR'],
+            'CUST_NO'          => null,
+            'ITEM_NO'          => $discounted['IM_PRC_RUL']['ITEM_NO']]
+        ]);
 
         DB::connection('sqlsrv')->table('IM_PRC_RUL_BRK')->insert([
-                                                                      ['GRP_TYP'          => 'C',
-                                                                       'GRP_COD'          => $discounted['IM_PRC_RUL_BRK']['GRP_COD'],
-                                                                       'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL_BRK']['RUL_SEQ_NO'],
-                                                                       'PRC_METH'         => 'F',
-                                                                       'AMT_OR_PCT'       => $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT'],
-                                                                       'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL_BRK']['PRC_BRK_DESCR'],
-                                                                       'LST_MAINT_DT'     => null,
-                                                                       'LST_MAINT_USR_ID' => null,
-                                                                       'LST_LCK_DT'       => null]
-                                                                  ]);
+            ['GRP_TYP'          => 'C',
+            'GRP_COD'          => $discounted['IM_PRC_RUL_BRK']['GRP_COD'],
+            'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL_BRK']['RUL_SEQ_NO'],
+            'PRC_METH'         => 'F',
+            'AMT_OR_PCT'       => $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT'],
+            'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL_BRK']['PRC_BRK_DESCR'],
+            'LST_MAINT_DT'     => null,
+            'LST_MAINT_USR_ID' => null,
+            'LST_LCK_DT'       => null]
+        ]);
 
         return true;
     }
@@ -228,7 +228,7 @@ Operation=and";
     {
         $data['sale_type']      = 'Manual';
 
-        $data['IM_PRC_GRP']['GRP_COD'] = 'SM' . $id;
+        $data['IM_PRC_GRP']['GRP_COD'] = 'SMMS' . $id;
 
         $YYMMDD = Carbon::now('America/Chicago')->format('ymd');
         $descr   = $item->ITEM_NO . ' '. $YYMMDD. ' ' . $item->PROF_ALPHA_2 . ' ' . $item->DESCR;
@@ -491,7 +491,7 @@ Operation=and";
              'END_DT'           => $data['IM_PRC_GRP']['END_DT'],
              'CUST_FILT_TMPLT'  => null,
              'LST_MAINT_DT'     => $now,
-             'LST_MAINT_USR_ID' => 'BTURNER',
+             'LST_MAINT_USR_ID' => config('pos.counterpoint.user'),
              'LST_LCK_DT'       => null,
              'CUST_FILT_TEXT'   => '*** All ***',
              'CUST_NO'          => null,
@@ -512,7 +512,7 @@ Operation=and";
              'SAL_FILT_TMPLT'   => null,
              'MIN_QTY'          => 0.0000,
              'LST_MAINT_DT'     => $now,
-             'LST_MAINT_USR_ID' => 'BTURNER',
+             'LST_MAINT_USR_ID' => config('pos.counterpoint.user'),
              'LST_LCK_DT'       => null,
              'CUSTOM_SP'        => null,
              'CUST_FILT_TEXT'   => '*** All ***',
@@ -574,7 +574,7 @@ Operation=and";
              'END_DT'           => $data['endTime'],
              'CUST_FILT_TMPLT'  => null,
              'LST_MAINT_DT'     => $now,
-             'LST_MAINT_USR_ID' => 'BTURNER',
+             'LST_MAINT_USR_ID' => config('pos.counterpoint.user'),
              'LST_LCK_DT'       => null,
              'CUST_FILT_TEXT'   => '*** All ***',
              'CUST_NO'          => null,

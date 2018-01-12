@@ -38,4 +38,9 @@ return [
 	*/
     'shortname' => env('POS_SHORTNAME', 'POS'),
 
+    'counterpoint' => [
+
+        'user' => env('COUNTERPOINT_USER', 'SALESMGR')
+    ]
+
 ];
