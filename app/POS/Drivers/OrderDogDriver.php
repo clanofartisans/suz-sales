@@ -204,7 +204,7 @@ XML;
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end, $id = null)
+    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id = null, $no_begin = null, $no_end = null)
     {
         $xml = "<ItemDiscounts><ItemDiscount><Level>0</Level><Type>Standard</Type><OverrideFlag>false</OverrideFlag><BuyQty>1.0000</BuyQty><MoreFlag>false</MoreFlag><PercentFlag>false</PercentFlag><Amount>$amount</Amount><FreeQty>0.0000</FreeQty><Price>$price</Price><StartDt>$start</StartDt><EndDt>$end</EndDt><DiscountRound>-1</DiscountRound></ItemDiscount></ItemDiscounts>";
 
@@ -494,7 +494,7 @@ XML;
     /*
      * ?
      */
-    public function applyLineDrive($brand, $discount, $begin, $end, $id)
+    public function applyLineDrive($brand, $discount, $begin, $end, $id, $no_begin, $no_end)
     {
         return false;
     }

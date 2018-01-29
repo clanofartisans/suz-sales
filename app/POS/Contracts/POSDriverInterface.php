@@ -45,7 +45,7 @@ interface POSDriverInterface
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end, $id);
+    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id, $no_begin, $no_end);
 
     /*
      * Sets the "display" prices based on the
@@ -70,7 +70,7 @@ interface POSDriverInterface
 
     public static function escapeBrand($brand);
 
-    public function applyLineDrive($brand, $discount, $begin, $end, $id);
+    public function applyLineDrive($brand, $discount, $begin, $end, $id, $no_begin, $no_end);
 
     /*
      * ?

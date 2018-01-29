@@ -36,7 +36,9 @@ class ManualSale extends Model
                            'flags',
                            'sale_begin',
                            'sale_end',
-                           'expires'];
+                           'expires',
+                           'no_begin',
+                           'no_end'];
 
     protected $dates = ['sale_begin', 'sale_end', 'expires'];
 
@@ -57,7 +59,7 @@ class ManualSale extends Model
                 $this->flags = 'Item not found in point of sale system';
                 $this->save();
             } else {
-                $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end, $this->id);
+                $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end, $this->id, $this->no_begin, $this->no_end);
 
                 if($discounted === false) {
                     $this->flags = 'Item already has discounts';

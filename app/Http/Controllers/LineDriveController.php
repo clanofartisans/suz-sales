@@ -32,36 +32,62 @@ class LineDriveController extends Controller
             $filter = 'f_all';
         }
 
-        $items = LineDrive::orderBy('sale_begin', 'asc')
-                           ->orderBy('sale_end', 'asc')
-                           ->orderBy('brand', 'asc');
+        $items = LineDrive::where('no_begin', false)
+                          ->where('no_end',false)
+                          ->orderBy('sale_begin', 'asc')
+                          ->orderBy('sale_end', 'asc')
+                          ->orderBy('brand', 'asc');
+
+        $forever = LineDrive::where('no_begin', true)
+                            ->where('no_end',true)
+                            ->orderBy('brand', 'asc');
 
         switch($filter) {
             case 'f_all':
-                $items = $items->where('expires', '>=', Carbon::now());
+                $items   = $items->where('expires', '>=', Carbon::now());
+                $forever = $forever->where('expires', '>=', Carbon::now());
                 break;
             case 'f_processed':
-                $items = $items->where('processed', true)
-                               ->where('expires', '>=', Carbon::now());;
+                $items   = $items->where('processed', true)
+                                 ->where('expires', '>=', Carbon::now());
+                $forever = $forever ->where('processed', true)
+                                    ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_flagged':
-                $items = $items->whereNotNull('flags')
-                               ->where('expires', '>=', Carbon::now());;
+                $items   = $items->whereNotNull('flags')
+                                 ->where('expires', '>=', Carbon::now());
+                $forever = $forever->whereNotNull('flags')
+                                   ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_expired':
-                $items = $items->where('expires', '<', Carbon::now());
+                $items   = $items->where('expires', '<', Carbon::now());
+                $forever = $forever->where('expires', '<', Carbon::now());
                 break;
         }
 
-        if(request()->has('page')) {
-            $items = $items->paginate(100);
-            session(['page' => $items->currentPage()]);
-        } else {
-            $page = session('page', 1);
-            if($page > 1 && (((float) $items->count()) / ($page - 1.0)) <= 100.0) {
-                session(['page' => 1]);
+        $items   = $items->get();
+        $forever = $forever->get();
+
+        $items = $items->concat($forever);
+
+        foreach($items as $item) {
+            if($item->no_begin && $item->no_end) {
+                $item->from_to = 'Forever';
+            } else {
+                if(is_null($item->sale_begin)) {
+                    $item->from_to = '&mdash;';
+                } else {
+                    $item->from_to = $item->sale_begin->toFormattedDateString();
+                }
+
+                $item->from_to .= ' to ';
+
+                if(is_null($item->sale_end)) {
+                    $item->from_to .= '&mdash;';
+                } else {
+                    $item->from_to .= $item->sale_end->toFormattedDateString();
+                }
             }
-            $items = $items->paginate(100, ['*'], 'page', session('page', 1));
         }
 
         $jobCounts['processing'] = DB::table('jobs')->where('queue', 'processing')->count();
@@ -96,18 +122,32 @@ class LineDriveController extends Controller
 
     public function store(Request $request)
     {
-        $sale_begin = new Carbon($request->sale_begin);
-        $sale_end   = new Carbon($request->sale_end);
+        if(!isset($request->checkNoBegin)) {
+            $sale_begin = new Carbon($request->sale_begin);
+        } else {
+            $sale_begin = null;
+        }
 
-        $expires = new Carbon($request->sale_end);
-        $expires = $expires->addDay();
+        if(!isset($request->checkNoEnd)) {
+            $sale_end   = new Carbon($request->sale_end);
+
+            $expires = new Carbon($request->sale_end);
+            $expires = $expires->addDay();
+        } else {
+            $sale_end   = null;
+
+            $expires = Carbon::now('America/Chicago');
+            $expires = $expires->addYears(100);
+        }
 
         $sale = LineDrive::create(['brand'      => urldecode($request->brand),
                                    'discount'   => $request->discount,
                                    'sale_begin' => $sale_begin,
                                    'sale_end'   => $sale_end,
                                    'expires'    => $expires,
-                                   'processed'  => false]);
+                                   'processed'  => false,
+                                   'no_begin'   => isset($request->checkNoBegin),
+                                   'no_end'     => isset($request->checkNoEnd)]);
 
         dispatch((new ApplyLineDrive($sale))->onQueue('processing'));
 

@@ -32,8 +32,7 @@
                 <!-- /.panel-default -->
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Line Drives ({{ number_format($items->total()) }} items)
-                        <div class="pull-right">{{ $items->links() }}</div>
+                        Line Drives ({{ number_format($items->count()) }} items)
                     </div>
                     <div class="panel-body">
                         @if(config('pos.driver') == 'orderdog')
@@ -53,14 +52,14 @@
                                     </thead>
                                     <?php $datesHeader = ''; $first = true; ?>
                                     @foreach ($items as $item)
-                                        @if ($item->sale_begin->toFormattedDateString() . ' to ' . $item->sale_end->toFormattedDateString() != $datesHeader)
+                                        @if ($item->from_to != $datesHeader)
                                             @if (!$first)
                                                 </tbody>
                                             @else
                                                 <?php $first = false; ?>
                                             @endif
                                             <tbody>
-                                            <?php $datesHeader = $item->sale_begin->toFormattedDateString() . ' to ' . $item->sale_end->toFormattedDateString(); ?>
+                                            <?php $datesHeader = $item->from_to; ?>
                                             <tr>
                                                 <th style="white-space: nowrap" colspan="5">
                                                     {{ $datesHeader }}
@@ -102,7 +101,6 @@
                         @endif
                     </div>
                     <!-- /.panel-body -->
-                    <div class="panel-footer">&nbsp;<div class="pull-right">{{ $items->links() }}</div></div>
                 </div>
                 <!-- /.panel-default -->
             </div>

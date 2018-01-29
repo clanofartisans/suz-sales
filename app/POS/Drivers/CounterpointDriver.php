@@ -113,10 +113,10 @@ class CounterpointDriver extends POS implements POSDriverContract
             'DESCR_UPR'        => $discounted['IM_PRC_GRP']['DESCR_UPR'],
             'CUST_FILT'        => null,
             'BEG_DAT'          => $discounted['IM_PRC_GRP']['BEG_DAT'],
-            'NO_BEG_DAT'       => 'N',
+            'NO_BEG_DAT'       => $discounted['IM_PRC_GRP']['NO_BEG_DAT'],
             'BEG_DT'           => $discounted['IM_PRC_GRP']['BEG_DT'],
             'END_DAT'          => $discounted['IM_PRC_GRP']['END_DAT'],
-            'NO_END_DAT'       => 'N',
+            'NO_END_DAT'       => $discounted['IM_PRC_GRP']['NO_END_DAT'],
             'END_DT'           => $discounted['IM_PRC_GRP']['END_DT'],
             'CUST_FILT_TMPLT'  => null,
             'LST_MAINT_DT'     => $now,
@@ -224,7 +224,7 @@ Operation=and";
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, Carbon $start, Carbon $end, $id)
+    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id, $no_begin, $no_end)
     {
         $data['sale_type']      = 'Manual';
 
@@ -236,10 +236,25 @@ Operation=and";
 
         $data['IM_PRC_GRP']['DESCR_UPR'] = strtoupper($data['IM_PRC_GRP']['DESCR']);
 
-        $data['IM_PRC_GRP']['BEG_DAT'] = $start->format('Y-m-d') . ' 00:00:00.000';
-        $data['IM_PRC_GRP']['BEG_DT']  = $data['IM_PRC_GRP']['BEG_DAT'];
-        $data['IM_PRC_GRP']['END_DAT'] = $end->format('Y-m-d') . ' 00:00:00.000';
-        $data['IM_PRC_GRP']['END_DT']  = $end->format('Y-m-d') . ' 23:59:59.000';
+        if($no_begin) {
+            $data['IM_PRC_GRP']['BEG_DAT'] = null;
+            $data['IM_PRC_GRP']['BEG_DT']  = null;
+            $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'Y';
+        } else {
+            $data['IM_PRC_GRP']['BEG_DAT'] = $start->format('Y-m-d') . ' 00:00:00.000';
+            $data['IM_PRC_GRP']['BEG_DT']  = $data['IM_PRC_GRP']['BEG_DAT'];
+            $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'N';
+        }
+
+        if($no_end) {
+            $data['IM_PRC_GRP']['END_DAT'] = null;
+            $data['IM_PRC_GRP']['END_DT']  = null;
+            $data['IM_PRC_GRP']['NO_END_DAT'] = 'Y';
+        } else {
+            $data['IM_PRC_GRP']['END_DAT'] = $end->format('Y-m-d') . ' 00:00:00.000';
+            $data['IM_PRC_GRP']['END_DT']  = $end->format('Y-m-d') . ' 23:59:59.000';
+            $data['IM_PRC_GRP']['NO_END_DAT'] = 'N';
+        }
 
         $data['IM_PRC_RUL']['GRP_COD']    = $data['IM_PRC_GRP']['GRP_COD'];
         $data['IM_PRC_RUL']['RUL_SEQ_NO'] = 1;
@@ -434,7 +449,7 @@ Operation=and";
     /*
      * ?
      */
-    public function applyLineDrive($brand, $discount, $begin, $end, $id)
+    public function applyLineDrive($brand, $discount, $begin, $end, $id, $no_begin, $no_end)
     {
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
@@ -442,16 +457,31 @@ Operation=and";
 
         $data['IM_PRC_GRP']['GRP_COD'] = 'SMLD' . $id;
 
-        $YYMMDD = $begin->format('ymd');
+        $YYMMDD = Carbon::now('America/Chicago')->format('ymd');
         $descr  = $brand . ' ' . $YYMMDD;
         $data['IM_PRC_GRP']['DESCR']   = substr($descr, 0, 30);
 
         $data['IM_PRC_GRP']['DESCR_UPR'] = strtoupper($data['IM_PRC_GRP']['DESCR']);
 
-        $data['IM_PRC_GRP']['BEG_DAT'] = $begin->format('Y-m-d') . ' 00:00:00.000';
-        $data['IM_PRC_GRP']['BEG_DT']  = $data['IM_PRC_GRP']['BEG_DAT'];
-        $data['IM_PRC_GRP']['END_DAT'] = $end->format('Y-m-d') . ' 00:00:00.000';
-        $data['IM_PRC_GRP']['END_DT']  = $end->format('Y-m-d') . ' 23:59:59.000';
+        if($no_begin) {
+            $data['IM_PRC_GRP']['BEG_DAT'] = null;
+            $data['IM_PRC_GRP']['BEG_DT']  = null;
+            $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'Y';
+        } else {
+            $data['IM_PRC_GRP']['BEG_DAT'] = $begin->format('Y-m-d') . ' 00:00:00.000';
+            $data['IM_PRC_GRP']['BEG_DT']  = $data['IM_PRC_GRP']['BEG_DAT'];
+            $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'N';
+        }
+
+        if($no_end) {
+            $data['IM_PRC_GRP']['END_DAT'] = null;
+            $data['IM_PRC_GRP']['END_DT']  = null;
+            $data['IM_PRC_GRP']['NO_END_DAT'] = 'Y';
+        } else {
+            $data['IM_PRC_GRP']['END_DAT'] = $end->format('Y-m-d') . ' 00:00:00.000';
+            $data['IM_PRC_GRP']['END_DT']  = $end->format('Y-m-d') . ' 23:59:59.000';
+            $data['IM_PRC_GRP']['NO_END_DAT'] = 'N';
+        }
 
         $data['IM_PRC_RUL']['GRP_COD']    = $data['IM_PRC_GRP']['GRP_COD'];
         $data['IM_PRC_RUL']['RUL_SEQ_NO'] = 1;
@@ -484,10 +514,10 @@ Operation=and";
              'DESCR_UPR'        => $data['IM_PRC_GRP']['DESCR_UPR'],
              'CUST_FILT'        => null,
              'BEG_DAT'          => $data['IM_PRC_GRP']['BEG_DAT'],
-             'NO_BEG_DAT'       => 'N',
+             'NO_BEG_DAT'       => $data['IM_PRC_GRP']['NO_BEG_DAT'],
              'BEG_DT'           => $data['IM_PRC_GRP']['BEG_DT'],
              'END_DAT'          => $data['IM_PRC_GRP']['END_DAT'],
-             'NO_END_DAT'       => 'N',
+             'NO_END_DAT'       => $data['IM_PRC_GRP']['NO_END_DAT'],
              'END_DT'           => $data['IM_PRC_GRP']['END_DT'],
              'CUST_FILT_TMPLT'  => null,
              'LST_MAINT_DT'     => $now,

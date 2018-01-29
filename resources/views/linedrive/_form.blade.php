@@ -23,14 +23,20 @@
 <div class="form-group">
     {!! Form::label('sale_begin', 'Sale Begins', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('sale_begin', '', ['class' => 'form-control']) !!}
+        <div class="form-inline">
+            {!! Form::text('sale_begin', '', ['class' => 'form-control']) !!}
+            {!! Form::checkbox('checkNoBegin', 'checkNoBegin', '', ['id' => 'checkNoBegin']) !!} No Begin Date
+        </div>
     </div>
 </div>
 
 <div class="form-group">
     {!! Form::label('sale_end', 'Sale Ends', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('sale_end', '', ['class' => 'form-control']) !!}
+        <div class="form-inline">
+            {!! Form::text('sale_end', '', ['class' => 'form-control']) !!}
+            {!! Form::checkbox('checkNoEnd', 'checkNoEnd', '', ['id' => 'checkNoEnd']) !!} No End Date
+        </div>
     </div>
 </div>
 

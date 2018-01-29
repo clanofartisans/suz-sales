@@ -98,10 +98,14 @@
                                             @endif
                                         </td>
                                         <td class="text-nowrap text-center">
-                                            @if (is_null($item->sale_end))
-                                                &mdash;
+                                            @if($item->no_end)
+                                                Forever
                                             @else
-                                                {{ $item->sale_end->toFormattedDateString() }}
+                                                @if (is_null($item->sale_end))
+                                                    &mdash;
+                                                @else
+                                                    {{ $item->sale_end->toFormattedDateString() }}
+                                                @endif
                                             @endif
                                         </td>
                                         <td class="text-nowrap text-center">

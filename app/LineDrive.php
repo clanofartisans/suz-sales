@@ -23,7 +23,9 @@ class LineDrive extends Model
                            'flags',
                            'sale_begin',
                            'sale_end',
-                           'expires'];
+                           'expires',
+                           'no_begin',
+                           'no_end'];
 
     protected $dates = ['sale_begin', 'sale_end', 'expires'];
 
@@ -32,7 +34,7 @@ class LineDrive extends Model
      */
     public function process()
     {
-        $result = POS::applyLineDrive($this->brand, $this->discount, $this->sale_begin, $this->sale_end, $this->id);
+        $result = POS::applyLineDrive($this->brand, $this->discount, $this->sale_begin, $this->sale_end, $this->id, $this->no_begin, $this->no_end);
 
         if($result === false) {
             $this->flags = 'An error occurred';

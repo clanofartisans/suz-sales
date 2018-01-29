@@ -170,7 +170,9 @@ class ManualController extends Controller
         $data['brand']    = session('manual_sale_brand');
         $data['sale_cat'] = session('manual_sale_cat');
         $data['begin']    = session('manual_sale_begin');
+        $data['no_begin'] = session('manual_sale_no_begin');
         $data['end']      = session('manual_sale_end');
+        $data['no_end']   = session('manual_sale_no_end');
         $data['percent']  = session('manual_sale_percent');
 
         if(session('manual_sale_color') == 'radioColor') {
@@ -199,11 +201,23 @@ class ManualController extends Controller
 
             $POSUpdate = true;
 
-            $sale_begin = new Carbon($request->sale_begin);
-            $sale_end   = new Carbon($request->sale_end);
+            if(!isset($request->checkNoBegin)) {
+                $sale_begin = new Carbon($request->sale_begin);
+            } else {
+                $sale_begin = null;
+            }
 
-            $expires = new Carbon($request->sale_end);
-            $expires = $expires->addDay();
+            if(!isset($request->checkNoEnd)) {
+                $sale_end   = new Carbon($request->sale_end);
+
+                $expires = new Carbon($request->sale_end);
+                $expires = $expires->addDay();
+            } else {
+                $sale_end   = null;
+
+                $expires = Carbon::now('America/Chicago');
+                $expires = $expires->addYears(100);
+            }
         } else {
 
             $sale_begin = null;
@@ -242,7 +256,9 @@ class ManualController extends Controller
                                     'printed'         => false,
                                     'sale_begin'      => $sale_begin,
                                     'sale_end'        => $sale_end,
-                                    'expires'         => $expires]);
+                                    'expires'         => $expires,
+                                    'no_begin'        => isset($request->checkNoBegin),
+                                    'no_end'          => isset($request->checkNoEnd)]);
 
         dispatch((new ApplySalePrice($sale))->onQueue('processing'));
 
@@ -253,6 +269,8 @@ class ManualController extends Controller
             session(['manual_sale_color'      => $request->radioBWColor]);
             session(['manual_sale_begin'      => $request->sale_begin]);
             session(['manual_sale_end'        => $request->sale_end]);
+            session(['manual_sale_no_begin'   => $request->checkNoBegin]);
+            session(['manual_sale_no_end'     => $request->checkNoEnd]);
             session(['manual_sale_percent'    => $request->previewInputPercentOff]);
 
             return redirect()->route('manual.create');
@@ -290,6 +308,8 @@ class ManualController extends Controller
         session()->forget('manual_sale_color');
         session()->forget('manual_sale_begin');
         session()->forget('manual_sale_end');
+        session()->forget('manual_sale_no_begin');
+        session()->forget('manual_sale_no_end');
         session()->forget('manual_sale_percent');
     }
 
