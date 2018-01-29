@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNoBeginAndEndToManualSales extends Migration
+class AddNoBeginToManualSales extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,6 @@ class AddNoBeginAndEndToManualSales extends Migration
     {
         Schema::table('manual_sales', function($table) {
             $table->boolean('no_begin')->default(false);
-            $table->boolean('no_end')->default(false);
         });
     }
 
@@ -28,7 +27,6 @@ class AddNoBeginAndEndToManualSales extends Migration
     {
         Schema::table('manual_sales', function($table) {
             $table->dropColumn('no_begin');
-            $table->dropColumn('no_end');
         });
     }
 }
