@@ -31,7 +31,7 @@ class ManualController extends Controller
     {
         $this->clearFormCookies();
 
-        $filter = session('filter');
+        $filter = session('manual_filter');
 
         if(empty($filter)) {
             $filter = 'f_unprinted';
@@ -90,13 +90,13 @@ class ManualController extends Controller
 
         if(request()->has('page')) {
             $items = $items->paginate(100);
-            session(['page' => $items->currentPage()]);
+            session(['manual_page' => $items->currentPage()]);
         } else {
-            $page = session('page', 1);
+            $page = session('manual_page', 1);
             if($page > 1 && (((float) $items->count()) / ($page - 1.0)) <= 100.0) {
-                session(['page' => 1]);
+                session(['manual_page' => 1]);
             }
-            $items = $items->paginate(100, ['*'], 'page', session('page', 1));
+            $items = $items->paginate(100, ['*'], 'page', session('manual_page', 1));
         }
 
         $queueCounts['bw']    = DB::table('manual_sales')->where('queued', true)->where('color', false)->whereNull('deleted_at')->count();
@@ -111,7 +111,7 @@ class ManualController extends Controller
     public function process(Request $request)
     {
         if($request->filter) {
-            session(['filter' => $request->filter]);
+            session(['manual_filter' => $request->filter]);
         }
 
         switch($request->process) {

@@ -49,7 +49,7 @@ class InfraController extends Controller
      */
     public function show($id)
     {
-        $filter = session('filter');
+        $filter = session('infra_filter');
 
         if(empty($filter)) {
             $filter = 'f_all';
@@ -90,13 +90,13 @@ class InfraController extends Controller
 
         if(request()->has('page')) {
             $items = $items->paginate(100);
-            session(['page' => $items->currentPage()]);
+            session(['infra_page' => $items->currentPage()]);
         } else {
-            $page = session('page', 1);
+            $page = session('infra_page', 1);
             if($page > 1 && (((float) $items->count()) / ($page - 1.0)) <= 100.0) {
-                session(['page' => 1]);
+                session(['infra_page' => 1]);
             }
-            $items = $items->paginate(100, ['*'], 'page', session('page', 1));
+            $items = $items->paginate(100, ['*'], 'page', session('infra_page', 1));
         }
 
         $queueCount = DB::table('infra_items')->where('queued', true)->count();
@@ -147,7 +147,7 @@ class InfraController extends Controller
     public function process($id, Request $request)
     {
         if($request->filter) {
-            session(['filter' => $request->filter]);
+            session(['infra_filter' => $request->filter]);
         }
         switch($request->process) {
             case 'approve':
