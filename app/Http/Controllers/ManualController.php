@@ -34,7 +34,7 @@ class ManualController extends Controller
         $filter = session('filter');
 
         if(empty($filter)) {
-            $filter = 'f_all';
+            $filter = 'f_unprinted';
         }
 
         $items = ManualSale::orderBy('brand', 'asc')
@@ -43,6 +43,10 @@ class ManualController extends Controller
         switch($filter) {
             case 'f_all':
                 $items = $items->where('expires', '>=', Carbon::now());
+                break;
+            case 'f_unprinted':
+                $items = $items->where('printed', false)
+                               ->where('expires', '>=', Carbon::now());;
                 break;
             case 'f_processed':
                 $items = $items->where('processed', true)

@@ -13,7 +13,8 @@
                     <li><button type="submit" class="btn btn-warning btn-block" name="process" value="reprocess"><i class="fa fa-refresh"></i> Reprocess Selected</button></li>
                     <li><button type="submit" class="btn btn-danger btn-block" name="process" value="delete"><i class="fa fa-trash-o"></i> Delete Selected</button></li>
                     <li>&nbsp;</li>
-                    <li><input type="radio" name="filter" id="f_all" value="f_all" {{ $filter === 'f_all' ? 'checked="checked"' : '' }}> Show all items<br>
+                    <li><input type="radio" name="filter" id="f_unprinted" value="f_unprinted" {{ $filter === 'f_unprinted' ? 'checked="checked"' : '' }}> Show unprinted items<br>
+                    <input type="radio" name="filter" id="f_all" value="f_all" {{ $filter === 'f_all' ? 'checked="checked"' : '' }}> Show all items<br>
                     <input type="radio" name="filter" id="f_processed" value="f_processed" {{ $filter === 'f_processed' ? 'checked="checked"' : '' }}> Show only processed<br>
                     <input type="radio" name="filter" id="f_queued" value="f_queued" {{ $filter === 'f_queued' ? 'checked="checked"' : '' }}> Show queued for printing<br>
                     <input type="radio" name="filter" id="f_img_bw" value="f_img_bw" {{ $filter === 'f_img_bw' ? 'checked="checked"' : '' }}> Show B&amp;W tags<br>
