@@ -34,8 +34,8 @@ class LineDriveController extends Controller
 
         $items = LineDrive::where('no_begin', false)
                           ->where('no_end',false)
-                          ->orderBy('sale_begin', 'asc')
                           ->orderBy('sale_end', 'asc')
+                          ->orderBy('sale_begin', 'asc')
                           ->orderBy('brand', 'asc');
 
         $forever = LineDrive::where('no_begin', true)
