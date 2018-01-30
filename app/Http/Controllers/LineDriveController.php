@@ -33,7 +33,7 @@ class LineDriveController extends Controller
         }
 
         $items = LineDrive::where('no_begin', false)
-                          ->where('no_end',false)
+                          ->orWhere('no_end', false)
                           ->orderBy('sale_end', 'asc')
                           ->orderBy('sale_begin', 'asc')
                           ->orderBy('brand', 'asc');
@@ -136,8 +136,8 @@ class LineDriveController extends Controller
         } else {
             $sale_end   = null;
 
-            $expires = Carbon::now('America/Chicago');
-            $expires = $expires->addYears(100);
+            $expires = new Carbon();
+            $expires = $expires->addYears(10);
         }
 
         $sale = LineDrive::create(['brand'      => urldecode($request->brand),

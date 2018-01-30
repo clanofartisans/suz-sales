@@ -219,8 +219,8 @@ class ManualController extends Controller
             } else {
                 $sale_end   = null;
 
-                $expires = Carbon::now('America/Chicago');
-                $expires = $expires->addYears(100);
+                $expires = new Carbon();
+                $expires = $expires->addYears(10);
             }
         } else {
 
