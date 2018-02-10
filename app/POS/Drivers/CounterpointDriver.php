@@ -58,6 +58,8 @@ class CounterpointDriver extends POS implements POSDriverContract
     {
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
+        $percent_off = $this->calcPercentageDiscount($discounted['reg_price'], $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT']);
+
         $test = DB::connection('sqlsrv')->table('IM_PRC_RUL')->insert([
             ['GRP_TYP'          => 'P',
              'GRP_COD'          => $discounted['IM_PRC_RUL']['GRP_COD'],
@@ -87,8 +89,9 @@ class CounterpointDriver extends POS implements POSDriverContract
             ['GRP_TYP'          => 'P',
              'GRP_COD'          => $discounted['IM_PRC_RUL_BRK']['GRP_COD'],
              'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL_BRK']['RUL_SEQ_NO'],
-             'PRC_METH'         => 'F',
-             'AMT_OR_PCT'       => $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT'],
+             'PRC_METH'         => 'D',
+            'PRC_BASIS'        => '1',
+            'AMT_OR_PCT'       => $percent_off,
              'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL_BRK']['PRC_BRK_DESCR'],
              'LST_MAINT_DT'     => null,
              'LST_MAINT_USR_ID' => null,
@@ -104,6 +107,8 @@ class CounterpointDriver extends POS implements POSDriverContract
     protected function updateManualItem($discounted)
     {
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
+
+        $percent_off = $this->calcPercentageDiscount($discounted['reg_price'], $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT']);
 
         DB::connection('sqlsrv')->table('IM_PRC_GRP')->insert([
             ['GRP_TYP'          => 'C',
@@ -156,8 +161,9 @@ class CounterpointDriver extends POS implements POSDriverContract
             ['GRP_TYP'          => 'C',
             'GRP_COD'          => $discounted['IM_PRC_RUL_BRK']['GRP_COD'],
             'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL_BRK']['RUL_SEQ_NO'],
-            'PRC_METH'         => 'F',
-            'AMT_OR_PCT'       => $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT'],
+            'PRC_METH'         => 'D',
+            'PRC_BASIS'        => '1',
+            'AMT_OR_PCT'       => $percent_off,
             'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL_BRK']['PRC_BRK_DESCR'],
             'LST_MAINT_DT'     => null,
             'LST_MAINT_USR_ID' => null,
@@ -194,6 +200,8 @@ class CounterpointDriver extends POS implements POSDriverContract
 
         $data['sale_type'] = 'INFRA';
 
+        $data['reg_price'] = $item->PRC_1;
+
         $data['IM_PRC_RUL']['GRP_COD']    = 'INFRA' . $c_begDate->format('my');
         $data['IM_PRC_RUL']['RUL_SEQ_NO'] = $localID;
         $data['IM_PRC_RUL']['DESCR']      = "$item->ITEM_NO $price";
@@ -226,7 +234,9 @@ Operation=and";
      */
     public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id, $no_begin, $no_end)
     {
-        $data['sale_type']      = 'Manual';
+        $data['sale_type'] = 'Manual';
+
+        $data['reg_price'] = $item->PRC_1;
 
         $data['IM_PRC_GRP']['GRP_COD'] = 'SMMS' . $id;
 
@@ -627,5 +637,12 @@ Operation=and";
                          ->firstOrFail();
 
         return $item->id;
+    }
+
+    protected function calcPercentageDiscount($reg_price, $sale_price)
+    {
+        $percentage = round(((1.0000 - ($sale_price / $reg_price)) * 100.0000), 4);
+
+        return $percentage;
     }
 }
