@@ -11,3 +11,4 @@ npm-debug.log
 .env
 public/js/
 public/css/
+database/seeds/UsersTableSeeder.php
