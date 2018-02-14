@@ -179,7 +179,7 @@ XML;
      *
      * @return string|bool
      */
-    public function applyDiscountToItem($item, string $realPrice, string $month, string $year)
+    public function applyDiscountToItem($item, string $realPrice, string $month, string $year, $percent = null)
     {
         $args  = $this->calcItemDiscountsFromInfra($item, $realPrice);
         $dates = $this->calcItemDiscountDates($month, $year);
@@ -204,7 +204,7 @@ XML;
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id = null, $no_begin = null, $no_end = null)
+    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id = null, $no_begin = null, $no_end = null, $percent = null)
     {
         $xml = "<ItemDiscounts><ItemDiscount><Level>0</Level><Type>Standard</Type><OverrideFlag>false</OverrideFlag><BuyQty>1.0000</BuyQty><MoreFlag>false</MoreFlag><PercentFlag>false</PercentFlag><Amount>$amount</Amount><FreeQty>0.0000</FreeQty><Price>$price</Price><StartDt>$start</StartDt><EndDt>$end</EndDt><DiscountRound>-1</DiscountRound></ItemDiscount></ItemDiscounts>";
 

@@ -40,12 +40,12 @@ interface POSDriverInterface
      *
      * @return string|bool
      */
-    public function applyDiscountToItem($item, string $realPrice, string $month, string $year);
+    public function applyDiscountToItem($item, string $realPrice, string $month, string $year, $percent = null, $localID = null);
 
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id, $no_begin, $no_end);
+    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id, $no_begin, $no_end, $percent = null);
 
     /*
      * Sets the "display" prices based on the

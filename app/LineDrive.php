@@ -39,11 +39,13 @@ class LineDrive extends Model
         if($result === false) {
             $this->flags = 'An error occurred';
             $this->save();
-        } else {
-            $this->processed = true;
-            $this->flags     = null;
-            $this->save();
         }
+
+        $this->processed = true;
+        $this->flags     = null;
+        $this->save();
+
+        POS::renumberSales();
 
         return true;
     }

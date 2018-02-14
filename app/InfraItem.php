@@ -36,7 +36,8 @@ class InfraItem extends Model
                            'imaged',
                            'printed',
                            'flags',
-                           'expires'];
+                           'expires',
+                           'percent_off'];
 
     /*
      * Each item belongs to an INFRA workbook.
@@ -86,7 +87,11 @@ class InfraItem extends Model
                 return true;
             }
 
-            $discounted = POS::applyDiscountToItem($item, $this->list_price_calc, $month, $year);
+            if(!isset($this->percent_off)) {
+                $this->percent_off = $this->calcPercentageDiscount($item->PRC_1, $this->list_price_calc);
+            }
+
+            $discounted = POS::applyDiscountToItem($item, $this->list_price_calc, $month, $year, $this->percent_off, $this->id);
 
             if($discounted === false) {
                 $this->flags = 'Item already has discounts';
@@ -207,5 +212,16 @@ class InfraItem extends Model
         File::delete($filename);
 
         return true;
+    }
+
+    protected function calcPercentageDiscount($reg_price, $sale_price)
+    {
+        if($sale_price == '20%') {
+            return 20.0000;
+        }
+
+        $percentage = round(((1.0000 - ($sale_price / $reg_price)) * 100.0000), 4);
+
+        return $percentage;
     }
 }

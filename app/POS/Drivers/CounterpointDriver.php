@@ -1,10 +1,13 @@
 <?php namespace App\POS\Drivers;
 
-use App\InfraItem;
-use App\InfraSheet;
 use DB;
 use App\POS\POS;
 use Carbon\Carbon;
+use App\InfraItem;
+use App\InfraSheet;
+use App\ManualSale;
+use App\LineDrive;
+use App\Jobs\RenumberSales;
 use App\POS\Contracts\POSDriverInterface as POSDriverContract;
 
 /**
@@ -21,11 +24,14 @@ class CounterpointDriver extends POS implements POSDriverContract
      */
     public function getItem(string $upc)
     {
-        $item = DB::connection('sqlsrv')->table('IM_ITEM')->where('ITEM_NO', $upc)->first();
+        $item_no = DB::connection('sqlsrv')->table('VI_IM_SKU_BARCOD')->where('BARCOD', $upc)->first();
 
-        if($item) {
+        if($item_no) {
+            $item = DB::connection('sqlsrv')->table('IM_ITEM')->where('ITEM_NO', $item_no->ITEM_NO)->first();
 
-            return $item;
+            if($item) {
+                return $item;
+            }
         }
 
         return false;
@@ -58,10 +64,10 @@ class CounterpointDriver extends POS implements POSDriverContract
     {
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
-        $percent_off = $this->calcPercentageDiscount($discounted['reg_price'], $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT']);
+        $percent_off = $discounted['percent_off'];
 
         $test = DB::connection('sqlsrv')->table('IM_PRC_RUL')->insert([
-            ['GRP_TYP'          => 'P',
+            ['GRP_TYP'          => 'C',
              'GRP_COD'          => $discounted['IM_PRC_RUL']['GRP_COD'],
              'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL']['RUL_SEQ_NO'],
              'DESCR'            => $discounted['IM_PRC_RUL']['DESCR'],
@@ -86,12 +92,12 @@ class CounterpointDriver extends POS implements POSDriverContract
             ]);
 
         DB::connection('sqlsrv')->table('IM_PRC_RUL_BRK')->insert([
-            ['GRP_TYP'          => 'P',
+            ['GRP_TYP'          => 'C',
              'GRP_COD'          => $discounted['IM_PRC_RUL_BRK']['GRP_COD'],
              'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL_BRK']['RUL_SEQ_NO'],
              'PRC_METH'         => 'D',
-            'PRC_BASIS'        => '1',
-            'AMT_OR_PCT'       => $percent_off,
+             'PRC_BASIS'        => '1',
+             'AMT_OR_PCT'       => $percent_off,
              'PRC_BRK_DESCR'    => $discounted['IM_PRC_RUL_BRK']['PRC_BRK_DESCR'],
              'LST_MAINT_DT'     => null,
              'LST_MAINT_USR_ID' => null,
@@ -108,7 +114,7 @@ class CounterpointDriver extends POS implements POSDriverContract
     {
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
-        $percent_off = $this->calcPercentageDiscount($discounted['reg_price'], $discounted['IM_PRC_RUL_BRK']['AMT_OR_PCT']);
+        $percent_off = $discounted['percent_off'];
 
         DB::connection('sqlsrv')->table('IM_PRC_GRP')->insert([
             ['GRP_TYP'          => 'C',
@@ -185,7 +191,7 @@ class CounterpointDriver extends POS implements POSDriverContract
      *
      * @return array|string|bool
      */
-    public function applyDiscountToItem($item, string $realPrice, string $month, string $year)
+    public function applyDiscountToItem($item, string $realPrice, string $month, string $year, $percent = null, $localID = null)
     {
         $args = $this->calcItemDiscountsFromInfra($item, $realPrice);
 
@@ -194,13 +200,12 @@ class CounterpointDriver extends POS implements POSDriverContract
         }
         $price   = $args['price'];
 
-        $localID = $this->getLocalItemID($item, $month, $year);
-
         $c_begDate = Carbon::createFromFormat('F Y j', "$month $year 1");
 
         $data['sale_type'] = 'INFRA';
 
-        $data['reg_price'] = $item->PRC_1;
+        $data['reg_price']   = $item->PRC_1;
+        $data['percent_off'] = $percent;
 
         $data['IM_PRC_RUL']['GRP_COD']    = 'INFRA' . $c_begDate->format('my');
         $data['IM_PRC_RUL']['RUL_SEQ_NO'] = $localID;
@@ -232,11 +237,12 @@ Operation=and";
     /*
      * ?
      */
-    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id, $no_begin, $no_end)
+    public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id, $no_begin, $no_end, $percent = null)
     {
         $data['sale_type'] = 'Manual';
 
-        $data['reg_price'] = $item->PRC_1;
+        $data['reg_price']   = $item->PRC_1;
+        $data['percent_off'] = $percent;
 
         $data['IM_PRC_GRP']['GRP_COD'] = 'SMMS' . $id;
 
@@ -600,7 +606,7 @@ Operation=and";
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
         DB::connection('sqlsrv')->table('IM_PRC_GRP')->insert([
-            ['GRP_TYP'          => 'P',
+            ['GRP_TYP'          => 'C',
              'GRP_COD'          => $data['groupCode'],
              'GRP_SEQ_NO'       => null,
              'DESCR'            => $data['desc'],
@@ -620,6 +626,8 @@ Operation=and";
              'CUST_NO'          => null,
              'MIX_MATCH_COD'    => null]
             ]);
+
+        $this->renumberSales();
 
         return true;
     }
@@ -644,5 +652,80 @@ Operation=and";
         $percentage = round(((1.0000 - ($sale_price / $reg_price)) * 100.0000), 4);
 
         return $percentage;
+    }
+
+    public function renumberSales()
+    {
+        $renumbering = DB::table('jobs')->where('queue', 'renumbering')->count();
+
+        if($renumbering > 0) {
+
+            return false;
+        }
+
+        dispatch((new RenumberSales())->onQueue('renumbering'));
+
+        return true;
+    }
+
+    public function performRenumbering()
+    {
+        /* Query All Our Sales */
+
+        $infraSales = InfraSheet::orderBy('year', 'desc')
+                                ->orderBy('month', 'desc')
+                                ->get();
+
+        $lineDrives = LineDrive::orderBy('discount', 'desc')
+                               ->get();
+
+        $manualSales = ManualSale::orderBy('percent_off', 'desc')
+                                 ->get();
+
+        /* Begin Sorting */
+
+        $sales[1] = 'EMPLOYEE';
+
+        $seq_no = 2;
+
+        /* Sort Infra */
+
+        foreach($infraSales as $infraSale) {
+            $begin_date = Carbon::createFromFormat('F Y j', "$infraSale->month $infraSale->year 1");
+            $sales[$seq_no] = 'INFRA' . $begin_date->format('my');
+            $seq_no++;
+        }
+
+        /* Sort Line Drives and Manual Sales */
+
+        foreach($lineDrives as $lineDrive) {
+            $manualsAndLines['SMLD' . $lineDrive->id] = $lineDrive->discount;
+        }
+
+        foreach($manualSales as $manualSale) {
+            $manualsAndLines['SMMS' . $manualSale->id] = $manualSale->percent_off;
+        }
+
+        if(!empty($manualsAndLines)) {
+            arsort($manualsAndLines);
+
+            foreach($manualsAndLines as $key => $value) {
+                $sales[$seq_no] = $key;
+                $seq_no++;
+            }
+        }
+
+        $this->applyRenumbering($sales);
+
+        return true;
+    }
+
+    public function applyRenumbering($sales)
+    {
+        foreach($sales as $seq_no => $sale) {
+            DB::connection('sqlsrv')->table('IM_PRC_GRP')
+                                    ->where('GRP_COD', $sale)
+                                    ->update(['GRP_SEQ_NO' => $seq_no]);
+        }
     }
 }

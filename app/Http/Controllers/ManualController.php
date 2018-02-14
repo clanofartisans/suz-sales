@@ -264,6 +264,11 @@ class ManualController extends Controller
                                     'no_begin'        => isset($request->checkNoBegin),
                                     'no_end'          => isset($request->checkNoEnd)]);
 
+        if(!empty($request->previewInputPercentOff)) {
+            $sale->percent_off = $request->previewInputPercentOff;
+            $sale->save();
+        }
+
         dispatch((new ApplySalePrice($sale))->onQueue('processing'));
 
         if(isset($request->submitContinue)) {

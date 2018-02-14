@@ -38,7 +38,8 @@ class ManualSale extends Model
                            'sale_end',
                            'expires',
                            'no_begin',
-                           'no_end'];
+                           'no_end',
+                           'percent_off'];
 
     protected $dates = ['sale_begin', 'sale_end', 'expires'];
 
@@ -59,7 +60,11 @@ class ManualSale extends Model
                 $this->flags = 'Item not found in point of sale system';
                 $this->save();
             } else {
-                $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end, $this->id, $this->no_begin, $this->no_end);
+                if(!isset($this->percent_off)) {
+                    $this->percent_off = $this->calcPercentageDiscount($item->PRC_1, $this->sale_price);
+                }
+
+                $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end, $this->id, $this->no_begin, $this->no_end, $this->percent_off);
 
                 if($discounted === false) {
                     $this->flags = 'Item already has discounts';
@@ -71,6 +76,8 @@ class ManualSale extends Model
                         $this->processed = true;
                         $this->flags     = null;
                         $this->save();
+
+                        POS::renumberSales();
                     }
                 }
             }
@@ -139,5 +146,12 @@ class ManualSale extends Model
         File::delete($filename);
 
         return true;
+    }
+
+    protected function calcPercentageDiscount($reg_price, $sale_price)
+    {
+        $percentage = round(((1.0000 - ($sale_price / $reg_price)) * 100.0000), 4);
+
+        return $percentage;
     }
 }
