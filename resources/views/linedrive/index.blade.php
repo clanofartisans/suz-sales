@@ -8,7 +8,7 @@
                 @if(config('pos.driver') == 'orderdog')
                     &nbsp;
                 @else
-                    <ul class="nav nav-pills nav-stacked" style="float: left;">
+                    <ul class="nav nav-pills nav-stacked" style="float: left; position: fixed;">
                         <li><button type="submit" class="btn btn-success btn-block" name="process" value="add"><i class="fa fa-plus-circle"></i> Add Line Drive</button></li>
                         <li><button type="submit" class="btn btn-danger btn-block" name="process" value="delete"><i class="fa fa-trash-o"></i> Delete Selected</button></li>
                         <li>&nbsp;</li>

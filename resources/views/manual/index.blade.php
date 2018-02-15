@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="row">
             <nav class="col-md-2 col-sm-2 col-xs-2">
-                <ul class="nav nav-pills nav-stacked" style="float: left;">
+                <ul class="nav nav-pills nav-stacked" style="float: left; position: fixed;">
                     <li><button type="submit" class="btn btn-success btn-block" name="process" value="add"><i class="fa fa-plus-circle"></i> Add Sales</button></li>
                     <li><button type="submit" class="btn btn-info btn-block" name="process" value="queue"><i class="fa fa-print"></i> Queue Selected</button></li>
                     <li><button type="submit" class="btn btn-info btn-block" name="process" value="printbwqueue"><i class="fa fa-print"></i> Print B&amp;W Queue</button></li>

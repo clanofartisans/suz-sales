@@ -26,7 +26,7 @@
     {!! Form::label('previewInputUPC', 'UPC', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         <div class="input-group">
-            {!! Form::text('previewInputUPC', null, ['class' => 'form-control']) !!}
+            {!! Form::text('previewInputUPC', null, ['class' => 'form-control', 'autofocus' => 'autofocus']) !!}
             <span class="input-group-btn">
                 <input type="submit" id="previewPOSFill" class="btn btn-default fa-input" value="&#xf002;" />
             </span>

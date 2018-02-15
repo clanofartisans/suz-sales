@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row">
             <nav class="col-md-2 col-sm-2 col-xs-2">
-                <ul class="nav nav-pills nav-stacked" style="float: left;">
+                <ul class="nav nav-pills nav-stacked" style="float: left; position: fixed;">
                     <li><button type="submit" class="btn btn-success btn-block" name="process" value="approve"><i class="fa fa-thumbs-o-up"></i> Approve</button></li>
                     <li><button type="submit" class="btn btn-success btn-block" name="process" value="approveall"><i class="fa fa-thumbs-o-up"></i> Approve All</button></li>
                     <li><button type="submit" class="btn btn-info btn-block" name="process" value="queue"><i class="fa fa-print"></i> Queue Selected</button></li>
