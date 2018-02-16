@@ -176,3 +176,23 @@ $(function() {
 $(function() {
     $( "#sale_end" ).datepicker();
 });
+
+$('#sale_begin').change(function() {
+    $('#checkNoBegin').prop('checked', false);
+});
+
+$('#checkNoBegin').click(function() {
+    if($('#checkNoBegin').is(':checked')) {
+        $('#sale_begin').val(null);
+    }
+});
+
+$('#sale_end').change(function() {
+    $('#checkNoEnd').prop('checked', false);
+});
+
+$('#checkNoEnd').click(function() {
+    if($('#checkNoEnd').is(':checked')) {
+        $('#sale_end').val(null);
+    }
+});
