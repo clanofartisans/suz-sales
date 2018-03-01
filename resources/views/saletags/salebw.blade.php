@@ -28,7 +28,7 @@
         }
 
         .sale-wrapper {
-            background-image: url('http://suz-sales.turners.pw/img/bw-sale-bg.png');
+            background-image: url('http://suz-sales.clanofartisans.net/img/bw-sale-bg.png');
             width: 600px;
             height: 900px;
             text-align: center;
