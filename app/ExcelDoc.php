@@ -170,6 +170,7 @@ class ExcelDoc
             InfraItem::create(['infrasheet_id'   => $infraSheetID,
                                'upc'             => $this->zeroPadUPC($item['upc']),
                                'brand'           => $item['brand'],
+                               'brand_uc'        => strtoupper($item['brand']),
                                'desc'            => $item['desc'],
                                'size'            => $item['size'],
                                'list_price'      => $this->fixPrecisionInfraSalePrice($item['price']),

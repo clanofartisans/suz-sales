@@ -22,6 +22,7 @@ class ManualSale extends Model
      */
     protected $fillable = ['upc',
                            'brand',
+                           'brand_uc',
                            'desc',
                            'sale_price',
                            'disp_sale_price',

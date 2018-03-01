@@ -58,7 +58,7 @@ class InfraController extends Controller
         $infrasheet = InfraSheet::findOrFail($id);
 
         $items = InfraItem::where('infrasheet_id', $id)
-                          ->orderBy('brand', 'asc')
+                          ->orderBy('brand_uc', 'asc')
                           ->orderBy('id', 'asc');
 
         switch($filter) {

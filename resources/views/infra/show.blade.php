@@ -46,25 +46,9 @@
                         @include('flash::message')
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover nowrap">
-                                <thead>
-                                    <tr>
-                                        <th>&nbsp;</th>
-                                        <th class="text-nowrap">UPC</th>
-                                        <th class="text-nowrap">Brand</th>
-                                        <th class="text-nowrap">Description</th>
-                                        <th class="text-nowrap">Size</th>
-                                        <th class="text-nowrap">INFRA $</th>
-                                        <th class="text-nowrap">Real $</th>
-                                        <th class="text-center"><i class="fa fa-thumbs-up" title="Approved" aria-hidden="true"></i></th>
-                                        <th class="text-center"><i class="fa fa-share" title="Processed" aria-hidden="true"></i></th>
-                                        <th class="text-center"><i class="fa fa-file-image-o" title="Ready to Print" aria-hidden="true"></i></th>
-                                        <th class="text-center"><i class="fa fa-print" title="Printed" aria-hidden="true"></i></th>
-                                        <th class="text-center"><i class="fa fa-flag" title="Flags" aria-hidden="true"></i></th>
-                                    </tr>
-                                </thead>
                                 <?php $brandHeader = ''; $first = true; ?>
                                 @foreach ($items as $item)
-                                    @if ($item->brand != $brandHeader)
+                                    @if ($item->brand_uc != strtoupper($brandHeader))
                                         @if (!$first)
                                             </tbody>
                                         @else
@@ -74,9 +58,20 @@
                                         <?php $brandHeader = $item->brand; ?>
                                         <tr>
                                             <th><input type="checkbox" class="checkAll" /></th>
-                                            <th style="white-space: nowrap" colspan="11">
+                                            <th style="white-space: nowrap" colspan="2">
                                                 {{ $brandHeader }}
                                             </th>
+                                            <th class="text-nowrap">Description</th>
+                                            <th class="text-nowrap">Size</th>
+                                            <th class="text-nowrap text-center">INFRA $</th>
+                                            <th class="text-nowrap text-center">Sale $</th>
+                                            <th class="text-nowrap text-center">MSRP</th>
+                                            <th class="text-nowrap text-center">Sale %</th>
+                                            <th class="text-center"><i class="fa fa-thumbs-up" title="Approved" aria-hidden="true"></i></th>
+                                            <th class="text-center"><i class="fa fa-share" title="Processed" aria-hidden="true"></i></th>
+                                            <th class="text-center"><i class="fa fa-file-image-o" title="Ready to Print" aria-hidden="true"></i></th>
+                                            <th class="text-center"><i class="fa fa-print" title="Printed" aria-hidden="true"></i></th>
+                                            <th class="text-center"><i class="fa fa-flag" title="Flags" aria-hidden="true"></i></th>
                                         </tr>
                                     @endif
                                     <tr>
@@ -85,8 +80,34 @@
                                         <td class="text-nowrap">{{ $item->brand }}</td>
                                         <td>{{ $item->desc }}</td>
                                         <td class="text-nowrap">{{ $item->size }}</td>
-                                        <td class="text-nowrap text-center">{{ $item->list_price }}</td>
-                                        <td class="text-nowrap text-center">{{ $item->list_price_calc }}</td>
+                                        <td class="text-nowrap text-center">
+                                            @if(!empty($item->list_price))
+                                                {{ $item->list_price }}
+                                            @else
+                                                &mdash;
+                                            @endif
+                                        </td>
+                                        <td class="text-nowrap text-center">
+                                            @if(!empty($item->disp_sale_price))
+                                                {{ $item->disp_sale_price }}
+                                            @else
+                                                &mdash;
+                                            @endif
+                                        </td>
+                                        <td class="text-nowrap text-center">
+                                            @if(!empty($item->disp_msrp))
+                                                ${{ $item->disp_msrp }}
+                                            @else
+                                                &mdash;
+                                            @endif
+                                        </td>
+                                        <td class="text-nowrap text-center">
+                                            @if(!empty($item->percent_off))
+                                                {{ number_format($item->percent_off, 0) }}%
+                                            @else
+                                                &mdash;
+                                            @endif
+                                        </td>
                                         <td class="text-nowrap text-center">
                                             @if ($item->approved)
                                                 <button type="button" class="btn btn-success btn-xs" disabled="disabled" title="Approved">

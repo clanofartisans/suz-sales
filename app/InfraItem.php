@@ -27,6 +27,7 @@ class InfraItem extends Model
     protected $fillable = ['infrasheet_id',
                            'upc',
                            'brand',
+                           'brand_uc',
                            'desc',
                            'size',
                            'list_price',

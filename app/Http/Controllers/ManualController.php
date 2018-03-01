@@ -37,7 +37,7 @@ class ManualController extends Controller
             $filter = 'f_unprinted';
         }
 
-        $items = ManualSale::orderBy('brand', 'asc')
+        $items = ManualSale::orderBy('brand_uc', 'asc')
                            ->orderBy('upc', 'asc');
 
         switch($filter) {
@@ -247,6 +247,7 @@ class ManualController extends Controller
 
         $sale = ManualSale::create(['upc'             => $request->previewInputUPC,
                                     'brand'           => $request->previewInputBrand,
+                                    'brand_uc'        => strtoupper($request->previewInputBrand),
                                     'desc'            => $request->previewInputDesc,
                                     'sale_price'      => $salePrice,
                                     'disp_sale_price' => $request->previewInputDispPrice,
