@@ -468,8 +468,13 @@ XML;
 
             if($return['brand'] == "PRIVATE LABEL" ||
                $return['brand'] == "VITALITY WORKS" ||
-               $return['brand'] == "RELIANCE PRIVATE LABEL") {
+               $return['brand'] == "RELIANCE PRIVATE LABEL")
+            {
                 $return['brand'] = "Suzanne's";
+            }
+
+            if($return['brand'] == "CRUNCHMASTER") {
+                $return['brand'] = "Crunch Master";
             }
 
             return $return;

@@ -426,6 +426,10 @@ Operation=and";
                 $return['brand'] = "Suzanne's";
             }
 
+            if($return['brand'] == "CRUNCHMASTER") {
+                $return['brand'] = "Crunch Master";
+            }
+
             return $return;
         }
 
