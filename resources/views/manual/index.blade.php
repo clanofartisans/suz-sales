@@ -63,9 +63,13 @@
                                         <?php $brandHeader = $item->brand; ?>
                                         <tr>
                                             <th><input type="checkbox" class="checkAll" /></th>
-                                            <th style="white-space: nowrap" colspan="2">
-                                                {{ $brandHeader }}
-                                            </th>
+                                            <th style="white-space: nowrap"
+                                                @if(empty(Request::get('debug')))
+                                                    colspan="2"
+                                                @else
+                                                    colspan="3"
+                                                @endif
+                                            >{{ $brandHeader }}</th>
                                             <th class="text-nowrap">Description</th>
                                             <th class="text-nowrap text-center">Sale $</th>
                                             <th class="text-nowrap text-center">MSRP</th>
@@ -81,6 +85,9 @@
                                     @endif
                                     <tr>
                                         <td><input type="checkbox" name="checked[]" value="{{ $item->id }}" /></td>
+                                        @if(!empty(Request::get('debug')))
+                                            <td class="text-nowrap"><strong>SMMS{{ $item->id }}</strong></td>
+                                        @endif
                                         <td class="text-nowrap">{{ $item->upc }}</td>
                                         <td class="text-nowrap">{{ $item->brand }}</td>
                                         <td>{{ $item->desc }}</td>

@@ -44,8 +44,11 @@
                                     <thead>
                                         <tr>
                                             <th><input type="checkbox" class="checkAllManual" /></th>
+                                            @if(!empty(Request::get('debug')))
+                                                <td class="text-nowrap"><strong>Debug</strong></td>
+                                            @endif
                                             <th class="text-nowrap">Brand</th>
-                                            <th class="text-nowrap">Discount</th>
+                                            <th class="text-center">Discount</th>
                                             <th class="text-center"><i class="fa fa-share" title="Processed" aria-hidden="true"></i></th>
                                             <th class="text-center"><i class="fa fa-flag" title="Flags" aria-hidden="true"></i></th>
                                         </tr>
@@ -61,13 +64,20 @@
                                             <tbody>
                                             <?php $datesHeader = $item->from_to; ?>
                                             <tr>
-                                                <th style="white-space: nowrap" colspan="5">
-                                                    {{ $datesHeader }}
-                                                </th>
+                                                <th style="white-space: nowrap"
+                                                    @if(empty(Request::get('debug')))
+                                                        colspan="5"
+                                                    @else
+                                                        colspan="6"
+                                                    @endif
+                                                >{{ $datesHeader }}</th>
                                             </tr>
                                         @endif
                                         <tr>
                                             <td><input type="checkbox" name="checked[]" value="{{ $item->id }}" /></td>
+                                            @if(!empty(Request::get('debug')))
+                                                <td class="text-nowrap"><strong>SMLD{{ $item->id }}</strong></td>
+                                            @endif
                                             <td class="text-nowrap">{{ $item->brand }}</td>
                                             <td class="text-nowrap text-center">{{ $item->discount }}%</td>
                                             <td class="text-nowrap text-center">
