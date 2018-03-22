@@ -46,33 +46,33 @@ class ManualController extends Controller
                 break;
             case 'f_unprinted':
                 $items = $items->where('printed', false)
-                               ->where('expires', '>=', Carbon::now());;
+                               ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_processed':
                 $items = $items->where('processed', true)
-                               ->where('expires', '>=', Carbon::now());;
+                               ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_queued':
                 $items = $items->where('queued', true)
-                               ->where('expires', '>=', Carbon::now());;
+                               ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_img_bw':
                 $items = $items->where('imaged', true)
                                ->where('color', false)
-                               ->where('expires', '>=', Carbon::now());;
+                               ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_img_color':
                 $items = $items->where('imaged', true)
                                ->where('color', true)
-                               ->where('expires', '>=', Carbon::now());;
+                               ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_printed':
                 $items = $items->where('printed', true)
-                               ->where('expires', '>=', Carbon::now());;
+                               ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_flagged':
                 $items = $items->whereNotNull('flags')
-                               ->where('expires', '>=', Carbon::now());;
+                               ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_flagged_discounted':
                 $items = $items->where('flags', 'Item already has discounts');

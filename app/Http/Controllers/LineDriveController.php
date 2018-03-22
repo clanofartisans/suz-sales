@@ -32,8 +32,10 @@ class LineDriveController extends Controller
             $filter = 'f_all';
         }
 
-        $items = LineDrive::where('no_begin', false)
-                          ->orWhere('no_end', false)
+        $items = LineDrive::where(function ($query) {
+                                      $query->where('no_begin', false)
+                                            ->orWhere('no_end', false);
+                                  })
                           ->orderBy('sale_end', 'asc')
                           ->orderBy('sale_begin', 'asc')
                           ->orderBy('brand', 'asc');
