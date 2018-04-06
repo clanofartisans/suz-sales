@@ -76,4 +76,6 @@ interface POSDriverInterface
      * ?
      */
     public function startInfraSheet(InfraSheet $infrasheet);
+
+    public function checkForBetterSales($sku, $percent);
 }

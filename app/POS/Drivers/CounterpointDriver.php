@@ -207,6 +207,10 @@ class CounterpointDriver extends POS implements POSDriverContract
         $data['reg_price']   = $item->PRC_1;
         $data['percent_off'] = $percent;
 
+        if($this->checkForBetterSales($item->ITEM_NO, $percent)) {
+            return false;
+        }
+
         $data['IM_PRC_RUL']['GRP_COD']    = 'INFRA' . $c_begDate->format('my');
         $data['IM_PRC_RUL']['RUL_SEQ_NO'] = $localID;
         $data['IM_PRC_RUL']['DESCR']      = "$item->ITEM_NO $price";
@@ -731,5 +735,15 @@ Operation=and";
                                     ->where('GRP_COD', $sale)
                                     ->update(['GRP_SEQ_NO' => $seq_no]);
         }
+    }
+
+    public function checkForBetterSales($sku, $percent)
+    {
+        $items = ManualSale::where('upc', '=', $sku)
+                           ->where('expires', '>=', Carbon::now())
+                           ->where('percent_off', '>', $percent)
+                           ->get();
+
+        return $items->isNotEmpty();
     }
 }
