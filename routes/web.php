@@ -43,6 +43,14 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('store', 'LineDriveController@store')->name('linedrive.store');
     });
 
+    // Employee Discount Routes
+    Route::group(['prefix' => 'employee'], function() {
+        Route::get('/', 'EmployeeDiscountController@index')->name('employeediscount.index');
+        Route::post('/', 'EmployeeDiscountController@process')->name('employeediscount.process');
+        Route::get('create', 'EmployeeDiscountController@create')->name('employeediscount.create');
+        Route::post('store', 'EmployeeDiscountController@store')->name('employeediscount.store');
+    });
+
     // Special AJAX Routes
     Route::group(['prefix' => 'ajax'], function() {
         Route::get('queueCountInfra', 'AjaxController@queueCountInfra')->name('ajax.queuecount.infra');

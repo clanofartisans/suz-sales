@@ -51,6 +51,7 @@
                         <li><a href="{{ url('/infra') }}">INFRA Sales</a></li>
                         <li><a href="{{ url('/manual') }}">Manual Sales</a></li>
                         <li><a href="{{ url('/linedrive') }}">Line Drives</a></li>
+                        <li><a href="{{ url('/employee') }}">Employee Discounts</a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
