@@ -856,6 +856,8 @@ Operation=and";
             $combined['SMMS' . $manualSale->id] = $manualSale->percent_off;
         }
 
+        $combined['EMPDEFAULT'] = 25;
+
         if(!empty($combined)) {
             arsort($combined);
 
