@@ -37,6 +37,7 @@ class CleanupInfra extends Command
     public function handle()
     {
         $items = InfraItem::where('expires', '<', Carbon::now())
+                          ->where('imaged', true)
                           ->get();
 
         foreach($items as $item) {

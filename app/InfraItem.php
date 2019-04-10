@@ -212,6 +212,9 @@ class InfraItem extends Model
 
         File::delete($filename);
 
+        $this->imaged = true;
+        $this->save();
+
         return true;
     }
 
