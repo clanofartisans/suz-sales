@@ -211,6 +211,7 @@ class ExcelDoc
     {
         if(!empty($price)) {
             if(strpos($price, '/') !== false) {
+				$price = rtrim($price);
                 $pieces    = explode('/', $price);
                 $pieces[1] = ltrim($pieces[1], '$');
 
