@@ -12,19 +12,19 @@
             font-family: Rockwell;
             font-style: normal;
             font-weight: normal;
-            src: url({{ asset('fonts/Rockwell.ttf') }}) format('truetype');
+            src: url({{ asset('http://suzannes.atitd.wiki/Rockwell.ttf') }}) format('truetype');
         }
         @font-face {
             font-family: Rockwell;
             font-style: normal;
             font-weight: bold;
-            src: url({{ asset('fonts/Rockwell-Bold.ttf') }}) format('truetype');
+            src: url({{ asset('http://suzannes.atitd.wiki/Rockwell-Bold.ttf') }}) format('truetype');
         }
         @font-face {
             font-family: "Sketch Rockwell";
             font-style: normal;
             font-weight: normal;
-            src: url({{ asset('fonts/SketchRockwell-Bold.ttf') }}) format('truetype');
+            src: url({{ asset('http://suzannes.atitd.wiki/SketchRockwell-Bold.ttf') }}) format('truetype');
         }
 
         .sale-wrapper {

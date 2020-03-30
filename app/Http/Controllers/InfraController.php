@@ -120,8 +120,15 @@ class InfraController extends Controller
 
         $infrasheet->month = $request->upmonth;
         $infrasheet->year  = $request->upyear;
+		
+		// There is a bug somewhere in Laravel, Flysystem, PHP, or somewhere else
+		// This helps us work around that in the meantime
+		$filename = time() . ".xls";
+		
+		$infrasheet->filename = $request->file('upworkbook')->storeAs('infrasheets', $filename);
 
-        $infrasheet->filename = $request->upworkbook->store('infrasheets');
+		// This is the original line that is currently bugged because of the above
+        //$infrasheet->filename = $request->file('upworkbook')->store('infrasheets');
 
         $infrasheet->save();
 
