@@ -1,7 +1,7 @@
 @extends('layouts.app-loader')
 
 @section('content')
-    {!! Form::open() !!}
+    {!! Form::open(['route' => ['infra.show', $infrasheet->id]]) !!}
     <input type="hidden" name="infrasheet" value="{{ $infrasheet->id }}">
     <div class="container-fluid">
         <div class="row">

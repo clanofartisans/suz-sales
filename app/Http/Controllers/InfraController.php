@@ -172,7 +172,7 @@ class InfraController extends Controller
                 break;
         }
 
-        return redirect()->route('infra.show', ['id' => $id]);
+        return redirect()->route('infra.show', ['infra_id' => $id]);
     }
 
     protected function approveAllItems(Request $request)
