@@ -194,6 +194,11 @@ class InfraController extends Controller
      */
     protected function approveItems(Request $request)
     {
+        if(!isset($request->checked)) {
+            flash()->warning('No items were selected.');
+            return;
+        }
+
         foreach($request->checked as $item) {
             InfraItem::find($item)->approve();
         }
