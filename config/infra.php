@@ -13,7 +13,7 @@ return [
     | use the worksheet for KeHE rather than the worksheet for UNFI.
     |
     */
-    'sheetname' => "7 KeHE CT",
+    'sheetname' => "KeHE",
 
     /*
     |--------------------------------------------------------------------------

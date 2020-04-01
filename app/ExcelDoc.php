@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Excel;
 use \Exception;
 use App\InfraItem;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ExcelDoc
 {
@@ -23,7 +23,6 @@ class ExcelDoc
        $this->loadWorkbook($filename);
        $this->loadKeHEWorksheet();
        $this->assignDataHeaders();
-       $this->findDataStartRow();
    }
 
    /*
@@ -31,9 +30,13 @@ class ExcelDoc
     */
     protected function loadWorkbook($filename)
     {
-        $workbook = Excel::load('storage/app/'.$filename);
+        $path = storage_path('app/' . $filename);
 
-        $this->workbook = $workbook->noHeading();
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($path);
+        $reader->setReadDataOnly(true);
+        $workbook = $reader->load($path);
+
+        $this->workbook = $workbook;
     }
 
     /*
@@ -41,14 +44,23 @@ class ExcelDoc
      */
     public function loadKeHEWorksheet()
     {
-        foreach($this->workbook->get() as $sheet)
-        {
-            if($sheet->getTitle() == config('infra.sheetname')) {
+        // Get all worksheet names
+        $worksheets = $this->workbook->getSheetNames();
 
-                $this->worksheet = $sheet;
+        $keheWorksheet = null;
 
-                return true;
+        // Find the KeHE worksheet in the list of worksheet names
+        foreach($worksheets as $worksheet) {
+            if(strpos($worksheet, config('infra.sheetname')) !== false) {
+                $keheWorksheet = $this->workbook->getSheetByName($worksheet);
             }
+        }
+
+        // If we found the KeHE worksheet
+        if($keheWorksheet instanceof Worksheet) {
+            $this->worksheet = $keheWorksheet;
+
+            return true;
         }
 
         throw new Exception("There was an error while processing the Excel file. Couldn't find the KeHE worksheet.");
@@ -62,22 +74,24 @@ class ExcelDoc
     {
         $dataHeaderRow = $this->findDataHeaderRow();
 
-        foreach($dataHeaderRow as $cellNum => $cellValue) {
+        $cellIterator = $dataHeaderRow->getCellIterator();
+        $cellIterator->setIterateOnlyExistingCells(false);
 
-            if($cellValue === config('infra.header.upc')) {
-                $this->dataCols['upc'] = $cellNum;
+        foreach($cellIterator as $cell) {
+            if($cell->getValue() === config('infra.header.upc')) {
+                $this->dataCols['upc'] = $cell->getColumn();
             }
-            if($cellValue === config('infra.header.brand')) {
-                $this->dataCols['brand'] = $cellNum;
+            if($cell->getValue() === config('infra.header.brand')) {
+                $this->dataCols['brand'] = $cell->getColumn();
             }
-            if($cellValue === config('infra.header.desc')) {
-                $this->dataCols['desc'] = $cellNum;
+            if($cell->getValue() === config('infra.header.desc')) {
+                $this->dataCols['desc'] = $cell->getColumn();
             }
-            if($cellValue === config('infra.header.size')) {
-                $this->dataCols['size'] = $cellNum;
+            if($cell->getValue() === config('infra.header.size')) {
+                $this->dataCols['size'] = $cell->getColumn();
             }
-            if($cellValue === config('infra.header.price')) {
-                $this->dataCols['price'] = $cellNum;
+            if($cell->getValue() === config('infra.header.price')) {
+                $this->dataCols['price'] = $cell->getColumn();
             }
         }
     }
@@ -87,11 +101,15 @@ class ExcelDoc
      */
     public function findDataHeaderRow()
     {
-        foreach($this->worksheet as $row) {
+        foreach($this->worksheet->getRowIterator() as $row) {
 
-            foreach($row as $cell) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
 
-                if($cell === 'Flyer CT $') {
+            foreach($cellIterator as $cell) {
+                if($cell->getValue() === 'Flyer CT $') {
+
+                    $this->startRow = ($row->getRowIndex() + 1);
 
                     return $row;
                 }
@@ -102,27 +120,6 @@ class ExcelDoc
     }
 
     /*
-     * Find the first row of actual data.
-     */
-    public function findDataStartRow()
-    {
-        foreach($this->worksheet as $rowNum => $rowValue) {
-
-            foreach($rowValue as $cell) {
-
-                if($cell === 'Flyer CT $') {
-
-                    $this->startRow = ($rowNum + 2);
-
-                    return true;
-                }
-            }
-        }
-
-        throw new Exception("There was an error while processing the Excel file. Couldn't find the first row of product data.");
-    }
-
-    /*
      * Loop through all the data rows converting
      * each row into an InfraItem object that
      * we'll then persist to the database.
@@ -130,30 +127,24 @@ class ExcelDoc
     public function prepareAndSaveItemData($infraSheetID)
     {
         $data = [];
-        foreach($this->worksheet as $rowNum => $rowVal)
-        {
-            if($rowNum >= $this->startRow)
+
+        foreach($this->worksheet->getRowIterator() as $row) {
+
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            if($row->getRowIndex() >= $this->startRow)
             {
                 $newRow = [];
-                foreach($rowVal as $cellNum => $cellVal)
-                {
-                    if($cellNum === $this->dataCols['upc']) {
-                        $newRow['upc'] = $cellVal;
-                    }
-                    if($cellNum === $this->dataCols['brand']) {
-                        $newRow['brand'] = $cellVal;
-                    }
-                    if($cellNum === $this->dataCols['desc']) {
-                        $newRow['desc'] = $this->cleanDesc($cellVal);
-                    }
-                    if($cellNum === $this->dataCols['size']) {
-                        $newRow['size'] = $cellVal;
-                    }
-                    if($cellNum === $this->dataCols['price']) {
-                        $newRow['price'] = $cellVal;
-                    }
+                $newRow['upc']   = $this->worksheet->getCell(($this->dataCols['upc'] . $row->getRowIndex()))->getValue();
+                $newRow['brand'] = $this->worksheet->getCell(($this->dataCols['brand'] . $row->getRowIndex()))->getValue();
+                $newRow['size']  = $this->worksheet->getCell(($this->dataCols['size'] . $row->getRowIndex()))->getValue();
+                $newRow['price'] = $this->worksheet->getCell(($this->dataCols['price'] . $row->getRowIndex()))->getValue();
+                $newRow['desc']  = $this->cleanDesc($this->worksheet->getCell(($this->dataCols['desc'] . $row->getRowIndex()))->getValue());
+
+                if($newRow['upc'] !== null) {
+                    $data[] = $newRow;
                 }
-                $data[] = $newRow;
             }
         }
 
