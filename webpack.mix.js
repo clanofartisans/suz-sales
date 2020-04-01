@@ -11,26 +11,26 @@ const { mix } = require('laravel-mix');
  |
  */
 
-mix.js('resources/assets/js/app.js', 'public/js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+mix.js('resources/js/app.js', 'public/js')
+   .sass('resources/sass/app.scss', 'public/css');
 
-mix.js('resources/assets/js/app-footer.js', 'public/js');
+mix.js('resources/js/app-footer.js', 'public/js');
 
 mix.styles([
-	'resources/assets/bower/bootstrap/dist/css/bootstrap.css',
-	'resources/assets/bower/font-awesome/css/font-awesome.css',
-	'resources/assets/css/sass.css',
-	'resources/assets/css/app.css'
+	'resources/bower/bootstrap/dist/css/bootstrap.css',
+	'resources/bower/font-awesome/css/font-awesome.css',
+	'resources/css/sass.css',
+	'resources/css/app.css'
 	], 'public/css/app.css');
 
 mix.js(
-	'resources/assets/bower/gasparesganga-jquery-loading-overlay/src/loadingoverlay.js',
+	'resources/bower/gasparesganga-jquery-loading-overlay/src/loadingoverlay.js',
 	'public/js');
 
 mix.copy(
-	'resources/assets/bower/gasparesganga-jquery-loading-overlay/src/loading.gif',
+	'resources/bower/gasparesganga-jquery-loading-overlay/src/loading.gif',
 	'public/js');
 
 mix.copy(
-	'resources/assets/bower/font-awesome/fonts',
+	'resources/bower/font-awesome/fonts',
 	'public/fonts');
