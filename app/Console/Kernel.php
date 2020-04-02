@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\CleanupInfra::class,
-        Commands\CleanupManual::class
+        Commands\CleanupManual::class,
+        Commands\HealthCheck::class
     ];
 
     /**
