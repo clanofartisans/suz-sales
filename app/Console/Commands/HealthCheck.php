@@ -65,7 +65,7 @@ class HealthCheck extends Command
         // Check if point of sale connection appears to be up
         try {
             $posTest = \POS::quickQuery('0');
-            if(isset($posTest['desc']) && $posTest['desc'] === 'NOT AN ITEM') {
+            if(isset($posTest['desc']) && $posTest['desc'] === 'NOT AN ITEM ') {
                 $tests++;
             } else {
                 $failed[] = 'Point of Sale System Connection';
