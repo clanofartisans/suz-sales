@@ -35,6 +35,7 @@ class HealthCheck extends Command
     {
         $tests      = 0;
         $totalTests = 3;
+        $failed     = [];
 
         $url = env('HEALTHCHECK_URL');
 
@@ -42,6 +43,8 @@ class HealthCheck extends Command
         $laravelVersion = \App::version();
         if(substr($laravelVersion, 0, 1) === "7") {
             $tests++;
+        } else {
+            $failed[] = 'Laravel Version Check';
         }
 
         // Check if MariaDB connection appears to be up
@@ -51,8 +54,11 @@ class HealthCheck extends Command
                             ->first();
             if($mariaTest->name === 'Brad Turner') {
                 $tests++;
+            } else {
+                $failed[] = 'MariaDB Connection';
             }
         } catch (\Exception $e) {
+            $failed[] = 'MariaDB Connection';
             report($e);
         }
 
@@ -61,8 +67,11 @@ class HealthCheck extends Command
             $posTest = \POS::quickQuery('0');
             if(isset($posTest['desc']) && $posTest['desc'] === 'NOT AN ITEM') {
                 $tests++;
+            } else {
+                $failed[] = 'Point of Sale System Connection';
             }
         } catch (\Exception $e) {
+            $failed[] = 'Point of Sale System Connection';
             report($e);
         }
 
@@ -73,7 +82,13 @@ class HealthCheck extends Command
         if($tests === $totalTests) {
             file_get_contents($url);
         } else {
-            \Log::warning(($totalTests - $tests) . ' health check tests have failed.');
+            $message  = ($totalTests - $tests) . ' health check tests have failed.';
+
+            foreach($failed as $failure) {
+                $message .= "\n" . '> ' . $failure;
+            }
+
+            \Log::warning($message);
         }
     }
 }
