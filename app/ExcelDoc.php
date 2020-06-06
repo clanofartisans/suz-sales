@@ -210,7 +210,9 @@ class ExcelDoc
 
                 return number_format($priceCalc, 2);
             } else {
-                if(!is_string($price)) {
+                $price = ltrim($price, '$');
+                if(is_numeric($price)) {
+                    $price = (float) $price;
                     return number_format($price, 2);
                 }
             }
