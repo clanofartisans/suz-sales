@@ -1,18 +1,18 @@
 <?php
-//
-//use Carbon\Carbon;
-//use Illuminate\Support\Facades\DB;
-//use Illuminate\Support\Facades\Schema;
-//use Illuminate\Database\Schema\Blueprint;
-//use Illuminate\Database\Migrations\Migration;
-//
-//class CreateDefaultEmployeeDiscount extends Migration
-//{
-//    /**
-//     * Run the migrations.
-//     */
-//    public function up()
-//    {
+
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateDefaultEmployeeDiscount extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
 //        $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 //
 //        $data['IM_PRC_GRP']['GRP_COD'] = 'EMPDEFAULT';
@@ -124,15 +124,15 @@
 //             'LST_MAINT_USR_ID' => null,
 //             'LST_LCK_DT'       => null]
 //            ]);
-//    }
-//
-//    /**
-//     * Reverse the migrations.
-//     */
-//    public function down()
-//    {
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
 //        DB::connection('sqlsrv')->delete("delete from IM_PRC_RUL_BRK WHERE GRP_COD =  'EMPDEFAULT'");
 //        DB::connection('sqlsrv')->delete("delete from IM_PRC_RUL WHERE GRP_COD =  'EMPDEFAULT'");
 //        DB::connection('sqlsrv')->delete("delete from IM_PRC_GRP WHERE GRP_COD =  'EMPDEFAULT'");
-//    }
-//}
+    }
+}
