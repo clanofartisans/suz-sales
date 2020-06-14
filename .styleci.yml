@@ -3,6 +3,7 @@ enabled:
   - align_double_arrow_minimal
   - align_equals_minimal
 disabled:
+  - array_indentation
   - no_unused_imports
   - not_operator_with_successor_space
   - trailing_comma_in_multiline_array
