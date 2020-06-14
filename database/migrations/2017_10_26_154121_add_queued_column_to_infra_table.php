@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddQueuedColumnToInfraTable extends Migration
 {
@@ -13,7 +13,7 @@ class AddQueuedColumnToInfraTable extends Migration
      */
     public function up()
     {
-        Schema::table('infra_items', function($table) {
+        Schema::table('infra_items', function ($table) {
             $table->boolean('queued')->default(false);
         });
     }
@@ -25,7 +25,7 @@ class AddQueuedColumnToInfraTable extends Migration
      */
     public function down()
     {
-        Schema::table('infra_items', function($table) {
+        Schema::table('infra_items', function ($table) {
             $table->dropColumn('queued');
         });
     }

@@ -2,9 +2,9 @@
 
 namespace App;
 
-use POS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use POS;
 
 class EmployeeDiscount extends Model
 {
@@ -36,7 +36,7 @@ class EmployeeDiscount extends Model
     {
         $result = POS::applyEmployeeDiscount($this->brand, $this->discount, $this->sale_begin, $this->sale_end, $this->id, $this->no_begin, $this->no_end);
 
-        if($result === false) {
+        if ($result === false) {
             $this->flags = 'An error occurred';
             $this->save();
         }

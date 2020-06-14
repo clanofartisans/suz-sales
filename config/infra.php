@@ -1,6 +1,5 @@
 <?php
 
-
 return [
 
     /*
@@ -13,7 +12,7 @@ return [
     | use the worksheet for KeHE rather than the worksheet for UNFI.
     |
     */
-    'sheetname' => "KeHE",
+    'sheetname' => 'KeHE',
 
     /*
     |--------------------------------------------------------------------------
@@ -26,10 +25,10 @@ return [
     |
     */
     'header' => [
-        'upc'   => "UPC",
-        'brand' => "Brand",
-        'desc'  => "Product Description",
-        'size'  => "Unit Size",
-        'price' => "Flyer CT $",
+        'upc'   => 'UPC',
+        'brand' => 'Brand',
+        'desc'  => 'Product Description',
+        'size'  => 'Unit Size',
+        'price' => 'Flyer CT $',
     ],
 ];

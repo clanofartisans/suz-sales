@@ -1,18 +1,20 @@
-<?php namespace App\POS\Drivers;
+<?php
 
-use DB;
+namespace App\POS\Drivers;
+
+use App\EmployeeDiscount;
+use App\InfraItem;
+use App\InfraSheet;
+use App\Jobs\RenumberSales;
+use App\LineDrive;
+use App\ManualSale;
+use App\POS\Contracts\POSDriverInterface as POSDriverContract;
 use App\POS\POS;
 use Carbon\Carbon;
-use App\InfraItem;
-use App\LineDrive;
-use App\InfraSheet;
-use App\ManualSale;
-use App\EmployeeDiscount;
-use App\Jobs\RenumberSales;
-use App\POS\Contracts\POSDriverInterface as POSDriverContract;
+use DB;
 
 /**
- * Class CounterpointDriver
+ * Class CounterpointDriver.
  */
 class CounterpointDriver extends POS implements POSDriverContract
 {
@@ -27,10 +29,10 @@ class CounterpointDriver extends POS implements POSDriverContract
     {
         $item_no = DB::connection('sqlsrv')->table('VI_IM_SKU_BARCOD')->where('BARCOD', $upc)->first();
 
-        if($item_no) {
+        if ($item_no) {
             $item = DB::connection('sqlsrv')->table('IM_ITEM')->where('ITEM_NO', $item_no->ITEM_NO)->first();
 
-            if($item) {
+            if ($item) {
                 return $item;
             }
         }
@@ -48,10 +50,10 @@ class CounterpointDriver extends POS implements POSDriverContract
      */
     public function updateItem($discounted)
     {
-        if($discounted['sale_type'] == 'INFRA') {
+        if ($discounted['sale_type'] == 'INFRA') {
             $this->updateInfraItem($discounted);
         }
-        if($discounted['sale_type'] == 'Manual') {
+        if ($discounted['sale_type'] == 'Manual') {
             $this->updateManualItem($discounted);
         }
 
@@ -118,7 +120,7 @@ class CounterpointDriver extends POS implements POSDriverContract
         $percent_off = $discounted['percent_off'];
 
         DB::connection('sqlsrv')->table('IM_PRC_GRP')->insert([
-            ['GRP_TYP'          => 'C',
+            ['GRP_TYP'         => 'C',
             'GRP_COD'          => $discounted['IM_PRC_GRP']['GRP_COD'],
             'GRP_SEQ_NO'       => null,
             'DESCR'            => $discounted['IM_PRC_GRP']['DESCR'],
@@ -140,7 +142,7 @@ class CounterpointDriver extends POS implements POSDriverContract
         ]);
 
         DB::connection('sqlsrv')->table('IM_PRC_RUL')->insert([
-            ['GRP_TYP'          => 'C',
+            ['GRP_TYP'         => 'C',
             'GRP_COD'          => $discounted['IM_PRC_RUL']['GRP_COD'],
             'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL']['RUL_SEQ_NO'],
             'DESCR'            => $discounted['IM_PRC_RUL']['DESCR'],
@@ -165,7 +167,7 @@ class CounterpointDriver extends POS implements POSDriverContract
         ]);
 
         DB::connection('sqlsrv')->table('IM_PRC_RUL_BRK')->insert([
-            ['GRP_TYP'          => 'C',
+            ['GRP_TYP'         => 'C',
             'GRP_COD'          => $discounted['IM_PRC_RUL_BRK']['GRP_COD'],
             'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL_BRK']['RUL_SEQ_NO'],
             'PRC_METH'         => 'D',
@@ -196,10 +198,10 @@ class CounterpointDriver extends POS implements POSDriverContract
     {
         $args = $this->calcItemDiscountsFromInfra($item, $realPrice);
 
-        if($args === false) {
+        if ($args === false) {
             return 'Item price is lower than sale price';
         }
-        $price   = $args['price'];
+        $price = $args['price'];
 
         $c_begDate = Carbon::createFromFormat('F Y j', "$month $year 1");
 
@@ -208,11 +210,11 @@ class CounterpointDriver extends POS implements POSDriverContract
         $data['reg_price']   = $item->PRC_1;
         $data['percent_off'] = $percent;
 
-        if($this->checkForBetterSales($item->ITEM_NO, $percent)) {
+        if ($this->checkForBetterSales($item->ITEM_NO, $percent)) {
             return false;
         }
 
-        $data['IM_PRC_RUL']['GRP_COD']    = 'INFRA' . $c_begDate->format('my');
+        $data['IM_PRC_RUL']['GRP_COD']    = 'INFRA'.$c_begDate->format('my');
         $data['IM_PRC_RUL']['RUL_SEQ_NO'] = $localID;
         $data['IM_PRC_RUL']['DESCR']      = "$item->ITEM_NO $price";
         $data['IM_PRC_RUL']['DESCR_UPPR'] = strtoupper($data['IM_PRC_RUL']['DESCR']);
@@ -249,31 +251,31 @@ Operation=and";
         $data['reg_price']   = $item->PRC_1;
         $data['percent_off'] = $percent;
 
-        $data['IM_PRC_GRP']['GRP_COD'] = 'SMMS' . $id;
+        $data['IM_PRC_GRP']['GRP_COD'] = 'SMMS'.$id;
 
-        $YYMMDD = Carbon::now('America/Chicago')->format('ymd');
-        $descr   = $item->ITEM_NO . ' '. $YYMMDD. ' ' . $item->PROF_ALPHA_2 . ' ' . $item->DESCR;
-        $data['IM_PRC_GRP']['DESCR']   = substr($descr, 0, 30);
+        $YYMMDD                      = Carbon::now('America/Chicago')->format('ymd');
+        $descr                       = $item->ITEM_NO.' '.$YYMMDD.' '.$item->PROF_ALPHA_2.' '.$item->DESCR;
+        $data['IM_PRC_GRP']['DESCR'] = substr($descr, 0, 30);
 
         $data['IM_PRC_GRP']['DESCR_UPR'] = strtoupper($data['IM_PRC_GRP']['DESCR']);
 
-        if($no_begin) {
-            $data['IM_PRC_GRP']['BEG_DAT'] = null;
-            $data['IM_PRC_GRP']['BEG_DT']  = null;
+        if ($no_begin) {
+            $data['IM_PRC_GRP']['BEG_DAT']    = null;
+            $data['IM_PRC_GRP']['BEG_DT']     = null;
             $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'Y';
         } else {
-            $data['IM_PRC_GRP']['BEG_DAT'] = $start->format('Y-m-d') . ' 00:00:00.000';
-            $data['IM_PRC_GRP']['BEG_DT']  = $data['IM_PRC_GRP']['BEG_DAT'];
+            $data['IM_PRC_GRP']['BEG_DAT']    = $start->format('Y-m-d').' 00:00:00.000';
+            $data['IM_PRC_GRP']['BEG_DT']     = $data['IM_PRC_GRP']['BEG_DAT'];
             $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'N';
         }
 
-        if($no_end) {
-            $data['IM_PRC_GRP']['END_DAT'] = null;
-            $data['IM_PRC_GRP']['END_DT']  = null;
+        if ($no_end) {
+            $data['IM_PRC_GRP']['END_DAT']    = null;
+            $data['IM_PRC_GRP']['END_DT']     = null;
             $data['IM_PRC_GRP']['NO_END_DAT'] = 'Y';
         } else {
-            $data['IM_PRC_GRP']['END_DAT'] = $end->format('Y-m-d') . ' 00:00:00.000';
-            $data['IM_PRC_GRP']['END_DT']  = $end->format('Y-m-d') . ' 23:59:59.000';
+            $data['IM_PRC_GRP']['END_DAT']    = $end->format('Y-m-d').' 00:00:00.000';
+            $data['IM_PRC_GRP']['END_DT']     = $end->format('Y-m-d').' 23:59:59.000';
             $data['IM_PRC_GRP']['NO_END_DAT'] = 'N';
         }
 
@@ -314,7 +316,7 @@ Operation=and";
      */
     protected function insertDiscountAtCorrectPosition($item, $discountXML)
     {
-        if(!isset($item->ItemDiscounts)) {
+        if (!isset($item->ItemDiscounts)) {
             $discounted = $this->insertDiscountWithoutExistingDiscounts($item, $discountXML);
         } else {
             $discounted = $this->insertDiscountWithExistingDiscounts($item, $discountXML);
@@ -333,12 +335,12 @@ Operation=and";
      */
     protected static function calcItemDiscountsFromInfra($item, $realPrice)
     {
-        if($realPrice == '20%') {
+        if ($realPrice == '20%') {
             $price = (float) $item->PRC_1;
 
             $realPrice = round(($price * 0.8), 2);
 
-            $amount    = $price - $realPrice;
+            $amount = $price - $realPrice;
 
             $args['disp_msrp']       = (string) (number_format($price, 2));
             $args['disp_sale_price'] = (string) (number_format($realPrice, 2));
@@ -351,7 +353,7 @@ Operation=and";
             $realPrice = (float) $realPrice;
             $amount    = ((float) $item->PRC_1) - $realPrice;
 
-            if($amount <= 0.00) {
+            if ($amount <= 0.00) {
                 return false;
             }
 
@@ -399,7 +401,7 @@ Operation=and";
     {
         $prices = self::calcItemDiscountsFromInfra($item, $infraPrice);
 
-        if($prices === false) {
+        if ($prices === false) {
             return false;
         }
 
@@ -417,22 +419,20 @@ Operation=and";
     {
         $return = [];
 
-        if($item = $this->getItem($upc)) {
+        if ($item = $this->getItem($upc)) {
+            $price           = (float) $item->PRC_1;
+            $return['brand'] = (string) $item->PROF_ALPHA_2;
+            $return['desc']  = ((string) $item->DESCR).' '.((string) $item->PROF_ALPHA_1);
+            $return['price'] = (string) (number_format($price, 2));
 
-            $price = (float) $item->PRC_1;
-            $return['brand']  = (string) $item->PROF_ALPHA_2;
-            $return['desc']   = ((string) $item->DESCR) . ' ' . ((string) $item->PROF_ALPHA_1);
-            $return['price']  = (string) (number_format($price, 2));
-
-            if($return['brand'] == "PRIVATE LABEL" ||
-               $return['brand'] == "VITALITY WORKS" ||
-               $return['brand'] == "RELIANCE PRIVATE LABEL")
-            {
+            if ($return['brand'] == 'PRIVATE LABEL' ||
+               $return['brand'] == 'VITALITY WORKS' ||
+               $return['brand'] == 'RELIANCE PRIVATE LABEL') {
                 $return['brand'] = "Suzanne's";
             }
 
-            if($return['brand'] == "CRUNCHMASTER") {
-                $return['brand'] = "Crunch Master";
+            if ($return['brand'] == 'CRUNCHMASTER') {
+                $return['brand'] = 'Crunch Master';
             }
 
             return $return;
@@ -454,7 +454,7 @@ Operation=and";
                                           ->orderBy('PROF_ALPHA_2', 'asc')
                                           ->get();
 
-        foreach($result as $raw) {
+        foreach ($result as $raw) {
             $brand   = $raw->PROF_ALPHA_2;
             $encoded = urlencode($brand);
 
@@ -466,7 +466,7 @@ Operation=and";
 
     public static function escapeBrand($brand)
     {
-        $escaped = str_replace ("'","''", $brand);
+        $escaped = str_replace("'", "''", $brand);
 
         return $escaped;
     }
@@ -480,31 +480,31 @@ Operation=and";
 
         $escaped = self::escapeBrand($brand);
 
-        $data['IM_PRC_GRP']['GRP_COD'] = 'SMLD' . $id;
+        $data['IM_PRC_GRP']['GRP_COD'] = 'SMLD'.$id;
 
-        $YYMMDD = Carbon::now('America/Chicago')->format('ymd');
-        $descr  = $brand . ' ' . $YYMMDD;
-        $data['IM_PRC_GRP']['DESCR']   = substr($descr, 0, 30);
+        $YYMMDD                      = Carbon::now('America/Chicago')->format('ymd');
+        $descr                       = $brand.' '.$YYMMDD;
+        $data['IM_PRC_GRP']['DESCR'] = substr($descr, 0, 30);
 
         $data['IM_PRC_GRP']['DESCR_UPR'] = strtoupper($data['IM_PRC_GRP']['DESCR']);
 
-        if($no_begin) {
-            $data['IM_PRC_GRP']['BEG_DAT'] = null;
-            $data['IM_PRC_GRP']['BEG_DT']  = null;
+        if ($no_begin) {
+            $data['IM_PRC_GRP']['BEG_DAT']    = null;
+            $data['IM_PRC_GRP']['BEG_DT']     = null;
             $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'Y';
         } else {
-            $data['IM_PRC_GRP']['BEG_DAT'] = $begin->format('Y-m-d') . ' 00:00:00.000';
-            $data['IM_PRC_GRP']['BEG_DT']  = $data['IM_PRC_GRP']['BEG_DAT'];
+            $data['IM_PRC_GRP']['BEG_DAT']    = $begin->format('Y-m-d').' 00:00:00.000';
+            $data['IM_PRC_GRP']['BEG_DT']     = $data['IM_PRC_GRP']['BEG_DAT'];
             $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'N';
         }
 
-        if($no_end) {
-            $data['IM_PRC_GRP']['END_DAT'] = null;
-            $data['IM_PRC_GRP']['END_DT']  = null;
+        if ($no_end) {
+            $data['IM_PRC_GRP']['END_DAT']    = null;
+            $data['IM_PRC_GRP']['END_DT']     = null;
             $data['IM_PRC_GRP']['NO_END_DAT'] = 'Y';
         } else {
-            $data['IM_PRC_GRP']['END_DAT'] = $end->format('Y-m-d') . ' 00:00:00.000';
-            $data['IM_PRC_GRP']['END_DT']  = $end->format('Y-m-d') . ' 23:59:59.000';
+            $data['IM_PRC_GRP']['END_DAT']    = $end->format('Y-m-d').' 00:00:00.000';
+            $data['IM_PRC_GRP']['END_DT']     = $end->format('Y-m-d').' 23:59:59.000';
             $data['IM_PRC_GRP']['NO_END_DAT'] = 'N';
         }
 
@@ -603,44 +603,44 @@ Operation=and";
 
         $escaped = self::escapeBrand($brand);
 
-        $data['IM_PRC_GRP']['GRP_COD'] = 'SMED' . $id;
+        $data['IM_PRC_GRP']['GRP_COD'] = 'SMED'.$id;
 
-        $YYMMDD = Carbon::now('America/Chicago')->format('ymd');
-        $descr  = 'Employee ' . $brand . ' ' . $YYMMDD;
-        $data['IM_PRC_GRP']['DESCR']   = substr($descr, 0, 30);
+        $YYMMDD                      = Carbon::now('America/Chicago')->format('ymd');
+        $descr                       = 'Employee '.$brand.' '.$YYMMDD;
+        $data['IM_PRC_GRP']['DESCR'] = substr($descr, 0, 30);
 
         $data['IM_PRC_GRP']['DESCR_UPR'] = strtoupper($data['IM_PRC_GRP']['DESCR']);
 
-        if($no_begin) {
-            $data['IM_PRC_GRP']['BEG_DAT'] = null;
-            $data['IM_PRC_GRP']['BEG_DT']  = null;
+        if ($no_begin) {
+            $data['IM_PRC_GRP']['BEG_DAT']    = null;
+            $data['IM_PRC_GRP']['BEG_DT']     = null;
             $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'Y';
         } else {
-            $data['IM_PRC_GRP']['BEG_DAT'] = $begin->format('Y-m-d') . ' 00:00:00.000';
-            $data['IM_PRC_GRP']['BEG_DT']  = $data['IM_PRC_GRP']['BEG_DAT'];
+            $data['IM_PRC_GRP']['BEG_DAT']    = $begin->format('Y-m-d').' 00:00:00.000';
+            $data['IM_PRC_GRP']['BEG_DT']     = $data['IM_PRC_GRP']['BEG_DAT'];
             $data['IM_PRC_GRP']['NO_BEG_DAT'] = 'N';
         }
 
-        if($no_end) {
-            $data['IM_PRC_GRP']['END_DAT'] = null;
-            $data['IM_PRC_GRP']['END_DT']  = null;
+        if ($no_end) {
+            $data['IM_PRC_GRP']['END_DAT']    = null;
+            $data['IM_PRC_GRP']['END_DT']     = null;
             $data['IM_PRC_GRP']['NO_END_DAT'] = 'Y';
         } else {
-            $data['IM_PRC_GRP']['END_DAT'] = $end->format('Y-m-d') . ' 00:00:00.000';
-            $data['IM_PRC_GRP']['END_DT']  = $end->format('Y-m-d') . ' 23:59:59.000';
+            $data['IM_PRC_GRP']['END_DAT']    = $end->format('Y-m-d').' 00:00:00.000';
+            $data['IM_PRC_GRP']['END_DT']     = $end->format('Y-m-d').' 23:59:59.000';
             $data['IM_PRC_GRP']['NO_END_DAT'] = 'N';
         }
 
         $data['IM_PRC_GRP']['CUST_FILT']       = "(AR_CUST.CATEG_COD = 'EMPLOYEE')";
-        $data['IM_PRC_GRP']['CUST_FILT_TMPLT'] = "Checked=0
+        $data['IM_PRC_GRP']['CUST_FILT_TMPLT'] = 'Checked=0
 IndentLev=0
 DataField=CATEG_COD
 Template=is (exactly)
 Value=EMPLOYEE
 Value1=
 Value2=
-Operation=and";
-        $data['IM_PRC_GRP']['CUST_FILT_TEXT'] = "Category is (exactly) EMPLOYEE";
+Operation=and';
+        $data['IM_PRC_GRP']['CUST_FILT_TEXT'] = 'Category is (exactly) EMPLOYEE';
 
         $data['IM_PRC_RUL']['GRP_COD']    = $data['IM_PRC_GRP']['GRP_COD'];
         $data['IM_PRC_RUL']['RUL_SEQ_NO'] = 1;
@@ -738,13 +738,13 @@ Operation=and";
 
         $data = [];
 
-        $data['groupCode'] = 'INFRA' . $c_begDate->format('my');
-        $data['desc']      = 'INFRA ' . $c_begDate->format('F Y');
+        $data['groupCode'] = 'INFRA'.$c_begDate->format('my');
+        $data['desc']      = 'INFRA '.$c_begDate->format('F Y');
         $data['descUpper'] = strtoupper($data['desc']);
-        $data['begDate']   = $c_begDate->format('Y-m-d') . ' 00:00:00.000';
+        $data['begDate']   = $c_begDate->format('Y-m-d').' 00:00:00.000';
         $data['begTime']   = $data['begDate'];
-        $data['endDate']   = $c_endDate->format('Y-m-d') . ' 00:00:00.000';
-        $data['endTime']   = $c_endDate->format('Y-m-d') . ' 23:59:59.000';
+        $data['endDate']   = $c_endDate->format('Y-m-d').' 00:00:00.000';
+        $data['endTime']   = $c_endDate->format('Y-m-d').' 23:59:59.000';
 
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
@@ -801,8 +801,7 @@ Operation=and";
     {
         $renumbering = DB::table('jobs')->where('queue', 'renumbering')->count();
 
-        if($renumbering > 0) {
-
+        if ($renumbering > 0) {
             return false;
         }
 
@@ -836,32 +835,32 @@ Operation=and";
 
         /* Sort Infra */
 
-        foreach($infraSales as $infraSale) {
-            $begin_date = Carbon::createFromFormat('F Y j', "$infraSale->month $infraSale->year 1");
-            $sales[$seq_no] = 'INFRA' . $begin_date->format('my');
+        foreach ($infraSales as $infraSale) {
+            $begin_date     = Carbon::createFromFormat('F Y j', "$infraSale->month $infraSale->year 1");
+            $sales[$seq_no] = 'INFRA'.$begin_date->format('my');
             $seq_no++;
         }
 
         /* Sort Line Drives, Manual Sales, and Employee Discounts */
 
-        foreach($lineDrives as $lineDrive) {
-            $combined['SMLD' . $lineDrive->id] = $lineDrive->discount;
+        foreach ($lineDrives as $lineDrive) {
+            $combined['SMLD'.$lineDrive->id] = $lineDrive->discount;
         }
 
-        foreach($employeeDiscounts as $employeeDiscount) {
-            $combined['SMED' . $employeeDiscount->id] = $employeeDiscount->discount;
+        foreach ($employeeDiscounts as $employeeDiscount) {
+            $combined['SMED'.$employeeDiscount->id] = $employeeDiscount->discount;
         }
 
-        foreach($manualSales as $manualSale) {
-            $combined['SMMS' . $manualSale->id] = $manualSale->percent_off;
+        foreach ($manualSales as $manualSale) {
+            $combined['SMMS'.$manualSale->id] = $manualSale->percent_off;
         }
 
         $combined['EMPDEFAULT'] = 25;
 
-        if(!empty($combined)) {
+        if (!empty($combined)) {
             arsort($combined);
 
-            foreach($combined as $key => $value) {
+            foreach ($combined as $key => $value) {
                 $sales[$seq_no] = $key;
                 $seq_no++;
             }
@@ -874,7 +873,7 @@ Operation=and";
 
     public function applyRenumbering($sales)
     {
-        foreach($sales as $seq_no => $sale) {
+        foreach ($sales as $seq_no => $sale) {
             DB::connection('sqlsrv')->table('IM_PRC_GRP')
                                     ->where('GRP_COD', $sale)
                                     ->update(['GRP_SEQ_NO' => $seq_no]);

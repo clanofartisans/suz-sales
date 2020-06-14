@@ -1,10 +1,12 @@
-<?php namespace App\POS\Contracts;
+<?php
 
-use Carbon\Carbon;
+namespace App\POS\Contracts;
+
 use App\InfraSheet;
+use Carbon\Carbon;
 
 /**
- * Interface POSDriverInterface
+ * Interface POSDriverInterface.
  */
 interface POSDriverInterface
 {
@@ -26,7 +28,6 @@ interface POSDriverInterface
      * @return bool
      */
     public function updateItem($discounted);
-
 
     /*
      * Calculate the sale prices and dates for this

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use POS;
-use Carbon\Carbon;
 use App\EmployeeDiscount;
-use Illuminate\Http\Request;
 use App\Jobs\ApplyEmployeeDiscount;
+use Carbon\Carbon;
+use DB;
+use Illuminate\Http\Request;
+use POS;
 
 class EmployeeDiscountController extends Controller
 {
@@ -28,35 +28,35 @@ class EmployeeDiscountController extends Controller
     {
         $filter = session('filter');
 
-        if(empty($filter)) {
+        if (empty($filter)) {
             $filter = 'f_all';
         }
 
         $items = EmployeeDiscount::where(function ($query) {
-                                      $query->where('no_begin', false)
+            $query->where('no_begin', false)
                                             ->orWhere('no_end', false);
-                                  })
+        })
                                  ->orderBy('sale_end', 'asc')
                                  ->orderBy('sale_begin', 'asc')
                                  ->orderBy('brand', 'asc');
 
         $forever = EmployeeDiscount::where('no_begin', true)
-                                   ->where('no_end',true)
+                                   ->where('no_end', true)
                                    ->orderBy('brand', 'asc');
 
-        switch($filter) {
+        switch ($filter) {
             case 'f_all':
                 $items   = $items->where('expires', '>=', Carbon::now());
                 $forever = $forever->where('expires', '>=', Carbon::now());
                 break;
             case 'f_processed':
-                $items   = $items->where('processed', true)
+                $items = $items->where('processed', true)
                                  ->where('expires', '>=', Carbon::now());
-                $forever = $forever ->where('processed', true)
+                $forever = $forever->where('processed', true)
                                     ->where('expires', '>=', Carbon::now());
                 break;
             case 'f_flagged':
-                $items   = $items->whereNotNull('flags')
+                $items = $items->whereNotNull('flags')
                                  ->where('expires', '>=', Carbon::now());
                 $forever = $forever->whereNotNull('flags')
                                    ->where('expires', '>=', Carbon::now());
@@ -72,11 +72,11 @@ class EmployeeDiscountController extends Controller
 
         $items = $items->concat($forever);
 
-        foreach($items as $item) {
-            if($item->no_begin && $item->no_end) {
+        foreach ($items as $item) {
+            if ($item->no_begin && $item->no_end) {
                 $item->from_to = 'Forever';
             } else {
-                if(is_null($item->sale_begin)) {
+                if (is_null($item->sale_begin)) {
                     $item->from_to = '&mdash;';
                 } else {
                     $item->from_to = $item->sale_begin->toFormattedDateString();
@@ -84,7 +84,7 @@ class EmployeeDiscountController extends Controller
 
                 $item->from_to .= ' to ';
 
-                if(is_null($item->sale_end)) {
+                if (is_null($item->sale_end)) {
                     $item->from_to .= '&mdash;';
                 } else {
                     $item->from_to .= $item->sale_end->toFormattedDateString();
@@ -99,11 +99,11 @@ class EmployeeDiscountController extends Controller
 
     public function process(Request $request)
     {
-        if($request->filter) {
+        if ($request->filter) {
             session(['filter' => $request->filter]);
         }
 
-        switch($request->process) {
+        switch ($request->process) {
             case 'add':
                 return redirect()->route('employeediscount.create');
                 break;
@@ -124,19 +124,19 @@ class EmployeeDiscountController extends Controller
 
     public function store(Request $request)
     {
-        if(!isset($request->checkNoBegin)) {
+        if (!isset($request->checkNoBegin)) {
             $sale_begin = new Carbon($request->sale_begin);
         } else {
             $sale_begin = null;
         }
 
-        if(!isset($request->checkNoEnd)) {
-            $sale_end   = new Carbon($request->sale_end);
+        if (!isset($request->checkNoEnd)) {
+            $sale_end = new Carbon($request->sale_end);
 
             $expires = new Carbon($request->sale_end);
             $expires = $expires->addDay();
         } else {
-            $sale_end   = null;
+            $sale_end = null;
 
             $expires = new Carbon();
             $expires = $expires->addYears(10);
@@ -158,7 +158,7 @@ class EmployeeDiscountController extends Controller
 
     protected function deleteItems(Request $request)
     {
-        foreach($request->checked as $item) {
+        foreach ($request->checked as $item) {
             EmployeeDiscount::find($item)->delete();
         }
 

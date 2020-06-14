@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateLineDrivesTable extends Migration
 {
@@ -13,8 +13,7 @@ class CreateLineDrivesTable extends Migration
      */
     public function up()
     {
-        Schema::create('line_drives', function(Blueprint $table)
-        {
+        Schema::create('line_drives', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('brand');
             $table->unsignedTinyInteger('discount');

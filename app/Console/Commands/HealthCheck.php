@@ -1,4 +1,6 @@
-<?php namespace App\Console\Commands;
+<?php
+
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
@@ -41,7 +43,7 @@ class HealthCheck extends Command
 
         // Check to make sure Laravel appears to be loaded correctly
         $laravelVersion = \App::version();
-        if(substr($laravelVersion, 0, 1) === "7") {
+        if (substr($laravelVersion, 0, 1) === '7') {
             $tests++;
         } else {
             $failed[] = 'Laravel Version Check';
@@ -52,7 +54,7 @@ class HealthCheck extends Command
             $mariaTest = \DB::table('users')
                             ->where('email', 'brad@clanofartisans.com')
                             ->first();
-            if($mariaTest->name === 'Brad Turner') {
+            if ($mariaTest->name === 'Brad Turner') {
                 $tests++;
             } else {
                 $failed[] = 'MariaDB Connection';
@@ -65,7 +67,7 @@ class HealthCheck extends Command
         // Check if point of sale connection appears to be up
         try {
             $posTest = \POS::quickQuery('0');
-            if(isset($posTest['desc']) && $posTest['desc'] === 'NOT AN ITEM ') {
+            if (isset($posTest['desc']) && $posTest['desc'] === 'NOT AN ITEM ') {
                 $tests++;
             } else {
                 $failed[] = 'Point of Sale System Connection';
@@ -76,16 +78,16 @@ class HealthCheck extends Command
         }
 
         // Output results to console in case we're running tests manually
-        $this->info($tests . '/' . $totalTests . ' tests passed.');
+        $this->info($tests.'/'.$totalTests.' tests passed.');
 
         // Ping HealthChecks.io on all green, or log a warning if something failed
-        if($tests === $totalTests) {
+        if ($tests === $totalTests) {
             file_get_contents($url);
         } else {
-            $message  = ($totalTests - $tests) . ' health check tests have failed.';
+            $message = ($totalTests - $tests).' health check tests have failed.';
 
-            foreach($failed as $failure) {
-                $message .= "\n" . '> ' . $failure;
+            foreach ($failed as $failure) {
+                $message .= "\n".'> '.$failure;
             }
 
             \Log::warning($message);
