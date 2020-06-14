@@ -192,7 +192,7 @@ class CounterpointDriver extends POS implements POSDriverContract
      * @param string $month
      * @param string $year
      *
-     * @return array|string|bool
+     * @return array
      */
     public function applyDiscountToItem($item, string $realPrice, string $month, string $year, $percent = null, $localID = null)
     {
@@ -313,7 +313,7 @@ Operation=and";
     /*
      * Calculates and returns all the pricing info for an item.
      *
-     * @param SimpleXML $item
+     * @param \SimpleXMLElement $item
      * @param string    $realPrice
      *
      * @return array|bool

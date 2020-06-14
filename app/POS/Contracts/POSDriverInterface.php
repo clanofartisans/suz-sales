@@ -38,8 +38,6 @@ interface POSDriverInterface
      * @param string $realPrice
      * @param string $month
      * @param string $year
-     *
-     * @return string|bool
      */
     public function applyDiscountToItem($item, string $realPrice, string $month, string $year, $percent = null, $localID = null);
 

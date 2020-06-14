@@ -110,7 +110,7 @@ XML;
 
         $this->response = simplexml_load_string($response);
 
-        if (!isset($this->response->children('soap', true)->Body->Fault)) {
+        if ($this->response && !isset($this->response->children('soap', true)->Body->Fault)) {
             $item = $this->response->children('soap', true)->Body->children()->RequestResponse->RequestResult->ItemLookup01Results->Item;
 
             return $item;
