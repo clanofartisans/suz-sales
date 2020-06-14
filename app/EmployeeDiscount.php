@@ -2,9 +2,9 @@
 
 namespace App;
 
+use App\POS\POSFacade as POS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use POS;
 
 class EmployeeDiscount extends Model
 {
