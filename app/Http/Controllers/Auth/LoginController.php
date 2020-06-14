@@ -21,7 +21,6 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
-
     /**
      * The maximum number of attempts to allow.
      *
