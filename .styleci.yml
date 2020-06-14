@@ -4,6 +4,7 @@ enabled:
   - align_equals_minimal
 disabled:
   - no_unused_imports
+  - not_operator_with_successor_space
   - trailing_comma_in_multiline_array
   - unalign_equals
 finder:
