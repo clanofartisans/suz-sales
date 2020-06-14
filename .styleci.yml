@@ -1,5 +1,6 @@
 preset: laravel
 enabled:
+  - align_double_arrow_minimal
   - align_equals_minimal
 disabled:
   - no_unused_imports
