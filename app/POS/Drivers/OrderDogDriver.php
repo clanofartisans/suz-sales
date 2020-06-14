@@ -179,7 +179,7 @@ XML;
      *
      * @return string|bool
      */
-    public function applyDiscountToItem($item, string $realPrice, string $month, string $year, $percent = null)
+    public function applyDiscountToItem($item, string $realPrice, string $month, string $year, $percent = null, $localID = null)
     {
         $args  = $this->calcItemDiscountsFromInfra($item, $realPrice);
         $dates = $this->calcItemDiscountDates($month, $year);
@@ -507,7 +507,14 @@ XML;
     /*
      * ?
      */
-    public function startInfraSheet(InfraSheet $infrasheet) {
+    public function startInfraSheet(InfraSheet $infrasheet)
+    {
         return true;
+    }
+
+
+    public function checkForBetterSales($sku, $percent)
+    {
+        return false;
     }
 }
