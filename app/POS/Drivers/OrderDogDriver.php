@@ -34,7 +34,7 @@ class OrderDogDriver extends POS implements POSDriverContract
     /*
      * The response we received back from our API call.
      *
-     * @var SimpleXML
+     * @var \SimpleXMLElement
      */
     protected $response;
 
@@ -75,7 +75,7 @@ class OrderDogDriver extends POS implements POSDriverContract
      *
      * @param string $upc
      *
-     * @return SimpleXMLElement|bool
+     * @return \SimpleXMLElement|bool
      */
     public function getItem(string $upc)
     {
@@ -305,12 +305,16 @@ XML;
 
     protected function checkDuplicateDiscount($discount, $discountXML)
     {
+        $current = [];
+
         $current['Amount']  = (float) $discount->Amount;
         $current['Price']   = (float) $discount->Price;
         $current['StartDt'] = new Carbon($discount->StartDt);
         $current['EndDt']   = new Carbon($discount->EndDt);
 
         $newDiscount = simplexml_load_string($discountXML);
+
+        $new = [];
 
         $new['Amount']  = (float) $newDiscount->ItemDiscount->Amount;
         $new['Price']   = (float) $newDiscount->ItemDiscount->Price;
@@ -375,6 +379,8 @@ XML;
      */
     protected static function calcItemDiscountsFromInfra($item, $realPrice)
     {
+        $args = [];
+
         if ($realPrice == '20%') {
             $price = (float) $item->Price;
 
@@ -422,6 +428,8 @@ XML;
         $start = new Carbon("first day of $month $year");
         $end   = new Carbon("last day of $month $year");
 
+        $dates = [];
+
         $dates['start'] = $start->format('n/j/Y');
         $dates['end']   = $end->format('n/j/Y');
 
@@ -444,6 +452,8 @@ XML;
         if ($prices === false) {
             return false;
         }
+
+        $display = [];
 
         $display['sale_price'] = $prices['disp_sale_price'];
         $display['msrp']       = $prices['disp_msrp'];

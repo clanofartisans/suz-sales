@@ -18,7 +18,7 @@ class POSManager extends Manager
      */
     public function getDefaultDriver()
     {
-        return $this->app['config']['pos.driver'];
+        return $this->container['config']['pos.driver'];
     }
 
     /**

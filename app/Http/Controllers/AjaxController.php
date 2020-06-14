@@ -9,6 +9,8 @@ class AjaxController extends Controller
 {
     public function queueCountInfra()
     {
+        $queueCount = [];
+
         $queueCount['infra'] = DB::table('infra_items')->where('queued', true)->count();
 
         return $queueCount;
@@ -16,6 +18,8 @@ class AjaxController extends Controller
 
     public function queueCountsManual()
     {
+        $queueCounts = [];
+
         $queueCounts['bw']    = DB::table('manual_sales')->where('queued', true)->where('color', false)->whereNull('deleted_at')->count();
         $queueCounts['color'] = DB::table('manual_sales')->where('queued', true)->where('color', true)->whereNull('deleted_at')->count();
 
@@ -24,6 +28,8 @@ class AjaxController extends Controller
 
     public function jobCounts()
     {
+        $jobCounts = [];
+
         $jobCounts['processing'] = DB::table('jobs')->where('queue', 'processing')->count();
         $jobCounts['imaging']    = DB::table('jobs')->where('queue', 'imaging')->count();
 

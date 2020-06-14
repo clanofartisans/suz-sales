@@ -15,7 +15,7 @@ interface POSDriverInterface
      *
      * @param string $upc
      *
-     * @return SimpleXMLElement|bool
+     * @return \SimpleXMLElement|bool
      */
     public function getItem(string $upc);
 

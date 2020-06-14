@@ -22,7 +22,7 @@ class EmployeeDiscountController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
     {
@@ -91,6 +91,8 @@ class EmployeeDiscountController extends Controller
                 }
             }
         }
+
+        $jobCounts = [];
 
         $jobCounts['processing'] = DB::table('jobs')->where('queue', 'processing')->count();
 

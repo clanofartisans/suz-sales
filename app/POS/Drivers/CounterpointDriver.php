@@ -23,7 +23,7 @@ class CounterpointDriver extends POS implements POSDriverContract
      *
      * @param string $upc
      *
-     * @return SimpleXMLElement|bool
+     * @return \SimpleXMLElement|bool
      */
     public function getItem(string $upc)
     {
@@ -69,7 +69,7 @@ class CounterpointDriver extends POS implements POSDriverContract
 
         $percent_off = $discounted['percent_off'];
 
-        $test = DB::connection('sqlsrv')->table('IM_PRC_RUL')->insert([
+        DB::connection('sqlsrv')->table('IM_PRC_RUL')->insert([
             ['GRP_TYP'          => 'C',
              'GRP_COD'          => $discounted['IM_PRC_RUL']['GRP_COD'],
              'RUL_SEQ_NO'       => $discounted['IM_PRC_RUL']['RUL_SEQ_NO'],
@@ -205,6 +205,8 @@ class CounterpointDriver extends POS implements POSDriverContract
 
         $c_begDate = Carbon::createFromFormat('F Y j', "$month $year 1");
 
+        $data = [];
+
         $data['sale_type'] = 'INFRA';
 
         $data['reg_price']   = $item->PRC_1;
@@ -246,6 +248,8 @@ Operation=and";
      */
     public function applyDiscountToManualSale($item, string $amount, string $price, $start, $end, $id, $no_begin, $no_end, $percent = null)
     {
+        $data = [];
+
         $data['sale_type'] = 'Manual';
 
         $data['reg_price']   = $item->PRC_1;
@@ -307,25 +311,6 @@ Operation=and";
     }
 
     /*
-     * Insert the discount info into the item's XML.
-     *
-     * @param SimpleXML $item
-     * @param string    $discountXML
-     *
-     * @return string|bool
-     */
-    protected function insertDiscountAtCorrectPosition($item, $discountXML)
-    {
-        if (!isset($item->ItemDiscounts)) {
-            $discounted = $this->insertDiscountWithoutExistingDiscounts($item, $discountXML);
-        } else {
-            $discounted = $this->insertDiscountWithExistingDiscounts($item, $discountXML);
-        }
-
-        return $discounted;
-    }
-
-    /*
      * Calculates and returns all the pricing info for an item.
      *
      * @param SimpleXML $item
@@ -335,6 +320,8 @@ Operation=and";
      */
     protected static function calcItemDiscountsFromInfra($item, $realPrice)
     {
+        $args = [];
+
         if ($realPrice == '20%') {
             $price = (float) $item->PRC_1;
 
@@ -382,6 +369,8 @@ Operation=and";
         $start = new Carbon("first day of $month $year");
         $end   = new Carbon("last day of $month $year");
 
+        $dates = [];
+
         $dates['start'] = $start->format('n/j/Y');
         $dates['end']   = $end->format('n/j/Y');
 
@@ -404,6 +393,8 @@ Operation=and";
         if ($prices === false) {
             return false;
         }
+
+        $display = [];
 
         $display['sale_price'] = $prices['disp_sale_price'];
         $display['msrp']       = $prices['disp_msrp'];
@@ -479,6 +470,8 @@ Operation=and";
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
         $escaped = self::escapeBrand($brand);
+
+        $data = [];
 
         $data['IM_PRC_GRP']['GRP_COD'] = 'SMLD'.$id;
 
@@ -602,6 +595,8 @@ Operation=and";
         $now = Carbon::now('America/Chicago')->format('Y-m-d H:i:s.v');
 
         $escaped = self::escapeBrand($brand);
+
+        $data = [];
 
         $data['IM_PRC_GRP']['GRP_COD'] = 'SMED'.$id;
 
@@ -856,6 +851,8 @@ Operation=and";
         }
 
         $combined['EMPDEFAULT'] = 25;
+
+        $sales = [];
 
         if (!empty($combined)) {
             arsort($combined);
