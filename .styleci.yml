@@ -1,6 +1,10 @@
 preset: laravel
+enabled:
+  - align_equals_minimal
 disabled:
-  - unused_use
+  - no_unused_imports
+  - trailing_comma_in_multiline_array
+  - unalign_equals
 finder:
   not-name:
     - index.php
