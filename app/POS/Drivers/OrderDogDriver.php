@@ -65,13 +65,15 @@ class OrderDogDriver extends POS implements POSDriverContract
      */
     protected function executeCurl()
     {
-        $response = curl_exec($this->curl);
+        if (!$this->curl) {
+            return false;
+        }
 
-        return $response;
+        return curl_exec($this->curl);
     }
 
     /*
-     * Look up an item in OrderDog and return it as a SimpleXML object.
+     * Look up an item in OrderDog and return it as a SimpleXMLElement object.
      *
      * @param string $upc
      *
@@ -103,6 +105,10 @@ class OrderDogDriver extends POS implements POSDriverContract
   </soap:Body>
 </soap:Envelope>
 XML;
+
+        if (!$this->curl) {
+            return false;
+        }
 
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $xml);
 
@@ -153,6 +159,10 @@ XML;
   </soap:Body>
 </soap:Envelope>
 XML;
+
+        if (!$this->curl) {
+            return false;
+        }
 
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $xml);
 
@@ -354,7 +364,7 @@ XML;
     /*
      * Check to make sure we got a good response back from OrderDog.
      *
-     * @param SimpleXML $check
+     * @param \SimpleXMLElement $check
      *
      * @return bool
      */
@@ -372,7 +382,7 @@ XML;
     /*
      * Calculates and returns all the pricing info for an item.
      *
-     * @param SimpleXML $item
+     * @param \SimpleXMLElement $item
      * @param string    $realPrice
      *
      * @return array|false
