@@ -23,7 +23,7 @@ class CounterpointDriver extends POS implements POSDriverContract
      *
      * @param string $upc
      *
-     * @return \SimpleXMLElement|bool
+     * @return \SimpleXMLElement|false
      */
     public function getItem(string $upc)
     {
@@ -44,7 +44,7 @@ class CounterpointDriver extends POS implements POSDriverContract
      * Update an item in OrderDog with the provided discount info.
      * Returns true if we response was okay else returns false.
      *
-     * @param string $discounted
+     * @param array $discounted
      *
      * @return bool
      */
@@ -192,7 +192,7 @@ class CounterpointDriver extends POS implements POSDriverContract
      * @param string $month
      * @param string $year
      *
-     * @return array
+     * @return array|string|false
      */
     public function applyDiscountToItem($item, string $realPrice, string $month, string $year, $percent = null, $localID = null)
     {

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|bool quickQuery(string $upc)
  * @method static bool renumberSales()
  * @method static bool startInfraSheet(\App\InfraSheet $infrasheet)
- * @method static bool updateItem(string $discounted)
+ * @method static bool updateItem(array $discounted)
  */
 class POSFacade extends Facade
 {

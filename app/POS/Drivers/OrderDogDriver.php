@@ -28,13 +28,13 @@ class OrderDogDriver extends POS implements POSDriverContract
     /*
      * The curl instance we'll be using for our API calls.
      *
-     * @var resource
+     * @var resource|false
      */
     protected $curl;
     /*
      * The response we received back from our API call.
      *
-     * @var \SimpleXMLElement
+     * @var \SimpleXMLElement|false
      */
     protected $response;
 
@@ -51,13 +51,13 @@ class OrderDogDriver extends POS implements POSDriverContract
      */
     protected function startCurl()
     {
-        $this->curl = curl_init();
-
-        curl_setopt($this->curl, CURLOPT_URL, $this->baseURL);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
-        curl_setopt($this->curl, CURLOPT_POST, true);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->fields);
+        if ($this->curl = curl_init()) {
+            curl_setopt($this->curl, CURLOPT_URL, $this->baseURL);
+            curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
+            curl_setopt($this->curl, CURLOPT_POST, true);
+            curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->fields);
+        }
     }
 
     /*
@@ -216,10 +216,10 @@ XML;
     /*
      * Insert the discount info into the item's XML.
      *
-     * @param SimpleXML $item
-     * @param string    $discountXML
+     * @param \SimpleXMLElement $item
+     * @param string $discountXML
      *
-     * @return string|bool
+     * @return string|false
      */
     protected function insertDiscountAtCorrectPosition($item, $discountXML)
     {
@@ -261,7 +261,7 @@ XML;
                 $discounted  = str_replace('</ItemDiscounts>', $discountXML, $itemXML);
                 break;
             default:
-                $discounted = false;
+                return false;
                 break;
         }
 
@@ -375,7 +375,7 @@ XML;
      * @param SimpleXML $item
      * @param string    $realPrice
      *
-     * @return array|bool
+     * @return array|false
      */
     protected static function calcItemDiscountsFromInfra($item, $realPrice)
     {

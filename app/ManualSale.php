@@ -3,10 +3,10 @@
 namespace App;
 
 use App\Jobs\GenerateImage;
+use App\POS\POSFacade as POS;
 use File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use POS;
 use SnappyImage;
 
 class ManualSale extends Model
