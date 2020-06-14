@@ -15,6 +15,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Paginator::useBootstrapThree();
+
+        if (env('DB_COMPATIBILITY'))
+        {
+            Schema::defaultStringLength(191);
+        }
     }
 
     /**
