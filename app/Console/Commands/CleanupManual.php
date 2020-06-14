@@ -1,8 +1,10 @@
-<?php namespace App\Console\Commands;
+<?php
 
-use Carbon\Carbon;
-use App\ManualSale;
+namespace App\Console\Commands;
+
 use App\Jobs\CleanupImages;
+use App\ManualSale;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class CleanupManual extends Command
@@ -41,7 +43,7 @@ class CleanupManual extends Command
                            ->where('imaged', true)
                            ->get();
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             dispatch((new CleanupImages($item))->onQueue('cleanup'));
         }
 
@@ -49,7 +51,7 @@ class CleanupManual extends Command
                            ->where('imaged', true)
                            ->get();
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             dispatch((new CleanupImages($item))->onQueue('cleanup'));
         }
     }

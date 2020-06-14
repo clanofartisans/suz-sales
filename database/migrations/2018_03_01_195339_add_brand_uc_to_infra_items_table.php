@@ -1,9 +1,9 @@
 <?php
 
 use App\InfraItem;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddBrandUcToInfraItemsTable extends Migration
 {
@@ -14,7 +14,7 @@ class AddBrandUcToInfraItemsTable extends Migration
      */
     public function up()
     {
-        Schema::table('infra_items', function($table) {
+        Schema::table('infra_items', function ($table) {
             $table->string('brand_uc')->nullable();
         });
 
@@ -32,7 +32,7 @@ class AddBrandUcToInfraItemsTable extends Migration
      */
     public function down()
     {
-        Schema::table('infra_items', function($table) {
+        Schema::table('infra_items', function ($table) {
             $table->dropColumn('brand_uc');
         });
     }

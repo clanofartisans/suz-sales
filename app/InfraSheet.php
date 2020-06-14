@@ -2,7 +2,7 @@
 
 namespace App;
 
-use \DateTime;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 
 class InfraSheet extends Model
@@ -21,7 +21,8 @@ class InfraSheet extends Model
      */
     public function getMonthAttribute($value)
     {
-        $dateObj   = DateTime::createFromFormat('!m', $value);
+        $dateObj = DateTime::createFromFormat('!m', $value);
+
         return $dateObj->format('F');
     }
 

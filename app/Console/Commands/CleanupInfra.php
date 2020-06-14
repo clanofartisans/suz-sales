@@ -1,8 +1,10 @@
-<?php namespace App\Console\Commands;
+<?php
 
-use Carbon\Carbon;
+namespace App\Console\Commands;
+
 use App\InfraItem;
 use App\Jobs\CleanupImages;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class CleanupInfra extends Command
@@ -40,7 +42,7 @@ class CleanupInfra extends Command
                           ->where('imaged', true)
                           ->get();
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             dispatch((new CleanupImages($item))->onQueue('cleanup'));
         }
     }

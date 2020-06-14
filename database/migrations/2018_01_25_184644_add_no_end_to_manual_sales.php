@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddNoEndToManualSales extends Migration
 {
@@ -13,7 +13,7 @@ class AddNoEndToManualSales extends Migration
      */
     public function up()
     {
-        Schema::table('manual_sales', function($table) {
+        Schema::table('manual_sales', function ($table) {
             $table->boolean('no_end')->default(false);
         });
     }
@@ -25,7 +25,7 @@ class AddNoEndToManualSales extends Migration
      */
     public function down()
     {
-        Schema::table('manual_sales', function($table) {
+        Schema::table('manual_sales', function ($table) {
             $table->dropColumn('no_end');
         });
     }

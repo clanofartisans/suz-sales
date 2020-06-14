@@ -2,8 +2,8 @@
 
 namespace App;
 
-use \Exception;
 use App\InfraItem;
+use Exception;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ExcelDoc
@@ -18,19 +18,19 @@ class ExcelDoc
      * then find the row with data headers,
      * and the first row of actual data.
      */
-   function __construct($filename)
-   {
-       $this->loadWorkbook($filename);
-       $this->loadKeHEWorksheet();
-       $this->assignDataHeaders();
-   }
+    public function __construct($filename)
+    {
+        $this->loadWorkbook($filename);
+        $this->loadKeHEWorksheet();
+        $this->assignDataHeaders();
+    }
 
-   /*
-    * Load the actual Excel file.
-    */
+    /*
+     * Load the actual Excel file.
+     */
     protected function loadWorkbook($filename)
     {
-        $path = storage_path('app/' . $filename);
+        $path = storage_path('app/'.$filename);
 
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($path);
         $reader->setReadDataOnly(true);
@@ -50,14 +50,14 @@ class ExcelDoc
         $keheWorksheet = null;
 
         // Find the KeHE worksheet in the list of worksheet names
-        foreach($worksheets as $worksheet) {
-            if(strpos($worksheet, config('infra.sheetname')) !== false) {
+        foreach ($worksheets as $worksheet) {
+            if (strpos($worksheet, config('infra.sheetname')) !== false) {
                 $keheWorksheet = $this->workbook->getSheetByName($worksheet);
             }
         }
 
         // If we found the KeHE worksheet
-        if($keheWorksheet instanceof Worksheet) {
+        if ($keheWorksheet instanceof Worksheet) {
             $this->worksheet = $keheWorksheet;
 
             return true;
@@ -77,20 +77,20 @@ class ExcelDoc
         $cellIterator = $dataHeaderRow->getCellIterator();
         $cellIterator->setIterateOnlyExistingCells(false);
 
-        foreach($cellIterator as $cell) {
-            if($cell->getValue() === config('infra.header.upc')) {
+        foreach ($cellIterator as $cell) {
+            if ($cell->getValue() === config('infra.header.upc')) {
                 $this->dataCols['upc'] = $cell->getColumn();
             }
-            if($cell->getValue() === config('infra.header.brand')) {
+            if ($cell->getValue() === config('infra.header.brand')) {
                 $this->dataCols['brand'] = $cell->getColumn();
             }
-            if($cell->getValue() === config('infra.header.desc')) {
+            if ($cell->getValue() === config('infra.header.desc')) {
                 $this->dataCols['desc'] = $cell->getColumn();
             }
-            if($cell->getValue() === config('infra.header.size')) {
+            if ($cell->getValue() === config('infra.header.size')) {
                 $this->dataCols['size'] = $cell->getColumn();
             }
-            if($cell->getValue() === config('infra.header.price')) {
+            if ($cell->getValue() === config('infra.header.price')) {
                 $this->dataCols['price'] = $cell->getColumn();
             }
         }
@@ -101,14 +101,12 @@ class ExcelDoc
      */
     public function findDataHeaderRow()
     {
-        foreach($this->worksheet->getRowIterator() as $row) {
-
+        foreach ($this->worksheet->getRowIterator() as $row) {
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
 
-            foreach($cellIterator as $cell) {
-                if($cell->getValue() === 'Flyer CT $') {
-
+            foreach ($cellIterator as $cell) {
+                if ($cell->getValue() === 'Flyer CT $') {
                     $this->startRow = ($row->getRowIndex() + 1);
 
                     return $row;
@@ -128,21 +126,19 @@ class ExcelDoc
     {
         $data = [];
 
-        foreach($this->worksheet->getRowIterator() as $row) {
-
+        foreach ($this->worksheet->getRowIterator() as $row) {
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
 
-            if($row->getRowIndex() >= $this->startRow)
-            {
-                $newRow = [];
-                $newRow['upc']   = $this->worksheet->getCell(($this->dataCols['upc'] . $row->getRowIndex()))->getValue();
-                $newRow['brand'] = $this->worksheet->getCell(($this->dataCols['brand'] . $row->getRowIndex()))->getValue();
-                $newRow['size']  = $this->worksheet->getCell(($this->dataCols['size'] . $row->getRowIndex()))->getValue();
-                $newRow['price'] = $this->worksheet->getCell(($this->dataCols['price'] . $row->getRowIndex()))->getValue();
-                $newRow['desc']  = $this->cleanDesc($this->worksheet->getCell(($this->dataCols['desc'] . $row->getRowIndex()))->getValue());
+            if ($row->getRowIndex() >= $this->startRow) {
+                $newRow          = [];
+                $newRow['upc']   = $this->worksheet->getCell(($this->dataCols['upc'].$row->getRowIndex()))->getValue();
+                $newRow['brand'] = $this->worksheet->getCell(($this->dataCols['brand'].$row->getRowIndex()))->getValue();
+                $newRow['size']  = $this->worksheet->getCell(($this->dataCols['size'].$row->getRowIndex()))->getValue();
+                $newRow['price'] = $this->worksheet->getCell(($this->dataCols['price'].$row->getRowIndex()))->getValue();
+                $newRow['desc']  = $this->cleanDesc($this->worksheet->getCell(($this->dataCols['desc'].$row->getRowIndex()))->getValue());
 
-                if($newRow['upc'] !== null) {
+                if ($newRow['upc'] !== null) {
                     $data[] = $newRow;
                 }
             }
@@ -156,8 +152,7 @@ class ExcelDoc
      */
     public function saveItemData($data, $infraSheetID)
     {
-        foreach($data as $item)
-        {
+        foreach ($data as $item) {
             InfraItem::create(['infrasheet_id'   => $infraSheetID,
                                'upc'             => $this->zeroPadUPC($item['upc']),
                                'brand'           => $item['brand'],
@@ -186,8 +181,7 @@ class ExcelDoc
      */
     public function fixPrecisionInfraSalePrice($price)
     {
-        if(!empty($price) && !is_string($price)) {
-
+        if (!empty($price) && !is_string($price)) {
             return number_format($price, 2);
         }
 
@@ -200,9 +194,9 @@ class ExcelDoc
      */
     public function calcInfraSalePrice($price)
     {
-        if(!empty($price)) {
-            if(strpos($price, '/') !== false) {
-				$price = rtrim($price);
+        if (!empty($price)) {
+            if (strpos($price, '/') !== false) {
+                $price     = rtrim($price);
                 $pieces    = explode('/', $price);
                 $pieces[1] = ltrim($pieces[1], '$');
 
@@ -211,39 +205,38 @@ class ExcelDoc
                 return number_format($priceCalc, 2);
             } else {
                 $price = ltrim($price, '$');
-                if(is_numeric($price)) {
+                if (is_numeric($price)) {
                     $price = (float) $price;
+
                     return number_format($price, 2);
                 }
             }
         }
+
         return '20%';
     }
 
     public function cleanDesc($desc)
     {
-        if(preg_match("/\xc2\xae/u", $desc, $result)) {
+        if (preg_match("/\xc2\xae/u", $desc, $result)) {
 
             // Ends with character
-            if(preg_match("/\xc2\xae$/u", $desc, $result)) {
-
+            if (preg_match("/\xc2\xae$/u", $desc, $result)) {
                 $clean = rtrim($desc, "\xc2\xae ");
 
                 return $clean;
             }
 
             // Begins with character
-            if(preg_match("/^\xc2\xae/u", $desc, $result)) {
-
+            if (preg_match("/^\xc2\xae/u", $desc, $result)) {
                 $clean = ltrim($desc, "\xc2\xae ");
 
                 return $clean;
             }
 
             // symbol immediately preceeded by non-whitespace character (delete symbol only)
-            if(preg_match("/\S\xc2\xae.+/u", $desc, $result)) {
-
-                $pattern = "/\xc2\xae/u";
+            if (preg_match("/\S\xc2\xae.+/u", $desc, $result)) {
+                $pattern     = "/\xc2\xae/u";
                 $replacement = '';
 
                 $clean = preg_replace($pattern, $replacement, $desc);
@@ -252,9 +245,8 @@ class ExcelDoc
             }
 
             // symbol surrounded on either side by whitespace character (replace symbol and all surrounding whitespace with one space)
-            if(preg_match("/\s+\xc2\xae\s+/u", $desc, $result)) {
-
-                $pattern = "/\s+\xc2\xae\s+/u";
+            if (preg_match("/\s+\xc2\xae\s+/u", $desc, $result)) {
+                $pattern     = "/\s+\xc2\xae\s+/u";
                 $replacement = ' ';
 
                 $clean = preg_replace($pattern, $replacement, $desc);

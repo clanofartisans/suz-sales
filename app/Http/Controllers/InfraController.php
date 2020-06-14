@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use POS;
-use TCPDF;
 use App\ExcelDoc;
-use Carbon\Carbon;
 use App\InfraItem;
 use App\InfraSheet;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
+use DB;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
+use POS;
+use TCPDF;
 
 class InfraController extends Controller
 {
@@ -51,7 +51,7 @@ class InfraController extends Controller
     {
         $filter = session('infra_filter');
 
-        if(empty($filter)) {
+        if (empty($filter)) {
             $filter = 'f_all';
         }
 
@@ -61,7 +61,7 @@ class InfraController extends Controller
                           ->orderBy('brand_uc', 'asc')
                           ->orderBy('id', 'asc');
 
-        switch($filter) {
+        switch ($filter) {
             case 'f_approved':
                 $items = $items->where('approved', true);
                 break;
@@ -88,12 +88,12 @@ class InfraController extends Controller
                 break;
         }
 
-        if(request()->has('page')) {
+        if (request()->has('page')) {
             $items = $items->paginate(100);
             session(['infra_page' => $items->currentPage()]);
         } else {
             $page = session('infra_page', 1);
-            if($page > 1 && (((float) $items->count()) / ($page - 1.0)) <= 100.0) {
+            if ($page > 1 && (((float) $items->count()) / ($page - 1.0)) <= 100.0) {
                 session(['infra_page' => 1]);
             }
             $items = $items->paginate(100, ['*'], 'page', session('infra_page', 1));
@@ -123,7 +123,7 @@ class InfraController extends Controller
 
         // There is a bug somewhere in Laravel, Flysystem, PHP, or somewhere else
         // This helps us work around that in the meantime
-        $filename = time() . ".xls";
+        $filename = time().'.xls';
 
         $infrasheet->filename = $request->file('upworkbook')
                                         ->storeAs('infrasheets', $filename);
@@ -154,10 +154,10 @@ class InfraController extends Controller
      */
     public function process($id, Request $request)
     {
-        if($request->filter) {
+        if ($request->filter) {
             session(['infra_filter' => $request->filter]);
         }
-        switch($request->process) {
+        switch ($request->process) {
             case 'approve':
                 $this->approveItems($request);
                 break;
@@ -180,7 +180,7 @@ class InfraController extends Controller
         $items = InfraItem::where('infrasheet_id', $request->infrasheet)
                           ->get();
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $item->approve();
         }
 
@@ -194,12 +194,13 @@ class InfraController extends Controller
      */
     protected function approveItems(Request $request)
     {
-        if(!isset($request->checked)) {
+        if (!isset($request->checked)) {
             flash()->warning('No items were selected.');
+
             return;
         }
 
-        foreach($request->checked as $item) {
+        foreach ($request->checked as $item) {
             InfraItem::find($item)->approve();
         }
 
@@ -208,13 +209,13 @@ class InfraController extends Controller
 
     protected function queueItems($items)
     {
-        if(count($items) == 0) {
+        if (count($items) == 0) {
             flash()->warning('No items are ready to be printed.');
 
             return false;
         }
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $item->queue();
         }
 
@@ -228,8 +229,9 @@ class InfraController extends Controller
      */
     protected function queueSelectedItems(Request $request)
     {
-        if(!isset($request->checked)) {
+        if (!isset($request->checked)) {
             flash()->warning('No items were selected.');
+
             return;
         }
 
@@ -237,8 +239,7 @@ class InfraController extends Controller
                           ->where('imaged', true)
                           ->get();
 
-        if($this->queueItems($items)) {
-
+        if ($this->queueItems($items)) {
             flash()->success('The selected items have been queued for printing.');
         }
     }
@@ -256,8 +257,7 @@ class InfraController extends Controller
                           ->orderBy('id', 'asc')
                           ->get();
 
-        if($this->printItems($items)) {
-
+        if ($this->printItems($items)) {
             flash()->success('All items that were queued for printing have been printed.');
         }
     }
@@ -271,19 +271,19 @@ class InfraController extends Controller
      */
     protected function printItems($items)
     {
-        if(count($items) == 0) {
+        if (count($items) == 0) {
             flash()->warning('No items are queued for printing.');
 
             return false;
         }
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $images[] = storage_path("app/images/infra/$item->id.png");
         }
 
         $this->printSheet($images);
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $item->print();
         }
 
@@ -300,7 +300,7 @@ class InfraController extends Controller
         $user   = auth()->user();
         $author = $user->name;
 
-        $layout = array(8.5, 11);
+        $layout = [8.5, 11];
 
         $pdf = new TCPDF('P', 'in', $layout, false, 'UTF-8', false, false);
 
@@ -321,26 +321,21 @@ class InfraController extends Controller
 
         $i = 0;
 
-        while(true) {
-
+        while (true) {
             $pdf->AddPage();
 
             $x = 0.25;
             $y = 0.5;
 
-            for($row = 1; $row <= 3; $row++) {
-
-                for($col = 1; $col <= 4; $col++) {
-
-                    if($i <= ($count - 1)) {
-
+            for ($row = 1; $row <= 3; $row++) {
+                for ($col = 1; $col <= 4; $col++) {
+                    if ($i <= ($count - 1)) {
                         $pdf->Image($images[$i], $x, $y, 2, 3, 'PNG', '', '', false, 300, '', false, false, 0, false, false, false);
 
                         $x += 2.0;
 
                         $i++;
                     } else {
-
                         break;
                     }
                 }
@@ -351,8 +346,7 @@ class InfraController extends Controller
 
             $pdf = $this->addAllCropMarks($pdf);
 
-            if($i > ($count - 1)) {
-
+            if ($i > ($count - 1)) {
                 break;
             }
         }
@@ -361,7 +355,7 @@ class InfraController extends Controller
 
         $outputName = $now->format('Y-m-d-H-i-s');
 
-        $pdf->Output(($outputName . '.pdf'), 'D');
+        $pdf->Output(($outputName.'.pdf'), 'D');
     }
 
     /**

@@ -1,19 +1,21 @@
-<?php namespace App\POS;
+<?php
+
+namespace App\POS;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class POSFacade
+ * Class POSFacade.
  */
-class POSFacade extends Facade {
-
+class POSFacade extends Facade
+{
     /**
      * Get the registered name of the component.
      *
      * @return string
      */
-    protected static function getFacadeAccessor() {
-
+    protected static function getFacadeAccessor()
+    {
         return 'pos';
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddNoBeginToLineDrives extends Migration
 {
@@ -13,7 +13,7 @@ class AddNoBeginToLineDrives extends Migration
      */
     public function up()
     {
-        Schema::table('line_drives', function($table) {
+        Schema::table('line_drives', function ($table) {
             $table->boolean('no_begin')->default(false);
         });
     }
@@ -25,7 +25,7 @@ class AddNoBeginToLineDrives extends Migration
      */
     public function down()
     {
-        Schema::table('line_drives', function($table) {
+        Schema::table('line_drives', function ($table) {
             $table->dropColumn('no_begin');
         });
     }

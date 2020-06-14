@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateInfraItemsTable extends Migration
 {
@@ -13,8 +13,7 @@ class CreateInfraItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('infra_items', function(Blueprint $table)
-        {
+        Schema::create('infra_items', function (Blueprint $table) {
             Schema::enableForeignKeyConstraints();
 
             $table->bigIncrements('id');
