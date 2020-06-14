@@ -2,12 +2,12 @@
 
 namespace App;
 
-use POS;
-use File;
-use SnappyImage;
 use App\Jobs\GenerateImage;
+use File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use POS;
+use SnappyImage;
 
 class ManualSale extends Model
 {
@@ -53,27 +53,26 @@ class ManualSale extends Model
      */
     public function process()
     {
-        if($this->pos_update) {
-
+        if ($this->pos_update) {
             $item = POS::getItem($this->upc);
 
-            if($item === false) {
+            if ($item === false) {
                 $this->flags = 'Item not found in point of sale system';
                 $this->save();
             } else {
-                if(!isset($this->percent_off)) {
+                if (!isset($this->percent_off)) {
                     $this->percent_off = $this->calcPercentageDiscount($item->PRC_1, $this->sale_price);
                 }
 
                 $discounted = POS::applyDiscountToManualSale($item, $this->savings, $this->sale_price, $this->sale_begin, $this->sale_end, $this->id, $this->no_begin, $this->no_end, $this->percent_off);
 
-                if($discounted === false) {
+                if ($discounted === false) {
                     $this->flags = 'Item already has discounts';
                     $this->save();
                 } else {
                     dispatch((new GenerateImage($this))->onQueue('imaging'));
 
-                    if(POS::updateItem($discounted)) {
+                    if (POS::updateItem($discounted)) {
                         $this->processed = true;
                         $this->flags     = null;
                         $this->save();
@@ -99,13 +98,13 @@ class ManualSale extends Model
      */
     public function processImage()
     {
-        if($this->color) {
+        if ($this->color) {
             $view = 'saletags.salecolor';
         } else {
             $view = 'saletags.salebw';
         }
 
-        $image = SnappyImage::loadView($view, array('data' => $this));
+        $image = SnappyImage::loadView($view, ['data' => $this]);
 
         $filename = storage_path("app/images/manual/$this->id.png");
 
@@ -126,7 +125,7 @@ class ManualSale extends Model
     public function queue()
     {
         $this->printed = false;
-        $this->queued = true;
+        $this->queued  = true;
         $this->save();
     }
 

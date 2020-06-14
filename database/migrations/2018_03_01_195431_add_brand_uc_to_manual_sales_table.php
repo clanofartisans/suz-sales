@@ -1,9 +1,9 @@
 <?php
 
 use App\ManualSale;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddBrandUcToManualSalesTable extends Migration
 {
@@ -14,7 +14,7 @@ class AddBrandUcToManualSalesTable extends Migration
      */
     public function up()
     {
-        Schema::table('manual_sales', function($table) {
+        Schema::table('manual_sales', function ($table) {
             $table->string('brand_uc')->nullable();
         });
 
@@ -32,7 +32,7 @@ class AddBrandUcToManualSalesTable extends Migration
      */
     public function down()
     {
-        Schema::table('manual_sales', function($table) {
+        Schema::table('manual_sales', function ($table) {
             $table->dropColumn('brand_uc');
         });
     }

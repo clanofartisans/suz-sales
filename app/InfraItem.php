@@ -2,13 +2,13 @@
 
 namespace App;
 
-use POS;
-use File;
-use SnappyImage;
-use Carbon\Carbon;
-use App\Jobs\GenerateImage;
 use App\Jobs\ApplySalePrice;
+use App\Jobs\GenerateImage;
+use Carbon\Carbon;
+use File;
 use Illuminate\Database\Eloquent\Model;
+use POS;
+use SnappyImage;
 
 class InfraItem extends Model
 {
@@ -72,7 +72,7 @@ class InfraItem extends Model
     {
         $item = POS::getItem($this->upc);
 
-        if($item === false) {
+        if ($item === false) {
             $this->flags = 'Item not found in point of sale system';
             $this->save();
         } else {
@@ -81,31 +81,31 @@ class InfraItem extends Model
 
             $updateDisplayPrices = $this->updateWithPOSInfo($item);
 
-            if($updateDisplayPrices === false) {
+            if ($updateDisplayPrices === false) {
                 $this->flags = 'Item price is lower than sale price';
                 $this->save();
 
                 return true;
             }
 
-            if(!isset($this->percent_off)) {
+            if (!isset($this->percent_off)) {
                 $this->percent_off = $this->calcPercentageDiscount($item->PRC_1, $this->list_price_calc);
             }
 
             $discounted = POS::applyDiscountToItem($item, $this->list_price_calc, $month, $year, $this->percent_off, $this->id);
 
-            if($discounted === false) {
+            if ($discounted === false) {
                 $this->flags = 'Item already has discounts';
                 $this->save();
-            } elseif($discounted === 'Item price is lower than sale price') {
+            } elseif ($discounted === 'Item price is lower than sale price') {
                 $this->flags = 'Item price is lower than sale price';
                 $this->save();
             } else {
                 dispatch((new GenerateImage($this))->onQueue('imaging'));
 
-                if(POS::updateItem($discounted)) {
+                if (POS::updateItem($discounted)) {
                     $this->processed = true;
-                    $this->flags = null;
+                    $this->flags     = null;
                     $this->save();
                 }
             }
@@ -121,7 +121,7 @@ class InfraItem extends Model
      */
     public function processImage()
     {
-        $image = SnappyImage::loadView('saletags.salebw', array('data' => $this));
+        $image = SnappyImage::loadView('saletags.salebw', ['data' => $this]);
 
         $filename = storage_path("app/images/infra/$this->id.png");
 
@@ -130,7 +130,7 @@ class InfraItem extends Model
         if (File::exists($filename)) {
             $this->imaged = true;
 
-            $expiration = $this->calcExpirationDate();
+            $expiration    = $this->calcExpirationDate();
             $this->expires = $expiration;
 
             $this->save();
@@ -171,18 +171,18 @@ class InfraItem extends Model
     {
         $prices = POS::getDisplayPricesFromItem($info, $this->list_price_calc);
 
-        if($prices === false) {
+        if ($prices === false) {
             return false;
         }
 
-        if(strpos($this->list_price, '/') !== false) {
+        if (strpos($this->list_price, '/') !== false) {
             $this->disp_sale_price = $this->list_price;
         } else {
             $this->disp_sale_price = '$'.$prices['sale_price'];
         }
 
-        $this->disp_msrp       = $prices['msrp'];
-        $this->disp_savings    = $prices['savings'];
+        $this->disp_msrp    = $prices['msrp'];
+        $this->disp_savings = $prices['savings'];
 
         $this->save();
 
@@ -220,7 +220,7 @@ class InfraItem extends Model
 
     protected function calcPercentageDiscount($reg_price, $sale_price)
     {
-        if($sale_price == '20%') {
+        if ($sale_price == '20%') {
             return 20.0000;
         }
 

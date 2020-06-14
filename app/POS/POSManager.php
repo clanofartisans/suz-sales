@@ -1,11 +1,13 @@
-<?php namespace App\POS;
+<?php
 
-use Illuminate\Support\Manager;
-use App\POS\Drivers\OrderDogDriver;
+namespace App\POS;
+
 use App\POS\Drivers\CounterpointDriver;
+use App\POS\Drivers\OrderDogDriver;
+use Illuminate\Support\Manager;
 
 /**
- * Class POSManager
+ * Class POSManager.
  */
 class POSManager extends Manager
 {

@@ -1,12 +1,14 @@
-<?php namespace App\POS\Drivers;
+<?php
+
+namespace App\POS\Drivers;
 
 use App\InfraSheet;
+use App\POS\Contracts\POSDriverInterface as POSDriverContract;
 use App\POS\POS;
 use Carbon\Carbon;
-use App\POS\Contracts\POSDriverInterface as POSDriverContract;
 
 /**
- * Class OrderDogDriver
+ * Class OrderDogDriver.
  */
 class OrderDogDriver extends POS implements POSDriverContract
 {
@@ -21,8 +23,8 @@ class OrderDogDriver extends POS implements POSDriverContract
      *
      * @var array
      */
-    protected $fields = array('Content-Type: text/xml; charset=utf-8',
-                              'SOAPAction: http://services.orderdog.com/Request');
+    protected $fields = ['Content-Type: text/xml; charset=utf-8',
+                              'SOAPAction: http://services.orderdog.com/Request'];
     /*
      * The curl instance we'll be using for our API calls.
      *
@@ -49,7 +51,6 @@ class OrderDogDriver extends POS implements POSDriverContract
      */
     protected function startCurl()
     {
-
         $this->curl = curl_init();
 
         curl_setopt($this->curl, CURLOPT_URL, $this->baseURL);
@@ -109,8 +110,7 @@ XML;
 
         $this->response = simplexml_load_string($response);
 
-        if(!isset($this->response->children('soap', true)->Body->Fault)) {
-
+        if (!isset($this->response->children('soap', true)->Body->Fault)) {
             $item = $this->response->children('soap', true)->Body->children()->RequestResponse->RequestResult->ItemLookup01Results->Item;
 
             return $item;
@@ -184,7 +184,7 @@ XML;
         $args  = $this->calcItemDiscountsFromInfra($item, $realPrice);
         $dates = $this->calcItemDiscountDates($month, $year);
 
-        if($args === false) {
+        if ($args === false) {
             return 'Item price is lower than sale price';
         }
 
@@ -223,7 +223,7 @@ XML;
      */
     protected function insertDiscountAtCorrectPosition($item, $discountXML)
     {
-        if(!isset($item->ItemDiscounts)) {
+        if (!isset($item->ItemDiscounts)) {
             $discounted = $this->insertDiscountWithoutExistingDiscounts($item, $discountXML);
         } else {
             $discounted = $this->insertDiscountWithExistingDiscounts($item, $discountXML);
@@ -236,13 +236,13 @@ XML;
     {
         $itemXML = $item->asXML();
 
-        if(isset($item->PackPrices)) {
-            $insertAfter = "</PackPrices>";
+        if (isset($item->PackPrices)) {
+            $insertAfter = '</PackPrices>';
         } else {
-            $insertAfter = "</RevenueAcct>";
+            $insertAfter = '</RevenueAcct>';
         }
 
-        $discountXML = $insertAfter . $discountXML;
+        $discountXML = $insertAfter.$discountXML;
 
         $discounted = str_replace($insertAfter, $discountXML, $itemXML);
 
@@ -255,10 +255,10 @@ XML;
 
         $discStatus = $this->checkExistingDiscounts($item, $discountXML);
 
-        switch($discStatus) {
+        switch ($discStatus) {
             case 'ignore':
                 $discountXML = substr($discountXML, 15);
-                $discounted  = str_replace("</ItemDiscounts>", $discountXML, $itemXML);
+                $discounted  = str_replace('</ItemDiscounts>', $discountXML, $itemXML);
                 break;
             default:
                 $discounted = false;
@@ -271,13 +271,13 @@ XML;
     protected function checkExistingDiscounts($item, $discountXML)
     {
         $discStatus = 'none';
-        foreach($item->ItemDiscounts->ItemDiscount as $discount) {
-            if($discount->Type == 'Employee') {
+        foreach ($item->ItemDiscounts->ItemDiscount as $discount) {
+            if ($discount->Type == 'Employee') {
                 $discStatus = 'ignore';
                 continue;
             }
-            if($discount->Type == 'Standard') {
-                if($this->checkExpiredDiscount($discount) || $this->checkDuplicateDiscount($discount, $discountXML)) {
+            if ($discount->Type == 'Standard') {
+                if ($this->checkExpiredDiscount($discount) || $this->checkDuplicateDiscount($discount, $discountXML)) {
                     $discStatus = 'ignore';
                     continue;
                 }
@@ -296,7 +296,7 @@ XML;
 
         $carbonNow = Carbon::now();
 
-        if($curEndDateCarbon < $carbonNow) {
+        if ($curEndDateCarbon < $carbonNow) {
             return true;
         }
 
@@ -317,7 +317,7 @@ XML;
         $new['StartDt'] = new Carbon($newDiscount->ItemDiscount->StartDt);
         $new['EndDt']   = new Carbon($newDiscount->ItemDiscount->EndDt);
 
-        if($current['Amount'] == $new['Amount'] &&
+        if ($current['Amount'] == $new['Amount'] &&
            $current['Price'] == $new['Price'] &&
            $current['StartDt'] == $new['StartDt'] &&
            $current['EndDt'] == $new['EndDt']) {
@@ -356,8 +356,8 @@ XML;
      */
     protected function checkUpdateResponse($check)
     {
-        if(isset($check->ResultCode) && isset($check->ResultMsg)) {
-            if($check->ResultCode == '0' && $check->ResultMsg = 'Item Updated') {
+        if (isset($check->ResultCode) && isset($check->ResultMsg)) {
+            if ($check->ResultCode == '0' && $check->ResultMsg = 'Item Updated') {
                 return true;
             }
         }
@@ -375,7 +375,7 @@ XML;
      */
     protected static function calcItemDiscountsFromInfra($item, $realPrice)
     {
-        if($realPrice == '20%') {
+        if ($realPrice == '20%') {
             $price = (float) $item->Price;
 
             $realPrice = round(($price * 0.8), 2);
@@ -393,7 +393,7 @@ XML;
             $realPrice = (float) $realPrice;
             $amount    = ((float) $item->Price) - $realPrice;
 
-            if($amount <= 0.00) {
+            if ($amount <= 0.00) {
                 return false;
             }
 
@@ -441,7 +441,7 @@ XML;
     {
         $prices = self::calcItemDiscountsFromInfra($item, $infraPrice);
 
-        if($prices === false) {
+        if ($prices === false) {
             return false;
         }
 
@@ -459,22 +459,20 @@ XML;
     {
         $return = [];
 
-        if($item = $this->getItem($upc)) {
-
+        if ($item = $this->getItem($upc)) {
             $price           = (float) $item->Price;
             $return['brand'] = (string) $item->Brand;
-            $return['desc']  = ((string) $item->Description) . ' ' . ((string) $item->Size) . ' ' . ((string) $item->Form);
+            $return['desc']  = ((string) $item->Description).' '.((string) $item->Size).' '.((string) $item->Form);
             $return['price'] = (string) (number_format($price, 2));
 
-            if($return['brand'] == "PRIVATE LABEL" ||
-               $return['brand'] == "VITALITY WORKS" ||
-               $return['brand'] == "RELIANCE PRIVATE LABEL")
-            {
+            if ($return['brand'] == 'PRIVATE LABEL' ||
+               $return['brand'] == 'VITALITY WORKS' ||
+               $return['brand'] == 'RELIANCE PRIVATE LABEL') {
                 $return['brand'] = "Suzanne's";
             }
 
-            if($return['brand'] == "CRUNCHMASTER") {
-                $return['brand'] = "Crunch Master";
+            if ($return['brand'] == 'CRUNCHMASTER') {
+                $return['brand'] = 'Crunch Master';
             }
 
             return $return;
@@ -511,7 +509,6 @@ XML;
     {
         return true;
     }
-
 
     public function checkForBetterSales($sku, $percent)
     {
