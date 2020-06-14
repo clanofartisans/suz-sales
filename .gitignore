@@ -3,12 +3,10 @@
 /public/storage
 /storage/*.key
 /vendor
-/.idea
-/.vagrant
+.env
+.env.backup
+.phpunit.result.cache
 Homestead.json
 Homestead.yaml
 npm-debug.log
-.env
-public/js/
-public/css/
-database/seeds/UsersTableSeeder.php
+yarn-error.log
