@@ -53,7 +53,7 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
      * Get an item from the POS system.
      *
      * @param string $upc
-     * @return \App\ItemSale
+     * @return \App\ItemSale|false
      */
     public function getItem(string $upc) : \App\ItemSale
     {
