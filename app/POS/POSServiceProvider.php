@@ -2,22 +2,13 @@
 
 namespace App\POS;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class POSServiceProvider extends ServiceProvider
+class POSServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-    }
-
-    /**
-     * Register the POS services.
+     * Register the service provider.
      *
      * @return void
      */
@@ -30,5 +21,15 @@ class POSServiceProvider extends ServiceProvider
         $this->app->singleton('pos.driver', function ($app) {
             return $app['pos']->driver();
         });
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return ['pos', 'pos.driver'];
     }
 }

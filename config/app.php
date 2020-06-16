@@ -232,7 +232,7 @@ return [
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
 
-        'POS' => App\POS\POSFacade::class
+        'POS' => App\POS\POS::class
 
     ],
 

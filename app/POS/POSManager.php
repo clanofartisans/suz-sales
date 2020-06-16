@@ -6,38 +6,35 @@ use App\POS\Drivers\CounterpointDriver;
 use App\POS\Drivers\OrderDogDriver;
 use Illuminate\Support\Manager;
 
-/**
- * Class POSManager.
- */
 class POSManager extends Manager
 {
     /**
-     * Get the default POS driver name.
+     * Create an instance of the Counterpoint POS Driver.
      *
-     * @return string
+     * @return \App\POS\Drivers\CounterpointDriver
      */
-    public function getDefaultDriver()
+    public function createCounterpointDriver()
     {
-        return $this->container['config']['pos.driver'];
+        return new CounterpointDriver;
     }
 
     /**
-     * Create an instance of the OrderDog POS driver.
+     * Create an instance of the OrderDog POS Driver.
      *
      * @return \App\POS\Drivers\OrderDogDriver
      */
-    protected function createOrderDogDriver()
+    public function createOrderDogDriver()
     {
         return new OrderDogDriver;
     }
 
     /**
-     * Create an instance of the Counterpoint POS driver.
+     * Get the default driver name.
      *
-     * @return \App\POS\Drivers\CounterpointDriver
+     * @return string
      */
-    protected function createCounterpointDriver()
+    public function getDefaultDriver()
     {
-        return new CounterpointDriver;
+        return $this->config->get('pos.driver');
     }
 }
