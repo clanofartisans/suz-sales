@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.com/clanofartisans/suz-sales.svg?branch=master)](https://travis-ci.com/clanofartisans/suz-sales)
 [![StyleCI](https://styleci.io/repos/272085636/shield?branch=master)](https://styleci.io/repos/272085636)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/clanofartisans/suz-sales/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/clanofartisans/suz-sales/?branch=master)
 [![codecov](https://codecov.io/gh/clanofartisans/suz-sales/branch/master/graph/badge.svg)](https://codecov.io/gh/clanofartisans/suz-sales)
 # Suzanne's Sales Manager
 An internal project for Suzanne's Natural Foods meant to simplify adding large numbers of "on sale" items in our point of sale system.
