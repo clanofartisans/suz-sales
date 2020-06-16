@@ -19,7 +19,6 @@ mix.js('resources/js/app-footer.js', 'public/js');
 mix.styles([
 	'resources/bower/bootstrap/dist/css/bootstrap.css',
 	'resources/bower/font-awesome/css/font-awesome.css',
-	'resources/css/sass.css',
 	'resources/css/app.css'
 	], 'public/css/app.css');
 
