@@ -13,7 +13,7 @@ class AuthSystemTest extends TestCase
 {
     use DatabaseMigrations;
 
-    function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -21,7 +21,7 @@ class AuthSystemTest extends TestCase
     }
 
     /** @test */
-    function logging_in_with_valid_credentials()
+    public function logging_in_with_valid_credentials()
     {
         $user = factory(User::class)->create([
             'email'    => 'test@example.com',
@@ -39,7 +39,7 @@ class AuthSystemTest extends TestCase
     }
 
     /** @test */
-    function login_attempt_with_invalid_credentials()
+    public function login_attempt_with_invalid_credentials()
     {
         $user = factory(User::class)->create([
             'email'    => 'test@example.com',
@@ -56,7 +56,7 @@ class AuthSystemTest extends TestCase
     }
 
     /** @test */
-    function login_attempt_with_account_that_does_not_exist()
+    public function login_attempt_with_account_that_does_not_exist()
     {
         $user = factory(User::class)->create([
             'email'    => 'test@example.com',
