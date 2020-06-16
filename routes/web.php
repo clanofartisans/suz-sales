@@ -27,7 +27,6 @@ Route::group(['middleware' => ['web']], function () {
         Route::get('{infra_id}', 'InfraController@show')->name('infra.show');
         Route::post('/', 'InfraController@uploadStore')->name('infra.uploadstore');
         Route::post('{infra_id}', 'InfraController@process')->name('infra.process');
-        Route::get('/sale/test', 'InfraController@testSale')->name('infra.testsale');
     });
 
     // Manual Sale Routes
