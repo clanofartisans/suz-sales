@@ -90,10 +90,10 @@
                                         @endif
                                         <td class="text-nowrap">{{ $item->upc }}</td>
                                         <td class="text-nowrap">{{ $item->brand }}</td>
-                                        <td>{{ $item->desc }}</td>
-                                        <td class="text-nowrap text-center">{{ $item->disp_sale_price }}</td>
-                                        <td class="text-nowrap text-center">${{ number_format($item->reg_price, 2) }}</td>
-                                        <td class="text-nowrap text-center">{{ number_format($item->percent_off, 0) }}%</td>
+                                        <td>{{ $item->desc }} {{ $item->size }}</td>
+                                        <td class="text-nowrap text-center">{{ $item->display_sale_price }}</td>
+                                        <td class="text-nowrap text-center">${{ number_format($item->regular_price, 2) }}</td>
+                                        <td class="text-nowrap text-center">{{ number_format($item->discount_percent, 0) }}%</td>
                                         <td class="text-nowrap text-center">
                                             @if (is_null($item->sale_begin))
                                                 &mdash;
@@ -112,7 +112,7 @@
                                                 @endif
                                             @endif
                                         </td>
-                                        <td class="text-nowrap text-center">{{ $item->sale_cat }}</td>
+                                        <td class="text-nowrap text-center">{{ $item->sale_category }}</td>
                                         <td class="text-nowrap text-center">
                                             @if ($item->processed)
                                                 <button type="button" class="btn btn-info btn-xs" disabled="disabled" title="Processed">

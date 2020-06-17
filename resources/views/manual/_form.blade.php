@@ -23,10 +23,10 @@
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputUPC', 'UPC', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('upc', 'UPC', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         <div class="input-group">
-            {!! Form::text('previewInputUPC', null, ['class' => 'form-control', 'autofocus' => 'autofocus']) !!}
+            {!! Form::text('upc', null, ['class' => 'form-control', 'autofocus' => 'autofocus']) !!}
             <span class="input-group-btn">
                 <input type="submit" id="previewPOSFill" class="btn btn-default fa-input" value="&#xf002;" />
             </span>
@@ -40,61 +40,68 @@
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputBrand', 'Brand', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('brand', 'Brand', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputBrand', $data['brand'], ['class' => 'form-control']) !!}
+        {!! Form::text('brand', $data['brand'], ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputDesc', 'Product Description', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('description', 'Product Description', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputDesc', null, ['class' => 'form-control']) !!}
+        {!! Form::text('description', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputSalePrice', 'Sale Price (for '.config('pos.name', 'POS System').')', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('size', 'Size', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputSalePrice', null, ['class' => 'form-control']) !!}
+        {!! Form::text('size', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputDispPrice', 'Display Price (for Printing)', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('real_sale_price', 'Sale Price (for '.config('pos.name', 'POS System').')', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputDispPrice', null, ['class' => 'form-control']) !!}
+        {!! Form::text('real_sale_price', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputRegPrice', 'Regular Price', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('display_sale_price', 'Display Price (for Printing)', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputRegPrice', null, ['class' => 'form-control']) !!}
+        {!! Form::text('display_sale_price', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputSavings', 'Savings', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('regular_price', 'Regular Price', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputSavings', null, ['class' => 'form-control']) !!}
+        {!! Form::text('regular_price', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputPercentOff', 'Discount % (optional)', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('savings_amount', 'Savings', ['class' => 'col-md-4 control-label']) !!}
+    <div class="col-md-6">
+        {!! Form::text('savings_amount', null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+<div class="form-group">
+    {!! Form::label('discount_percent', 'Discount % (optional)', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         <div class="input-group">
-            {!! Form::text('previewInputPercentOff', $data['percent'], ['class' => 'form-control']) !!}
+            {!! Form::text('discount_percent', $data['discount_percent'], ['class' => 'form-control']) !!}
             <div class="input-group-addon">% Off</div>
         </div>
     </div>
 </div>
 
 <div class="form-group">
-    {!! Form::label('previewInputSaleCat', 'Sale Category', ['class' => 'col-md-4 control-label']) !!}
+    {!! Form::label('sale_category', 'Sale Category', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('previewInputSaleCat', $data['sale_cat'], ['class' => 'form-control']) !!}
+        {!! Form::text('sale_category', $data['sale_category'], ['class' => 'form-control']) !!}
     </div>
 </div>
 
@@ -102,7 +109,7 @@
     {!! Form::label('sale_begin', 'Sale Begins', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         <div class="form-inline">
-            {!! Form::text('sale_begin', $data['begin'], ['class' => 'form-control']) !!}
+            {!! Form::text('sale_begin', $data['sale_begin'], ['class' => 'form-control']) !!}
             {!! Form::checkbox('checkNoBegin', 'checkNoBegin', $data['no_begin'], ['id' => 'checkNoBegin']) !!} No Begin Date
         </div>
     </div>
@@ -112,7 +119,7 @@
     {!! Form::label('sale_end', 'Sale Ends', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         <div class="form-inline">
-            {!! Form::text('sale_end', $data['end'], ['class' => 'form-control']) !!}
+            {!! Form::text('sale_end', $data['sale_end'], ['class' => 'form-control']) !!}
             {!! Form::checkbox('checkNoEnd', 'checkNoEnd', $data['no_end'], ['id' => 'checkNoEnd']) !!} No End Date
         </div>
     </div>

@@ -56,12 +56,13 @@ class ItemSale extends Model
      * @var array
      */
     protected $casts = [
-        'applied'    => 'boolean',
-        'approved'   => 'boolean',
-        'color'      => 'boolean',
-        'pos_update' => 'boolean',
-        'printed'    => 'boolean',
-        'queued'     => 'boolean',
+        'applied'          => 'boolean',
+        'approved'         => 'boolean',
+        'color'            => 'boolean',
+        'discount_percent' => 'decimal:4',
+        'pos_update'       => 'boolean',
+        'printed'          => 'boolean',
+        'queued'           => 'boolean',
     ];
 
     /**
@@ -76,9 +77,40 @@ class ItemSale extends Model
     ];
 
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Set or calculate the discount percent.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setDiscountPercentAttribute($value)
+    {
+        if (!is_numeric($value)) {
+            $value = $this->calculateDiscountPercent();
+        }
+        $this->attributes['discount_percent'] = $value;
+    }
+
+    /**
+     * Set or calculate the discount percent.
+     *
+     * @return float
+     */
+    protected function calculateDiscountPercent()
+    {
+        return round(((1 - ($this->real_sale_price / $this->regular_price)) * 100), 4);
+    }
 }

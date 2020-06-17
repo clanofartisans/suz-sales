@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\InfraItem;
+use App\ItemSale;
 use App\Jobs\ApplySalePrice;
 use App\ManualSale;
 use Carbon\Carbon;
@@ -37,7 +37,7 @@ class ManualController extends Controller
             $filter = 'f_unprinted';
         }
 
-        $items = ManualSale::orderBy('brand_uc', 'asc')
+        $items = ItemSale::orderBy('brand_uc', 'asc')
                            ->orderBy('upc', 'asc');
 
         switch ($filter) {
@@ -99,8 +99,8 @@ class ManualController extends Controller
             $items = $items->paginate(100, ['*'], 'page', session('manual_page', 1));
         }
 
-        $queueCounts['bw']    = DB::table('manual_sales')->where('queued', true)->where('color', false)->whereNull('deleted_at')->count();
-        $queueCounts['color'] = DB::table('manual_sales')->where('queued', true)->where('color', true)->whereNull('deleted_at')->count();
+        $queueCounts['bw']    = DB::table('item_sales')->where('queued', true)->where('color', false)->whereNull('deleted_at')->count();
+        $queueCounts['color'] = DB::table('item_sales')->where('queued', true)->where('color', true)->whereNull('deleted_at')->count();
 
         $jobCounts['processing'] = DB::table('jobs')->where('queue', 'processing')->count();
         $jobCounts['imaging']    = DB::table('jobs')->where('queue', 'imaging')->count();
@@ -172,12 +172,12 @@ class ManualController extends Controller
     public function create()
     {
         $data['brand']    = session('manual_sale_brand');
-        $data['sale_cat'] = session('manual_sale_cat');
-        $data['begin']    = session('manual_sale_begin');
+        $data['sale_category'] = session('manual_sale_cat');
+        $data['sale_begin']    = session('manual_sale_begin');
         $data['no_begin'] = session('manual_sale_no_begin');
-        $data['end']      = session('manual_sale_end');
+        $data['sale_end']      = session('manual_sale_end');
         $data['no_end']   = session('manual_sale_no_end');
-        $data['percent']  = session('manual_sale_percent');
+        $data['discount_percent']  = session('manual_sale_percent');
 
         if (session('manual_sale_color') == 'radioColor') {
             $data['color'] = true;
@@ -201,7 +201,7 @@ class ManualController extends Controller
             $colorBW = false;
         }
 
-        if ($request->radioPOSUpdate == 'radioPOSYes') {
+        if ($request->pos_update == 'pos_update_yes') {
             $POSUpdate = true;
 
             if (!isset($request->checkNoBegin)) {
@@ -243,32 +243,25 @@ class ManualController extends Controller
             $saleCat = 'Great Savings';
         }
 
-        $sale = ManualSale::create(['upc'             => $request->previewInputUPC,
-                                    'brand'           => $request->previewInputBrand,
-                                    'brand_uc'        => strtoupper($request->previewInputBrand),
-                                    'desc'            => $request->previewInputDesc,
-                                    'sale_price'      => $salePrice,
-                                    'disp_sale_price' => $request->previewInputDispPrice,
-                                    'reg_price'       => $request->previewInputRegPrice,
-                                    'savings'         => $request->previewInputSavings,
-                                    'sale_cat'        => $saleCat,
-                                    'color'           => $colorBW,
-                                    'pos_update'      => $POSUpdate,
-                                    'processed'       => false,
-                                    'imaged'          => false,
-                                    'printed'         => false,
-                                    'sale_begin'      => $sale_begin,
-                                    'sale_end'        => $sale_end,
-                                    'expires'         => $expires,
-                                    'no_begin'        => isset($request->checkNoBegin),
-                                    'no_end'          => isset($request->checkNoEnd)]);
+        $sale = ItemSale::create(['upc'                 => $request->upc,
+                                  'brand'               => $request->brand,
+                                  'desc'                => $request->description,
+                                  'size'                => $request->size,
+                                  'regular_price'       => $request->regular_price,
+                                  'display_sale_price'  => $request->display_sale_price,
+                                  'real_sale_price'     => $request->real_sale_price,
+                                  'savings_amount'      => $request->savings_amount,
+                                  'discount_percent'    => $request->discount_percent,
+                                  'sale_category'       => $request->sale_category,
+                                  'sale_begin'          => Carbon::create($request->sale_begin),
+                                  'sale_end'            => Carbon::create($request->sale_end)]);
 
         if (!empty($request->previewInputPercentOff)) {
             $sale->percent_off = $request->previewInputPercentOff;
             $sale->save();
         }
 
-        dispatch((new ApplySalePrice($sale))->onQueue('processing'));
+        //dispatch((new ApplySalePrice($sale))->onQueue('processing'));
 
         if (isset($request->submitContinue)) {
             session(['manual_sale_brand' => $request->previewInputBrand]);
