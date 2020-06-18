@@ -19,11 +19,11 @@ class CreateItemSalesTable extends Migration
             $table->string('brand');
             $table->string('desc');
             $table->string('size');
-            $table->decimal('regular_price', 6, 2);
+            $table->decimal('regular_price', 6, 2)->nullable();
             $table->string('display_sale_price');
-            $table->decimal('real_sale_price', 6, 2);
-            $table->decimal('savings_amount', 6, 2);
-            $table->decimal('discount_percent', 7, 4);
+            $table->decimal('real_sale_price', 6, 2)->nullable();
+            $table->decimal('savings_amount', 6, 2)->nullable();
+            $table->decimal('discount_percent', 7, 4)->nullable();
             $table->string('sale_category')->default('Great Savings');
             $table->boolean('color')->default(false);
             $table->boolean('pos_update')->default(true);
