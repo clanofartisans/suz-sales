@@ -23,7 +23,7 @@ class OrderDogDriver extends AbstractPOSDriver implements POSContract
      * @param \App\ItemSale $item
      * @return bool
      */
-    public function applyItemSale(\App\ItemSale $item) : bool
+    public function applyItemSale(\App\ItemSale $item): bool
     {
         return false;
     }
@@ -34,7 +34,7 @@ class OrderDogDriver extends AbstractPOSDriver implements POSContract
      * @param \App\LineDrive $lineDrive
      * @return bool
      */
-    public function applyLineDrive(\App\LineDrive $lineDrive) : bool
+    public function applyLineDrive(\App\LineDrive $lineDrive): bool
     {
         return false;
     }
@@ -44,7 +44,7 @@ class OrderDogDriver extends AbstractPOSDriver implements POSContract
      *
      * @return iterable
      */
-    public function getBrands() : iterable
+    public function getBrands(): iterable
     {
         return [];
     }
@@ -53,11 +53,11 @@ class OrderDogDriver extends AbstractPOSDriver implements POSContract
      * Get an item from the POS system.
      *
      * @param string $upc
-     * @return \App\ItemSale|false
+     * @return \App\ItemSale|null
      */
-    public function getItem(string $upc) : \App\ItemSale
+    public function getItem(string $upc): ?\App\ItemSale
     {
-        return false;
+        return null;
     }
 
     /**
@@ -66,7 +66,7 @@ class OrderDogDriver extends AbstractPOSDriver implements POSContract
      * @param \App\InfraSheet $infrasheet
      * @return bool
      */
-    public function initializeInfraSale(\App\InfraSheet $infrasheet) : bool
+    public function initializeInfraSale(\App\InfraSheet $infrasheet): bool
     {
         return false;
     }

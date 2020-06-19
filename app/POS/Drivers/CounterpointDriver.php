@@ -2,6 +2,7 @@
 
 namespace App\POS\Drivers;
 
+use App\ItemSale;
 use App\POS\Contracts\POSContract;
 
 class CounterpointDriver extends AbstractPOSDriver implements POSContract
@@ -23,7 +24,7 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
      * @param \App\ItemSale $item
      * @return bool
      */
-    public function applyItemSale(\App\ItemSale $item) : bool
+    public function applyItemSale(\App\ItemSale $item): bool
     {
         return false;
     }
@@ -34,30 +35,47 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
      * @param \App\LineDrive $lineDrive
      * @return bool
      */
-    public function applyLineDrive(\App\LineDrive $lineDrive) : bool
+    public function applyLineDrive(\App\LineDrive $lineDrive): bool
     {
         return false;
     }
 
     /**
      * Get a list of all brands in the POS system.
+     * Keys are url encoded versions of values.
      *
      * @return iterable
      */
-    public function getBrands() : iterable
+    public function getBrands(): iterable
     {
-        return [];
+        $brands = [];
+
+        foreach ($this->getRawBrandDataFromCounterpoint() as $brand) {
+            $brands[urlencode($brand)] = $brand;
+        }
+
+        return $brands;
     }
 
     /**
      * Get an item from the POS system.
      *
      * @param string $upc
-     * @return \App\ItemSale|false
+     * @return \App\ItemSale|null
      */
-    public function getItem(string $upc) : \App\ItemSale
+    public function getItem(string $upc): ?\App\ItemSale
     {
-        return false;
+        if ($item = $this->getRawItemDataFromCounterpoint($upc)) {
+            $item = ItemSale::make([
+                'brand'         => $item['brand'],
+                'desc'          => $item['desc'],
+                'regular_price' => $item['regular_price'],
+                'size'          => $item['size'],
+                'upc'           => $item['upc']
+            ]);
+        }
+
+        return $item;
     }
 
     /**
@@ -66,8 +84,29 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
      * @param \App\InfraSheet $infrasheet
      * @return bool
      */
-    public function initializeInfraSale(\App\InfraSheet $infrasheet) : bool
+    public function initializeInfraSale(\App\InfraSheet $infrasheet): bool
     {
         return false;
+    }
+
+    /**
+     * Get raw brand data from Counterpoint.
+     *
+     * @return iterable|null
+     */
+    protected function getRawBrandDataFromCounterpoint(): ?iterable
+    {
+        return null;
+    }
+
+    /**
+     * Get raw item data from Counterpoint.
+     *
+     * @param string $upc
+     * @return iterable|null
+     */
+    protected function getRawItemDataFromCounterpoint($upc): ?iterable
+    {
+        return null;
     }
 }
