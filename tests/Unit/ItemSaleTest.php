@@ -24,9 +24,9 @@ class ItemSaleTest extends TestCase
     public function calculate_missing_discount_percent_from_sale_pricing()
     {
         $item = factory(ItemSale::class)->create([
-            'regular_price'      => 10.00,
-            'real_sale_price'    => 6.00,
-            'savings_amount'     => 4.00
+            'regular_price'   => 10.00,
+            'real_sale_price' => 6.00,
+            'savings_amount'  => 4.00
         ]);
 
         $item->discount_percent = '';

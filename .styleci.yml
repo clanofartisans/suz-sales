@@ -1,7 +1,7 @@
 preset: laravel
 enabled:
-  - align_double_arrow_minimal
-  - align_equals_minimal
+  - align_double_arrow
+  - align_equals
 disabled:
   - array_indentation
   - no_unused_imports

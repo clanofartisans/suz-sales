@@ -16,11 +16,11 @@ class CounterpointDriverTest extends TestCase
     public function get_an_item_from_counterpoint()
     {
         $sampleData = [
-            'upc'                => '021245750123',
-            'brand'              => 'KAL Brand',
-            'desc'               => 'Melatonin 3mg',
-            'size'               => '120 TABS',
-            'regular_price'      => 12.34
+            'upc'           => '021245750123',
+            'brand'         => 'KAL Brand',
+            'desc'          => 'Melatonin 3mg',
+            'size'          => '120 TABS',
+            'regular_price' => 12.34
         ];
 
         $pos = Mockery::mock(CounterpointDriver::class)
@@ -63,9 +63,9 @@ class CounterpointDriverTest extends TestCase
                        'KAL Brand',
                        'Solaray'];
 
-        $expectedReturn = ['Burt%27s+Bees'  => "Burt's Bees",
-                           'KAL+Brand'      => 'KAL Brand',
-                           'Solaray'        => 'Solaray'];
+        $expectedReturn = ['Burt%27s+Bees' => "Burt's Bees",
+                           'KAL+Brand'     => 'KAL Brand',
+                           'Solaray'       => 'Solaray'];
 
         $pos = Mockery::mock(CounterpointDriver::class)
             ->shouldAllowMockingProtectedMethods()

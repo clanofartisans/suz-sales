@@ -243,18 +243,18 @@ class ManualController extends Controller
             $saleCat = 'Great Savings';
         }
 
-        $sale = ItemSale::create(['upc'                 => $request->upc,
-                                  'brand'               => $request->brand,
-                                  'desc'                => $request->description,
-                                  'size'                => $request->size,
-                                  'regular_price'       => $request->regular_price,
-                                  'display_sale_price'  => $request->display_sale_price,
-                                  'real_sale_price'     => $request->real_sale_price,
-                                  'savings_amount'      => $request->savings_amount,
-                                  'discount_percent'    => $request->discount_percent,
-                                  'sale_category'       => $request->sale_category,
-                                  'sale_begin'          => Carbon::create($request->sale_begin),
-                                  'sale_end'            => Carbon::create($request->sale_end)]);
+        $sale = ItemSale::create(['upc'                => $request->upc,
+                                  'brand'              => $request->brand,
+                                  'desc'               => $request->description,
+                                  'size'               => $request->size,
+                                  'regular_price'      => $request->regular_price,
+                                  'display_sale_price' => $request->display_sale_price,
+                                  'real_sale_price'    => $request->real_sale_price,
+                                  'savings_amount'     => $request->savings_amount,
+                                  'discount_percent'   => $request->discount_percent,
+                                  'sale_category'      => $request->sale_category,
+                                  'sale_begin'         => Carbon::create($request->sale_begin),
+                                  'sale_end'           => Carbon::create($request->sale_end)]);
 
         if (!empty($request->previewInputPercentOff)) {
             $sale->percent_off = $request->previewInputPercentOff;
@@ -264,15 +264,15 @@ class ManualController extends Controller
         //dispatch((new ApplySalePrice($sale))->onQueue('processing'));
 
         if (isset($request->submitContinue)) {
-            session(['manual_sale_brand' => $request->previewInputBrand]);
-            session(['manual_sale_cat' => $request->previewInputSaleCat]);
+            session(['manual_sale_brand'      => $request->previewInputBrand]);
+            session(['manual_sale_cat'        => $request->previewInputSaleCat]);
             session(['manual_sale_pos_update' => $request->radioPOSUpdate]);
-            session(['manual_sale_color' => $request->radioBWColor]);
-            session(['manual_sale_begin' => $request->sale_begin]);
-            session(['manual_sale_end' => $request->sale_end]);
-            session(['manual_sale_no_begin' => $request->checkNoBegin]);
-            session(['manual_sale_no_end' => $request->checkNoEnd]);
-            session(['manual_sale_percent' => $request->previewInputPercentOff]);
+            session(['manual_sale_color'      => $request->radioBWColor]);
+            session(['manual_sale_begin'      => $request->sale_begin]);
+            session(['manual_sale_end'        => $request->sale_end]);
+            session(['manual_sale_no_begin'   => $request->checkNoBegin]);
+            session(['manual_sale_no_end'     => $request->checkNoEnd]);
+            session(['manual_sale_percent'    => $request->previewInputPercentOff]);
 
             return redirect()->route('manual.create');
         } else {
