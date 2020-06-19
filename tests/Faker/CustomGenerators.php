@@ -17,6 +17,7 @@ class CustomGenerators extends \Faker\Provider\Base
     protected static function upcChecksum($input)
     {
         $split = str_split($input);
+
         $mod = (($split[0] + $split[2] + $split[4] + $split[6] + $split[8] + $split[10]) * 3
                 + $split[1] + $split[3] + $split[5] + $split[7] + $split[9]) % 10;
 

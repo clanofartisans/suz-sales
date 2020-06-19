@@ -171,13 +171,13 @@ class ManualController extends Controller
 
     public function create()
     {
-        $data['brand']    = session('manual_sale_brand');
-        $data['sale_category'] = session('manual_sale_cat');
-        $data['sale_begin']    = session('manual_sale_begin');
-        $data['no_begin'] = session('manual_sale_no_begin');
-        $data['sale_end']      = session('manual_sale_end');
-        $data['no_end']   = session('manual_sale_no_end');
-        $data['discount_percent']  = session('manual_sale_percent');
+        $data['brand']            = session('manual_sale_brand');
+        $data['sale_category']    = session('manual_sale_cat');
+        $data['sale_begin']       = session('manual_sale_begin');
+        $data['no_begin']         = session('manual_sale_no_begin');
+        $data['sale_end']         = session('manual_sale_end');
+        $data['no_end']           = session('manual_sale_no_end');
+        $data['discount_percent'] = session('manual_sale_percent');
 
         if (session('manual_sale_color') == 'radioColor') {
             $data['color'] = true;
