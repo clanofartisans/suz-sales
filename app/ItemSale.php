@@ -91,6 +91,18 @@ class ItemSale extends Model
     public $timestamps = true;
 
     /**
+     * The INFRA sheet this item belongs to. Items only belong to
+     * one INFRA sheet, not "belong to many". This is just the
+     * simplest way to set up this relationship in Laravel.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function infrasheet()
+    {
+        return $this->belongsToMany('App\InfraSheet', 'infrasheet_itemsale', 'itemsale_id', 'infrasheet_id');
+    }
+
+    /**
      * Set or calculate the discount percent.
      *
      * @param  string  $value

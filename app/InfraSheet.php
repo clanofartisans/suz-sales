@@ -2,37 +2,46 @@
 
 namespace App;
 
-use DateTime;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int     id
+ * @property int     month
+ * @property int     year
+ * @property string  filename
+ * @property string  created_at
+ * @property string  updated_at
+ */
 class InfraSheet extends Model
 {
     /**
-     * The model's database table.
+     * The attributes that aren't mass assignable.
      *
      * @var array
      */
-    protected $table = 'infrasheets';
+    protected $guarded = [];
 
-    /*
-     * Any time the month is accessed, return the full name of the month.
+    /**
+     * The table associated with the model.
      *
-     * @return string
+     * @var string
      */
-    public function getMonthAttribute($value)
-    {
-        $dateObj = DateTime::createFromFormat('!m', $value);
+    protected $table;
 
-        return $dateObj->format('F');
-    }
-
-    /*
-     * Each INFRA Sheet should have many items associated with it.
+    /**
+     * Indicates if the model should be timestamped.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
+     * The items that belong to this INFRA sheet.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function items()
     {
-        return $this->hasMany('App\InfraItem');
+        return $this->belongsToMany('App\ItemSale');
     }
 }
