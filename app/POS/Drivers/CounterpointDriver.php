@@ -4,6 +4,8 @@ namespace App\POS\Drivers;
 
 use App\ItemSale;
 use App\POS\Contracts\POSContract;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CounterpointDriver extends AbstractPOSDriver implements POSContract
 {
@@ -50,7 +52,7 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
     {
         $brands = [];
 
-        foreach ($this->getRawBrandDataFromCounterpoint() as $brand) {
+        foreach ($this->getCleanBrandDataFromCounterpoint() as $brand) {
             $brands[urlencode($brand)] = $brand;
         }
 
@@ -65,7 +67,7 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
      */
     public function getItem(string $upc): ?\App\ItemSale
     {
-        if ($item = $this->getRawItemDataFromCounterpoint($upc)) {
+        if ($item = $this->getCleanItemDataFromCounterpoint($upc)) {
             $item = ItemSale::make([
                 'brand'         => $item['brand'],
                 'desc'          => $item['desc'],
@@ -90,23 +92,89 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
     }
 
     /**
-     * Get raw brand data from Counterpoint.
+     * Convert raw brand data from Counterpoint to a usable array.
      *
-     * @return iterable|null
+     * @return iterable
      */
-    protected function getRawBrandDataFromCounterpoint(): ?iterable
+    protected function getCleanBrandDataFromCounterpoint(): iterable
     {
-        return null;
+        $brands = [];
+
+        if ($result = $this->getRawBrandDataFromCounterpoint()) {
+            foreach ($result as $raw) {
+                $brands[] = $raw->PROF_ALPHA_2;
+            }
+        }
+
+        return $brands;
     }
 
     /**
-     * Get raw item data from Counterpoint.
+     * Convert raw item data from Counterpoint to a usable array.
      *
      * @param string $upc
      * @return iterable|null
      */
-    protected function getRawItemDataFromCounterpoint($upc): ?iterable
+    protected function getCleanItemDataFromCounterpoint($upc): ?iterable
     {
+        if ($match = $this->getRawItemDataFromCounterpoint($this->getItemNumberFromUPC($upc))) {
+            $item = [];
+
+            $item['brand']         = $match->PROF_ALPHA_2;
+            $item['desc']          = $match->DESCR;
+            $item['regular_price'] = $match->PRC_1;
+            $item['size']          = $match->PROF_ALPHA_2;
+            $item['upc']           = $upc;
+
+            return $item;
+        }
+
         return null;
+    }
+
+    /**
+     * Look up the actual Counterpoint item number associated with a UPC.
+     *
+     * @param string $upc
+     * @return string|null
+     */
+    protected function getItemNumberFromUPC($upc): ?string
+    {
+        $match = DB::connection('counterpoint')
+                   ->table('VI_IM_SKU_BARCOD')
+                   ->select('ITEM_NO')
+                   ->where('BARCOD', $upc)
+                   ->first();
+
+        return $match ? $match->ITEM_NO : null;
+    }
+
+    /**
+     * Get raw brand data from Counterpoint.
+     *
+     * @return Collection
+     */
+    protected function getRawBrandDataFromCounterpoint(): Collection
+    {
+        return DB::connection('counterpoint')
+                 ->table('IM_ITEM')
+                 ->select('PROF_ALPHA_2')
+                 ->distinct()
+                 ->orderBy('PROF_ALPHA_2', 'asc')
+                 ->get();
+    }
+
+    /**
+     * Get an item's raw data from Counterpoint.
+     *
+     * @param string $item_no
+     * @return \stdClass|null
+     */
+    protected function getRawItemDataFromCounterpoint(string $item_no): ?\stdClass
+    {
+        return DB::connection('counterpoint')
+            ->table('IM_ITEM')
+            ->where('ITEM_NO', $item_no)
+            ->first();
     }
 }

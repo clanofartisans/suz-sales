@@ -27,7 +27,7 @@ class CounterpointDriverTest extends TestCase
                       ->shouldAllowMockingProtectedMethods()
                       ->makePartial();
 
-        $pos->shouldReceive('getRawItemDataFromCounterpoint')
+        $pos->shouldReceive('getCleanItemDataFromCounterpoint')
             ->with('021245750123')
             ->andReturn($sampleData)
             ->once();
@@ -46,7 +46,7 @@ class CounterpointDriverTest extends TestCase
             ->shouldAllowMockingProtectedMethods()
             ->makePartial();
 
-        $pos->shouldReceive('getRawItemDataFromCounterpoint')
+        $pos->shouldReceive('getCleanItemDataFromCounterpoint')
             ->with('012345678905')
             ->andReturn(null)
             ->once();
@@ -71,7 +71,7 @@ class CounterpointDriverTest extends TestCase
             ->shouldAllowMockingProtectedMethods()
             ->makePartial();
 
-        $pos->shouldReceive('getRawBrandDataFromCounterpoint')
+        $pos->shouldReceive('getCleanBrandDataFromCounterpoint')
             ->andReturn($sampleData)
             ->once();
 
