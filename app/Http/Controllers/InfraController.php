@@ -77,6 +77,7 @@ class InfraController extends Controller
     public function getUploadFormYears(): iterable
     {
         $current = Carbon::now()->year;
-        return [$current - 1, $current, $current +1];
+
+        return [$current - 1, $current, $current + 1];
     }
 }

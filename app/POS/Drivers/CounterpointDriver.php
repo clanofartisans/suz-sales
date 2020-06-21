@@ -3,8 +3,8 @@
 namespace App\POS\Drivers;
 
 use App\Exceptions\POSSystemException;
-use App\ItemSale;
 use App\InfraSheet;
+use App\ItemSale;
 use App\POS\Contracts\POSContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
