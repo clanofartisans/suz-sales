@@ -40,9 +40,11 @@ class InfraController extends Controller
     {
         $infrasheet = InfraSheet::makeFromUpload($request->file('upworkbook'), $request->upmonth, $request->upyear);
 
-        POS::initializeInfraSale($infrasheet);
+        if (POS::initializeInfraSale($infrasheet)) {
+            $infrasheet->save();
 
-        //$infrasheet->queueNewSheetJobs();
+            //$infrasheet->queueNewSheetJobs();
+        }
 
         flash()->success('The INFRA workbook was uploaded successfully.');
 

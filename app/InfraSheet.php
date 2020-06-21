@@ -51,7 +51,7 @@ class InfraSheet extends Model
     }
 
     /**
-     * Attempt to create an InfraSheet from the upload form.
+     * Attempt to make an InfraSheet from the upload form.
      *
      * @param UploadedFile $file
      * @param string $month
@@ -67,8 +67,6 @@ class InfraSheet extends Model
 
         if (self::testInfraFile($file)) {
             $infrasheet->filename = $file->storeAs('infrasheets', time().'.xls');
-
-            $infrasheet->save();
         }
 
         return $infrasheet;
