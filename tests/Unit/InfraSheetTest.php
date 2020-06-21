@@ -4,10 +4,16 @@ namespace Tests\Unit;
 
 use App\Exceptions\InfraFileTestException;
 use App\InfraSheet;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class InfraSheetTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * @test
      * @throws InfraFileTestException
@@ -149,5 +155,26 @@ class InfraSheetTest extends TestCase
         $this->expectException(InfraFileTestException::class);
 
         InfraSheet::testInfraFile($file);
+    }
+
+    /**
+     * @test
+     * @throws InfraFileTestException
+     */
+    public function create_an_infra_sheet_from_an_uploaded_file_and_date()
+    {
+        $month = date('m');
+        $year  = date('Y');
+
+        $file = Storage::get('infrasheets/TestInfraSheet-Valid.xls');
+
+        $uploadedFile = UploadedFile::fake()->createWithContent('TestInfraSheet-Valid.xls', $file);
+
+        $infrasheet = InfraSheet::makeFromUpload($uploadedFile, $month, $year);
+
+        $this->assertStringEndsWith('.xls', $infrasheet->filename);
+        $this->assertRecentTimestamp(Carbon::createFromTimestamp(substr($infrasheet->filename, 12, -4)));
+        $this->assertEquals($month, $infrasheet->month);
+        $this->assertEquals($year, $infrasheet->year);
     }
 }

@@ -4,6 +4,7 @@ namespace App;
 
 use App\Exceptions\InfraFileTestException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet as Workbook;
 use PhpOffice\PhpSpreadsheet\Worksheet\Row;
@@ -48,18 +49,24 @@ class InfraSheet extends Model
     /**
      * Attempt to create an InfraSheet from the upload form.
      *
-     * @param string $file
+     * @param UploadedFile $file
      * @param string $month
      * @param string $year
      * @return InfraSheet
      * @throws InfraFileTestException
      */
-    public static function makeFromUpload(string $file, string $month, string $year): InfraSheet
+    public static function makeFromUpload(UploadedFile $file, string $month, string $year): self
     {
         if (self::testInfraFile($file)) {
-            return InfraSheet::make(['filename' => $file,
-                                     'month'    => $month,
-                                     'year'     => $year]);
+            $infrasheet = self::make(['filename' => $file,
+                                      'month'    => $month,
+                                      'year'     => $year]);
+
+            $infrasheet->filename = $file->storeAs('infrasheets', time().'.xls');
+
+            $infrasheet->save();
+
+            return $infrasheet;
         }
 
         throw new InfraFileTestException('Invalid Infra file.');
