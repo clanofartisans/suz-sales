@@ -2,9 +2,11 @@
 
 namespace App\POS\Drivers;
 
+use App\Exceptions\POSSystemException;
 use App\ItemSale;
 use App\InfraSheet;
 use App\POS\Contracts\POSContract;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -86,10 +88,52 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
      *
      * @param InfraSheet $infrasheet
      * @return bool
+     * @throws POSSystemException
      */
     public function initializeInfraSale(InfraSheet $infrasheet): bool
     {
-        return false;
+        $begin = Carbon::create($infrasheet->year, $infrasheet->month, 1);
+        $end   = $begin->copy()->endOfMonth();
+
+        $data = [];
+
+        $data['GRP_TYP']          = 'C';
+        $data['NO_BEG_DAT']       = 'N';
+        $data['NO_END_DAT']       = 'N';
+        $data['CUST_FILT_TEXT']   = '*** All ***';
+        $data['GRP_COD']          = 'INFRA'.$begin->format('my');
+        $data['DESCR']            = 'INFRA '.$begin->format('F Y');
+        $data['DESCR_UPR']        = strtoupper($data['DESCR']);
+        $data['BEG_DAT']          = $begin->format('Y-m-d').' 00:00:00.000';
+        $data['BEG_DT']           = $begin->format('Y-m-d').' 00:00:00.000';
+        $data['END_DAT']          = $end->format('Y-m-d').' 00:00:00.000';
+        $data['END_DT']           = $end->format('Y-m-d').' 23:59:59.000';
+        $data['LST_MAINT_DT']     = Carbon::now()->format('Y-m-d H:i:s.v');
+        $data['LST_MAINT_USR_ID'] = config('pos.counterpoint.user');
+
+        if (!$this->insertIntoDatabase('IM_PRC_GRP', $data)) {
+            throw new POSSystemException('The INFRA sale data has already been initialized in Counterpoint for the month you specified.');
+        }
+
+        return true;
+    }
+
+    /**
+     * Inserts raw data directly into the Counterpoint database.
+     *
+     * @param string $table
+     * @param array $data
+     * @return bool
+     */
+    protected function insertIntoDatabase(string $table, array $data): bool
+    {
+        try {
+            DB::connection('counterpoint')->table($table)->insert($data);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
