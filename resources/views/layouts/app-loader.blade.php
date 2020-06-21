@@ -94,8 +94,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-    <script src="{{ mix('/js/app-footer.js') }}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous" defer></script>
+    <script src="{{ mix('/js/app-footer.js') }}" defer></script>
 
     <!-- Hide the loader -->
     <script language="javascript" type="text/javascript">
