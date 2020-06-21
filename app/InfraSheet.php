@@ -57,19 +57,17 @@ class InfraSheet extends Model
      */
     public static function makeFromUpload(UploadedFile $file, string $month, string $year): self
     {
-        if (self::testInfraFile($file)) {
-            $infrasheet = self::make(['filename' => $file,
-                                      'month'    => $month,
-                                      'year'     => $year]);
+        $infrasheet = self::make(['filename' => $file,
+                                  'month'    => $month,
+                                  'year'     => $year]);
 
+        if (self::testInfraFile($file)) {
             $infrasheet->filename = $file->storeAs('infrasheets', time().'.xls');
 
             $infrasheet->save();
-
-            return $infrasheet;
         }
 
-        throw new InfraFileTestException('Invalid Infra file.');
+        return $infrasheet;
     }
 
     /**
