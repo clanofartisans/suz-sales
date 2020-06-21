@@ -2,30 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\ExcelDoc;
-use App\InfraItem;
+use App\Exceptions\InfraFileTestException;
+use App\Exceptions\POSSystemException;
 use App\InfraSheet;
+use App\POS\Facades\POS;
 use Carbon\Carbon;
-use DB;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use POS;
-use TCPDF;
 
 class InfraController extends Controller
 {
     /**
-     * Create a new controller instance.
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
-     * Display a listing of uploaded INFRA workbooks.
+     * Show a list of all available INFRA sheets.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
     {
@@ -33,111 +22,27 @@ class InfraController extends Controller
                                  ->orderBy('month', 'desc')
                                  ->get();
 
-        $years     = $this->getUploadFormYears();
-        $nextMonth = $this->getUploadFormNextMonth();
-        $nextYear  = $this->getUploadFormNextYear();
+        $years         = $this->getUploadFormYears();
+        $selectedMonth = $this->getSelectedMonth();
+        $selectedYear  = $this->getSelectedYear();
 
-        return view('infra.index', compact('infrasheets', 'years', 'nextMonth', 'nextYear'));
+        return view('infra.index', compact('infrasheets', 'years', 'selectedMonth', 'selectedYear'));
     }
 
     /**
-     * Display a listing of items for a given INFRA workbooks.
-     *
-     * @param int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $filter = session('infra_filter');
-
-        if (empty($filter)) {
-            $filter = 'f_all';
-        }
-
-        $infrasheet = InfraSheet::findOrFail($id);
-
-        $items = InfraItem::where('infrasheet_id', $id)
-                          ->orderBy('brand_uc', 'asc')
-                          ->orderBy('id', 'asc');
-
-        switch ($filter) {
-            case 'f_approved':
-                $items = $items->where('approved', true);
-                break;
-            case 'f_processed':
-                $items = $items->where('processed', true);
-                break;
-            case 'f_queued':
-                $items = $items->where('queued', true);
-                break;
-            case 'f_printed':
-                $items = $items->where('printed', true);
-                break;
-            case 'f_flagged':
-                $items = $items->whereNotNull('flags');
-                break;
-            case 'f_flagged_discounted':
-                $items = $items->where('flags', 'Item already has discounts');
-                break;
-            case 'f_flagged_lowprice':
-                $items = $items->where('flags', 'Item price is lower than sale price');
-                break;
-            case 'f_flagged_notfound':
-                $items = $items->where('flags', 'Item not found in point of sale system');
-                break;
-        }
-
-        if (request()->has('page')) {
-            $items = $items->paginate(100);
-            session(['infra_page' => $items->currentPage()]);
-        } else {
-            $page = session('infra_page', 1);
-            if ($page > 1 && (((float) $items->count()) / ($page - 1.0)) <= 100.0) {
-                session(['infra_page' => 1]);
-            }
-            $items = $items->paginate(100, ['*'], 'page', session('infra_page', 1));
-        }
-
-        $queueCount = DB::table('infra_items')->where('queued', true)->count();
-
-        $jobCounts['processing'] = DB::table('jobs')->where('queue', 'processing')->count();
-        $jobCounts['imaging']    = DB::table('jobs')->where('queue', 'imaging')->count();
-
-        return view('infra.show', compact('infrasheet', 'items', 'filter', 'queueCount', 'jobCounts'));
-    }
-
-    /**
-     * Process an uploaded INFRA spreadsheet file.
+     * Create a new INFRA sheet from an uploaded INFRA file.
      *
      * @param Request $request
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
+     * @throws InfraFileTestException
      */
-    public function uploadStore(Request $request)
+    public function store(Request $request)
     {
-        $infrasheet = new InfraSheet;
+        $infrasheet = InfraSheet::makeFromUpload($request->file('upworkbook'), $request->upmonth, $request->upyear);
 
-        $infrasheet->month = $request->upmonth;
-        $infrasheet->year  = $request->upyear;
+        POS::initializeInfraSale($infrasheet);
 
-        // There is a bug somewhere in Laravel, Flysystem, PHP, or somewhere else
-        // This helps us work around that in the meantime
-        $filename = time().'.xls';
-
-        $infrasheet->filename = $request->file('upworkbook')
-                                        ->storeAs('infrasheets', $filename);
-
-        // This is the original line that is currently bugged because of the above
-        //$infrasheet->filename = $request->file('upworkbook')->store('infrasheets');
-
-        $infrasheet->save();
-
-        $excelDoc = new ExcelDoc($infrasheet->filename);
-
-        $excelDoc->prepareAndSaveItemData($infrasheet->id);
-
-        POS::StartInfraSheet($infrasheet);
+        //$infrasheet->queueNewSheetJobs();
 
         flash()->success('The INFRA workbook was uploaded successfully.');
 
@@ -145,310 +50,33 @@ class InfraController extends Controller
     }
 
     /**
-     * Approve or print INFRA items based on user input.
-     *
-     * @param int $id
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function process($id, Request $request)
-    {
-        if ($request->filter) {
-            session(['infra_filter' => $request->filter]);
-        }
-        switch ($request->process) {
-            case 'approve':
-                $this->approveItems($request);
-                break;
-            case 'approveall':
-                $this->approveAllItems($request);
-                break;
-            case 'queue':
-                $this->queueSelectedItems($request);
-                break;
-            case 'print':
-                $this->printAllQueuedItems($request);
-                break;
-        }
-
-        return redirect()->route('infra.show', ['infra_id' => $id]);
-    }
-
-    protected function approveAllItems(Request $request)
-    {
-        $items = InfraItem::where('infrasheet_id', $request->infrasheet)
-                          ->get();
-
-        foreach ($items as $item) {
-            $item->approve();
-        }
-
-        flash()->success('All items have been approved.');
-    }
-
-    /**
-     * Loop through and approve user selected INFRA items.
-     *
-     * @param Request $request
-     */
-    protected function approveItems(Request $request)
-    {
-        if (!isset($request->checked)) {
-            flash()->warning('No items were selected.');
-
-            return;
-        }
-
-        foreach ($request->checked as $item) {
-            InfraItem::find($item)->approve();
-        }
-
-        flash()->success('The selected items have been approved.');
-    }
-
-    protected function queueItems($items)
-    {
-        if (count($items) == 0) {
-            flash()->warning('No items are ready to be printed.');
-
-            return false;
-        }
-
-        foreach ($items as $item) {
-            $item->queue();
-        }
-
-        return true;
-    }
-
-    /**
-     * Loop through and print user selected INFRA items.
-     *
-     * @param Request $request
-     */
-    protected function queueSelectedItems(Request $request)
-    {
-        if (!isset($request->checked)) {
-            flash()->warning('No items were selected.');
-
-            return;
-        }
-
-        $items = InfraItem::whereIn('id', $request->checked)
-                          ->where('imaged', true)
-                          ->get();
-
-        if ($this->queueItems($items)) {
-            flash()->success('The selected items have been queued for printing.');
-        }
-    }
-
-    /**
-     * Loop through and print all INFRA items that are ready to be printed.
-     *
-     * @param Request $request
-     */
-    protected function printAllQueuedItems(Request $request)
-    {
-        $items = InfraItem::where('infrasheet_id', $request->infrasheet)
-                          ->where('queued', true)
-                          ->orderBy('brand', 'asc')
-                          ->orderBy('id', 'asc')
-                          ->get();
-
-        if ($this->printItems($items)) {
-            flash()->success('All items that were queued for printing have been printed.');
-        }
-    }
-
-    /**
-     * Prepare and print a collection of items.
-     *
-     * @param \Illuminate\Database\Eloquent\Collection $items
-     *
-     * @return bool
-     */
-    protected function printItems($items)
-    {
-        if (count($items) == 0) {
-            flash()->warning('No items are queued for printing.');
-
-            return false;
-        }
-
-        foreach ($items as $item) {
-            $images[] = storage_path("app/images/infra/$item->id.png");
-        }
-
-        $this->printSheet($images);
-
-        foreach ($items as $item) {
-            $item->print();
-        }
-
-        return true;
-    }
-
-    /**
-     * Compiles an array of images into a PDF document ready for printing.
-     *
-     * @param array $images
-     */
-    protected function printSheet($images)
-    {
-        $user   = auth()->user();
-        $author = $user->name;
-
-        $layout = [8.5, 11];
-
-        $pdf = new TCPDF('P', 'in', $layout, false, 'UTF-8', false, false);
-
-        $pdf->SetCreator('Suzanne\'s Sales Manager');
-        $pdf->SetAuthor($author);
-        $pdf->SetTitle('Suzanne\'s Sales Test');
-
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
-
-        $pdf->SetMargins(0.25, 0.5, 0.25, true);
-
-        $pdf->SetAutoPageBreak(true, 0.5);
-
-        $pdf->setImageScale(300);
-
-        $count = count($images);
-
-        $i = 0;
-
-        while (true) {
-            $pdf->AddPage();
-
-            $x = 0.25;
-            $y = 0.5;
-
-            for ($row = 1; $row <= 3; $row++) {
-                for ($col = 1; $col <= 4; $col++) {
-                    if ($i <= ($count - 1)) {
-                        $pdf->Image($images[$i], $x, $y, 2, 3, 'PNG', '', '', false, 300, '', false, false, 0, false, false, false);
-
-                        $x += 2.0;
-
-                        $i++;
-                    } else {
-                        break;
-                    }
-                }
-
-                $x = 0.25;
-                $y += 3.5;
-            }
-
-            $pdf = $this->addAllCropMarks($pdf);
-
-            if ($i > ($count - 1)) {
-                break;
-            }
-        }
-
-        $now = Carbon::now('America/Chicago');
-
-        $outputName = $now->format('Y-m-d-H-i-s');
-
-        $pdf->Output(($outputName.'.pdf'), 'D');
-    }
-
-    /**
-     * Adds all crop marks needed for a full page of sale tags.
-     *
-     * @param TCPDF $pdf
-     *
-     * @return TCPDF
-     */
-    protected function addAllCropMarks(TCPDF $pdf)
-    {
-        $pdf->SetAlpha(0.25);
-        $pdf->cropMark(0.25, 0.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(2.25, 0.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(4.25, 0.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(6.25, 0.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(8.25, 0.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(0.25, 3.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(2.25, 3.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(4.25, 3.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(6.25, 3.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(8.25, 3.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(0.25, 4.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(2.25, 4.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(4.25, 4.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(6.25, 4.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(8.25, 4.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(0.25, 7.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(2.25, 7.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(4.25, 7.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(6.25, 7.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(8.25, 7.0, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(0.25, 7.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(2.25, 7.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(4.25, 7.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(6.25, 7.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(8.25, 7.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(0.25, 10.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(2.25, 10.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(4.25, 10.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(6.25, 10.5, 0.2, 0.2, 'A,D');
-        $pdf->cropMark(8.25, 10.5, 0.2, 0.2, 'A,D');
-        $pdf->SetAlpha(1);
-
-        return $pdf;
-    }
-
-    /**
-     * Builds an array of previous and upcoming years based on current year.
-     *
-     * @return array
-     */
-    protected function getUploadFormYears()
-    {
-        $carbon = Carbon::now();
-
-        $lastYear = $carbon->copy()->subYear();
-        $nextYear = $carbon->copy()->addYear();
-
-        $years[] = $lastYear->year;
-        $years[] = $carbon->year;
-        $years[] = $nextYear->year;
-
-        return $years;
-    }
-
-    /**
-     * Calculates and returns next month as an integer.
+     * Get the month that should be selected by default in the upload form.
      *
      * @return int
      */
-    protected function getUploadFormNextMonth()
+    public function getSelectedMonth()
     {
-        $carbon = Carbon::now();
-
-        $nextMonth = $carbon->copy()->addMonth();
-        $nextMonth = $nextMonth->month;
-
-        return $nextMonth;
+        return Carbon::now()->addMonth()->month;
     }
 
     /**
-     * Calculates and returns next year as an integer.
+     * Get the year that should be selected by default in the upload form.
      *
      * @return int
      */
-    protected function getUploadFormNextYear()
+    public function getSelectedYear()
     {
-        $carbon = Carbon::now();
+        return Carbon::now()->addMonth()->year;
+    }
 
-        $nextMonth = $carbon->copy()->addMonth();
-        $nextYear  = $nextMonth->year;
-
-        return $nextYear;
+    /**
+     * Get the previous, current, and next year for the upload form.
+     *
+     * @return iterable
+     */
+    public function getUploadFormYears(): iterable
+    {
+        $current = Carbon::now()->year;
+        return [$current - 1, $current, $current +1];
     }
 }

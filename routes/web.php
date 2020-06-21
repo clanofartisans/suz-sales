@@ -25,7 +25,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::group(['prefix' => 'infra'], function () {
         Route::get('/', 'InfraController@index')->name('infra.index');
         Route::get('{infra_id}', 'InfraController@show')->name('infra.show');
-        Route::post('/', 'InfraController@uploadStore')->name('infra.uploadstore');
+        Route::post('/', 'InfraController@store')->name('infra.uploadstore');
         Route::post('{infra_id}', 'InfraController@process')->name('infra.process');
     });
 
