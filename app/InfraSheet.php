@@ -11,8 +11,6 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
- * @method static InfraSheet make(array $attributes = [])
- *
  * @property int     id
  * @property int     month
  * @property int     year

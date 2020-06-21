@@ -3,6 +3,7 @@
 namespace App\POS\Drivers;
 
 use App\ItemSale;
+use App\InfraSheet;
 use App\POS\Contracts\POSContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -23,10 +24,10 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
     /**
      * Apply a sale to an item in the POS system.
      *
-     * @param \App\ItemSale $item
+     * @param ItemSale $item
      * @return bool
      */
-    public function applyItemSale(\App\ItemSale $item): bool
+    public function applyItemSale(ItemSale $item): bool
     {
         return false;
     }
@@ -63,9 +64,9 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
      * Get an item from the POS system.
      *
      * @param string $upc
-     * @return \App\ItemSale|null
+     * @return ItemSale|null
      */
-    public function getItem(string $upc): ?\App\ItemSale
+    public function getItem(string $upc): ?ItemSale
     {
         if ($item = $this->getCleanItemDataFromCounterpoint($upc)) {
             $item = ItemSale::make([
@@ -83,10 +84,10 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
     /**
      * Initialize an empty INFRA sale in the POS system.
      *
-     * @param \App\InfraSheet $infrasheet
+     * @param InfraSheet $infrasheet
      * @return bool
      */
-    public function initializeInfraSale(\App\InfraSheet $infrasheet): bool
+    public function initializeInfraSale(InfraSheet $infrasheet): bool
     {
         return false;
     }
