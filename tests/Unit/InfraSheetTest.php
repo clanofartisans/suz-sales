@@ -177,4 +177,15 @@ class InfraSheetTest extends TestCase
         $this->assertEquals($month, $infrasheet->month);
         $this->assertEquals($year, $infrasheet->year);
     }
+
+    /** @test */
+    public function get_formatted_date()
+    {
+        $infrasheet = InfraSheet::make(['month' => '1',
+                                        'year'  => '2020']);
+
+        $date = $infrasheet->formatted_date;
+
+        $this->assertEquals('January 2020', $date);
+    }
 }

@@ -37,7 +37,7 @@
                                 @foreach ($infrasheets as $infrasheet)
                                     <tr class="clickable" data-url="{{ route('infra.show', [$infrasheet->id]) }}">
                                         <td><a href="{{ route('infra.show', [$infrasheet->id]) }}">
-                                            {{ $infrasheet->month }} {{ $infrasheet->year }}
+                                            {{ $infrasheet->formatted_date }}
                                             </a></td>
                                     </tr>
                                 @endforeach

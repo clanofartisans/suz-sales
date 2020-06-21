@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Exceptions\InfraFileTestException;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -42,6 +43,11 @@ class InfraSheet extends Model
     public function items()
     {
         return $this->belongsToMany('App\ItemSale');
+    }
+
+    public function getFormattedDateAttribute()
+    {
+        return Carbon::create($this->year, $this->month)->format('F Y');
     }
 
     /**
