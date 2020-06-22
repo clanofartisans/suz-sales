@@ -129,6 +129,25 @@ class InfraSheet extends Model
     }
 
     /**
+     * Cleans extra characters or spaces from a string.
+     * "/\xe2\x84\xa2/u" is a Trade Mark symbol : TM
+     * "/\xc2\xae/u" is a Registered symbol : (R)
+     *
+     * @param string $text
+     * @return string
+     */
+    public function cleanText(string $text): string
+    {
+        if (preg_match("/(\xc2\xae|\xe2\x84\xa2)/u", $text)) {
+            $text = preg_replace("/(\xc2\xae|\xe2\x84\xa2)/u", ' ', $text);
+            $text = preg_replace('/\s+/', ' ', $text);
+            $text = trim($text);
+        }
+
+        return $text;
+    }
+
+    /**
      * Load a workbook file using PhpSpreadsheet.
      *
      * @param string $file

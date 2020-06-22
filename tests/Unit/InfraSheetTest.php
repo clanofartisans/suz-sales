@@ -188,4 +188,79 @@ class InfraSheetTest extends TestCase
 
         $this->assertEquals('January 2020', $date);
     }
+
+    /**
+     * @test
+     */
+    public function clean_descriptions_from_infra_files()
+    {
+        $samples = [];
+
+        // Something without special characters
+        $samples[0]  = 'Cold Brew Coffee - Mocha';
+        $expected[0] = 'Cold Brew Coffee - Mocha';
+
+        // Non-whitespace, (R) symbol, whitespace
+        $samples[1]  = 'OG Ezekiel 4:9® English Muffins - Sprouted Whole Grain';
+        $expected[1] = 'OG Ezekiel 4:9 English Muffins - Sprouted Whole Grain';
+
+            // Starts with (R) symbol, followed by whitespace
+        $samples[2]  = '® RAW Probiotics Men';
+        $expected[2] = 'RAW Probiotics Men';
+
+            // (R) symbol surrounded by whitespace
+        $samples[3]  = 'OG ® RAW Probiotic Kids';
+        $expected[3] = 'OG RAW Probiotic Kids';
+
+            // (R) symbol with no surrounding whitespace
+        $samples[4]  = 'Stress Relax®Tranquil Sleep Enteric';
+        $expected[4] = 'Stress Relax Tranquil Sleep Enteric';
+
+            // Multiple (R) symbols
+        $samples[5]  = "Stress Relax® Suntheanine® L'Theanine";
+        $expected[5] = "Stress Relax Suntheanine L'Theanine";
+
+            // (R) symbol followed by multiple spaces
+        $samples[6]  = "Stress Relax Suntheanine®  L'Theanine";
+        $expected[6] = "Stress Relax Suntheanine L'Theanine";
+
+            // Both an (R) symbol and a (TM) symbol
+        $samples[7]  = 'Targeted Choice® Just Breathe™';
+        $expected[7] = 'Targeted Choice Just Breathe';
+
+            // Ends with space, followed by an (R) symbol
+        $samples[8]  = 'Cinnamon Force ®';
+        $expected[8] = 'Cinnamon Force';
+
+            // Ends with (TM) symbol
+        $samples[9]  = 'Holy Basil Force™';
+        $expected[9] = 'Holy Basil Force';
+
+        $infrasheet = InfraSheet::make(['month' => '1',
+                                        'year'  => '2020']);
+
+        $cleaned = [];
+
+        $cleaned[0] = $infrasheet->cleanText($samples[0]);
+        $cleaned[1] = $infrasheet->cleanText($samples[1]);
+        $cleaned[2] = $infrasheet->cleanText($samples[2]);
+        $cleaned[3] = $infrasheet->cleanText($samples[3]);
+        $cleaned[4] = $infrasheet->cleanText($samples[4]);
+        $cleaned[5] = $infrasheet->cleanText($samples[5]);
+        $cleaned[6] = $infrasheet->cleanText($samples[6]);
+        $cleaned[7] = $infrasheet->cleanText($samples[7]);
+        $cleaned[8] = $infrasheet->cleanText($samples[8]);
+        $cleaned[9] = $infrasheet->cleanText($samples[9]);
+
+        $this->assertEquals($expected[0], $cleaned[0]);
+        $this->assertEquals($expected[1], $cleaned[1]);
+        $this->assertEquals($expected[2], $cleaned[2]);
+        $this->assertEquals($expected[3], $cleaned[3]);
+        $this->assertEquals($expected[4], $cleaned[4]);
+        $this->assertEquals($expected[5], $cleaned[5]);
+        $this->assertEquals($expected[6], $cleaned[6]);
+        $this->assertEquals($expected[7], $cleaned[7]);
+        $this->assertEquals($expected[8], $cleaned[8]);
+        $this->assertEquals($expected[9], $cleaned[9]);
+    }
 }
