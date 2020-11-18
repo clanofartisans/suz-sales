@@ -204,35 +204,35 @@ class InfraSheetTest extends TestCase
         $samples[1]  = 'OG Ezekiel 4:9® English Muffins - Sprouted Whole Grain';
         $expected[1] = 'OG Ezekiel 4:9 English Muffins - Sprouted Whole Grain';
 
-            // Starts with (R) symbol, followed by whitespace
+        // Starts with (R) symbol, followed by whitespace
         $samples[2]  = '® RAW Probiotics Men';
         $expected[2] = 'RAW Probiotics Men';
 
-            // (R) symbol surrounded by whitespace
+        // (R) symbol surrounded by whitespace
         $samples[3]  = 'OG ® RAW Probiotic Kids';
         $expected[3] = 'OG RAW Probiotic Kids';
 
-            // (R) symbol with no surrounding whitespace
+        // (R) symbol with no surrounding whitespace
         $samples[4]  = 'Stress Relax®Tranquil Sleep Enteric';
         $expected[4] = 'Stress Relax Tranquil Sleep Enteric';
 
-            // Multiple (R) symbols
+        // Multiple (R) symbols
         $samples[5]  = "Stress Relax® Suntheanine® L'Theanine";
         $expected[5] = "Stress Relax Suntheanine L'Theanine";
 
-            // (R) symbol followed by multiple spaces
+        // (R) symbol followed by multiple spaces
         $samples[6]  = "Stress Relax Suntheanine®  L'Theanine";
         $expected[6] = "Stress Relax Suntheanine L'Theanine";
 
-            // Both an (R) symbol and a (TM) symbol
+        // Both an (R) symbol and a (TM) symbol
         $samples[7]  = 'Targeted Choice® Just Breathe™';
         $expected[7] = 'Targeted Choice Just Breathe';
 
-            // Ends with space, followed by an (R) symbol
+        // Ends with space, followed by an (R) symbol
         $samples[8]  = 'Cinnamon Force ®';
         $expected[8] = 'Cinnamon Force';
 
-            // Ends with (TM) symbol
+        // Ends with (TM) symbol
         $samples[9]  = 'Holy Basil Force™';
         $expected[9] = 'Holy Basil Force';
 
