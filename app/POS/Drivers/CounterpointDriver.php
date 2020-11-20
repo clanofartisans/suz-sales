@@ -128,7 +128,7 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
     protected function insertIntoDatabase(string $table, array $data): bool
     {
         try {
-            DB::connection('counterpoint')->table($table)->insert($data);
+            $this->connection()->table($table)->insert($data);
         } catch (\Exception $e) {
             return false;
         }
@@ -162,7 +162,7 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
      */
     protected function getCleanItemDataFromCounterpoint($upc): ?iterable
     {
-        if ($match = $this->getRawItemDataFromCounterpoint($this->getItemNumberFromUPC($upc))) {
+        if ($this->getItemNumberFromUPC($upc) && $match = $this->getRawItemDataFromCounterpoint($this->getItemNumberFromUPC($upc))) {
             $item = [];
 
             $item['brand']         = $match->PROF_ALPHA_2;
@@ -180,16 +180,17 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
     /**
      * Look up the actual Counterpoint item number associated with a UPC.
      *
+     * @codeCoverageIgnore (Covered by integration test)
      * @param string $upc
      * @return string|null
      */
     protected function getItemNumberFromUPC($upc): ?string
     {
-        $match = DB::connection('counterpoint')
-                   ->table('VI_IM_SKU_BARCOD')
-                   ->select('ITEM_NO')
-                   ->where('BARCOD', $upc)
-                   ->first();
+        $match = $this->connection()
+            ->table('VI_IM_SKU_BARCOD')
+            ->select('ITEM_NO')
+            ->where('BARCOD', $upc)
+            ->first();
 
         return $match ? $match->ITEM_NO : null;
     }
@@ -197,29 +198,42 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
     /**
      * Get raw brand data from Counterpoint.
      *
+     * @codeCoverageIgnore (Covered by integration test)
      * @return Collection
      */
     protected function getRawBrandDataFromCounterpoint(): Collection
     {
-        return DB::connection('counterpoint')
-                 ->table('IM_ITEM')
-                 ->select('PROF_ALPHA_2')
-                 ->distinct()
-                 ->orderBy('PROF_ALPHA_2', 'asc')
-                 ->get();
+        return $this->connection()
+            ->table('IM_ITEM')
+            ->select('PROF_ALPHA_2')
+            ->distinct()
+            ->orderBy('PROF_ALPHA_2', 'asc')
+            ->get();
     }
 
     /**
      * Get an item's raw data from Counterpoint.
      *
+     * @codeCoverageIgnore (Covered by integration test)
      * @param string $item_no
      * @return \stdClass|null
      */
     protected function getRawItemDataFromCounterpoint(string $item_no): ?\stdClass
     {
-        return DB::connection('counterpoint')
+        return $this->connection()
             ->table('IM_ITEM')
             ->where('ITEM_NO', $item_no)
             ->first();
+    }
+
+    /**
+     * Get a connection to the Counterpoint database.
+     *
+     * @codeCoverageIgnore (Covered by integration test)
+     * @return \Illuminate\Database\ConnectionInterface
+     */
+    protected function connection(): \Illuminate\Database\ConnectionInterface
+    {
+        return DB::connection(env('CP_DB_CONNECTION'));
     }
 }
