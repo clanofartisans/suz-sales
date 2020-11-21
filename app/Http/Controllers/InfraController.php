@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\InfraSheetUploaded;
 use App\Exceptions\InfraFileTestException;
 use App\Exceptions\POSSystemException;
 use App\InfraSheet;
@@ -40,13 +41,9 @@ class InfraController extends Controller
     {
         $infrasheet = InfraSheet::makeFromUpload($request->file('upworkbook'), $request->upmonth, $request->upyear);
 
-        if (POS::initializeInfraSale($infrasheet)) {
-            $infrasheet->save();
-
-            //$infrasheet->queueNewSheetJobs();
+        if ($infrasheet instanceof InfraSheet) {
+            InfraSheetUploaded::dispatch($infrasheet);
         }
-
-        flash()->success('The INFRA workbook was uploaded successfully.');
 
         return redirect()->route('infra.index');
     }

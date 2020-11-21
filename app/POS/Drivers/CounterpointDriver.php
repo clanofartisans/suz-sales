@@ -93,23 +93,23 @@ class CounterpointDriver extends AbstractPOSDriver implements POSContract
     public function initializeInfraSale(InfraSheet $infrasheet): bool
     {
         $begin = Carbon::create($infrasheet->year, $infrasheet->month, 1);
-        $end   = $begin->copy()->endOfMonth();
+        $end = $begin->copy()->endOfMonth();
 
-        $data = [];
-
-        $data['GRP_TYP']          = 'C';
-        $data['NO_BEG_DAT']       = 'N';
-        $data['NO_END_DAT']       = 'N';
-        $data['CUST_FILT_TEXT']   = '*** All ***';
-        $data['GRP_COD']          = 'INFRA'.$begin->format('my');
-        $data['DESCR']            = 'INFRA '.$begin->format('F Y');
-        $data['DESCR_UPR']        = strtoupper($data['DESCR']);
-        $data['BEG_DAT']          = $begin->format('Y-m-d').' 00:00:00.000';
-        $data['BEG_DT']           = $begin->format('Y-m-d').' 00:00:00.000';
-        $data['END_DAT']          = $end->format('Y-m-d').' 00:00:00.000';
-        $data['END_DT']           = $end->format('Y-m-d').' 23:59:59.000';
-        $data['LST_MAINT_DT']     = Carbon::now()->format('Y-m-d H:i:s.v');
-        $data['LST_MAINT_USR_ID'] = config('pos.counterpoint.user');
+        $data = [
+            'GRP_TYP' => 'C',
+            'NO_BEG_DAT' => 'N',
+            'NO_END_DAT' => 'N',
+            'CUST_FILT_TEXT' => '*** All ***',
+            'GRP_COD' => 'INFRA' . $begin->format('my'),
+            'DESCR' => 'INFRA ' . $begin->format('F Y'),
+            'DESCR_UPR' => strtoupper('INFRA ' . $begin->format('F Y')),
+            'BEG_DAT' => $begin->format('Y-m-d') . ' 00:00:00.000',
+            'BEG_DT' => $begin->format('Y-m-d') . ' 00:00:00.000',
+            'END_DAT' => $end->format('Y-m-d') . ' 00:00:00.000',
+            'END_DT' => $end->format('Y-m-d') . ' 23:59:59.000',
+            'LST_MAINT_DT' => Carbon::now()->format('Y-m-d H:i:s.v'),
+            'LST_MAINT_USR_ID' => config('pos.counterpoint.user')
+        ];
 
         if (!$this->insertIntoDatabase('IM_PRC_GRP', $data)) {
             throw new POSSystemException('The INFRA sale data has already been initialized in Counterpoint for the month you specified.');
