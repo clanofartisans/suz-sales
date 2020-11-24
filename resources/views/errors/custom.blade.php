@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Maintenance</title>
+    <title>{{ $title }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -25,8 +25,9 @@
     <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
         <div class="flex items-center pt-8 sm:justify-start sm:pt-0">
             <div class="px-4 text-lg text-gray-500 tracking-wider">
-                <h3>Maintenance</h3>
-                <p>Sales Manager will be right back.</p>
+                <h3>{{ $title }}</h3>
+                <p>{{ $message }}</p>
+                <p style="text-align: right;">&larr; <a href="{!! url()->previous() !!}" style="text-decoration: underline;">Back to previous page</a></p>
             </div>
         </div>
     </div>
