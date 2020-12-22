@@ -33,7 +33,6 @@ class CounterpointEventSubscriberTest extends TestCase
 
     /**
      * @test
-     * @throws POSSystemException
      * @group integration
      */
     public function integration_with_counterpoint__do_not_initialize_a_new_infra_sale_if_one_already_exists()

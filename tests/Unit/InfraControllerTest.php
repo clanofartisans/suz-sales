@@ -4,13 +4,17 @@ namespace Tests\Unit;
 
 use App\Events\InfraSheetUploaded;
 use App\Http\Controllers\InfraController;
+use App\InfraSheet;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class InfraControllerTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /** @test */
     public function get_previous_current_and_next_year()
     {
@@ -48,7 +52,7 @@ class InfraControllerTest extends TestCase
     }
 
     /** @test */
-    public function uploading_valid_infrasheet_triggers_uploaded_event()
+    public function uploading_valid_infrasheet_saves_to_database_and_triggers_uploaded_event()
     {
         Event::fake();
 
@@ -66,7 +70,7 @@ class InfraControllerTest extends TestCase
     }
 
     /** @test */
-    public function uploading_invalid_infrasheet_does_not_trigger_uploaded_event()
+    public function uploading_invalid_infrasheet_does_not_save_or_trigger_uploaded_event()
     {
         Event::fake();
 

@@ -4,15 +4,19 @@ namespace Tests\Unit;
 
 use App\Exceptions\InfraFileTestException;
 use App\InfraSheet;
+use App\Jobs\ParseInfraSheet;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class InfraSheetTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseMigrations;
 
     /**
      * @test
@@ -163,8 +167,8 @@ class InfraSheetTest extends TestCase
      */
     public function create_an_infra_sheet_from_an_uploaded_file_and_date()
     {
-        $month = date('m');
-        $year  = date('Y');
+        $month = date(1);
+        $year  = date(2020);
 
         $file = Storage::get('infrasheets/TestInfraSheet-Valid.xls');
 
@@ -176,6 +180,7 @@ class InfraSheetTest extends TestCase
         $this->assertRecentTimestamp(Carbon::createFromTimestamp(substr($infrasheet->filename, 12, -4)));
         $this->assertEquals($month, $infrasheet->month);
         $this->assertEquals($year, $infrasheet->year);
+        $this->assertDatabaseHas('infra_sheets', ['month' => 1, 'year' => 2020]);
     }
 
     /** @test */
@@ -189,9 +194,7 @@ class InfraSheetTest extends TestCase
         $this->assertEquals('January 2020', $date);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function clean_descriptions_from_infra_files()
     {
         $samples = [];
@@ -262,5 +265,43 @@ class InfraSheetTest extends TestCase
         $this->assertEquals($expected[7], $cleaned[7]);
         $this->assertEquals($expected[8], $cleaned[8]);
         $this->assertEquals($expected[9], $cleaned[9]);
+    }
+
+    /** @test */
+    public function parsing_an_infra_sheet_queues_a_job_to_do_the_actual_parsing()
+    {
+        Queue::fake();
+
+        $month = date('m');
+        $year  = date('Y');
+
+        $file = Storage::get('infrasheets/TestInfraSheet-Valid.xls');
+
+        $uploadedFile = UploadedFile::fake()->createWithContent('TestInfraSheet-Valid.xls', $file);
+
+        $infrasheet = InfraSheet::makeFromUpload($uploadedFile, $month, $year);
+
+        $infrasheet->queueParseSheet();
+
+        Queue::assertPushed(ParseInfraSheet::class, 1);
+    }
+
+    /** @test */
+    public function parsing_an_infra_sheet_adds_items_locally()
+    {
+        $month = date('m');
+        $year  = date('Y');
+
+        $file = Storage::get('infrasheets/TestInfraSheet-Valid.xls');
+
+        $uploadedFile = UploadedFile::fake()->createWithContent('TestInfraSheet-Valid.xls', $file);
+
+        $infrasheet = InfraSheet::makeFromUpload($uploadedFile, $month, $year);
+
+        $infrasheet->queueParseSheet();
+
+        $this->assertDatabaseCount('item_sales', 12);
+        $this->assertDatabaseHas('item_sales', ['upc' => '857554005773']);
+        $this->assertDatabaseHas('item_sales', ['upc' => '073472001196']);
     }
 }
