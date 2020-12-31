@@ -1,6 +1,6 @@
 <?php
 
-use App\ManualSale;
+//use App\ManualSale;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,11 +18,13 @@ class AddBrandUcToManualSalesTable extends Migration
             $table->string('brand_uc')->nullable();
         });
 
+        /*
         foreach (ManualSale::all() as $item) {
             $item->update([
               'brand_uc' => strtoupper($item->brand)
             ]);
         }
+        */
     }
 
     /**

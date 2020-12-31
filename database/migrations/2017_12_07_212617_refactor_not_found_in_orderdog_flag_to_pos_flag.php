@@ -1,7 +1,7 @@
 <?php
 
-use App\InfraItem;
-use App\ManualSale;
+//use App\InfraItem;
+//use App\ManualSale;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,6 +15,7 @@ class RefactorNotFoundInOrderdogFlagToPosFlag extends Migration
      */
     public function up()
     {
+        /*
         $infraItems = InfraItem::where('flags', 'Item not found in OrderDog')
                                ->get();
 
@@ -28,6 +29,7 @@ class RefactorNotFoundInOrderdogFlagToPosFlag extends Migration
         foreach ($manualItems as $item) {
             $item->update(['flags' => 'Item not found in point of sale system']);
         }
+        */
     }
 
     /**
@@ -37,6 +39,7 @@ class RefactorNotFoundInOrderdogFlagToPosFlag extends Migration
      */
     public function down()
     {
+        /*
         $infraItems = InfraItem::where('flags', 'Item not found in point of sale system')
                                ->get();
 
@@ -50,5 +53,6 @@ class RefactorNotFoundInOrderdogFlagToPosFlag extends Migration
         foreach ($manualItems as $item) {
             $item->update(['flags' => 'Item not found in OrderDog']);
         }
+        */
     }
 }

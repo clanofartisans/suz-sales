@@ -1,6 +1,6 @@
 <?php
 
-use App\InfraItem;
+//use App\InfraItem;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,12 +17,13 @@ class AddBrandUcToInfraItemsTable extends Migration
         Schema::table('infra_items', function ($table) {
             $table->string('brand_uc')->nullable();
         });
-
+/*
         foreach (InfraItem::all() as $item) {
             $item->update([
               'brand_uc' => strtoupper($item->brand)
             ]);
         }
+*/
     }
 
     /**
