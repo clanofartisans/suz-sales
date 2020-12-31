@@ -6,6 +6,9 @@ language: php
 php:
   - 7.4
 
+env:
+  - XDEBUG_MODE=coverage
+
 services:
   - mysql
 
