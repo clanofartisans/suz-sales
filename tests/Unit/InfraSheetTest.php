@@ -284,7 +284,10 @@ class InfraSheetTest extends TestCase
         Queue::assertPushed(ParseInfraSheet::class, 1);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group integration
+     */
     public function parsing_an_infra_sheet_adds_items_locally()
     {
         $month = date('m');
