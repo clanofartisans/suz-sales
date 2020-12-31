@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\Events\InfraSheetUploaded;
 use App\Http\Controllers\InfraController;
-use App\InfraSheet;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;

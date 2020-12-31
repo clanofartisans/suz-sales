@@ -7,9 +7,7 @@ use App\InfraSheet;
 use App\Jobs\ParseInfraSheet;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -301,7 +299,6 @@ class InfraSheetTest extends TestCase
         $infrasheet->queueParseSheet();
 
         $this->assertDatabaseCount('item_sales', 12);
-        $this->assertDatabaseHas('item_sales', ['upc' => '857554005773']);
-        $this->assertDatabaseHas('item_sales', ['upc' => '073472001196']);
+        $this->assertDatabaseHas('item_sales', ['upc' => '871459003054']);
     }
 }

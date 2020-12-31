@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\POS\Facades\POS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -97,7 +98,7 @@ class ItemSale extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function infrasheet()
+    public function infrasheet(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany('App\InfraSheet', 'infrasheet_itemsale', 'itemsale_id', 'infrasheet_id');
     }
@@ -106,9 +107,8 @@ class ItemSale extends Model
      * Set or calculate the discount percent.
      *
      * @param  string  $value
-     * @return void
      */
-    public function setDiscountPercentAttribute($value)
+    public function setDiscountPercentAttribute(string $value)
     {
         if (!is_numeric($value)) {
             $value = $this->calculateDiscountPercent();
@@ -117,12 +117,160 @@ class ItemSale extends Model
     }
 
     /**
+     * Calculates all pricing info for the sale.
+     *
+     * @param null $salePrice
+     * @return $this
+     */
+    public function calculatePricingData($salePrice = null): ItemSale
+    {
+        if (!($posItem = $this->getPOSItem($this->upc))) {
+            $this->display_sale_price = $this->calculateDisplaySalePrice($salePrice, $salePrice);
+            $this->flags = 'Item not found in point of sale system';
+
+            return $this;
+        }
+
+        $this->regular_price      = $posItem->regular_price;
+        $this->real_sale_price    = $this->calculateRealSalePrice($salePrice, $posItem->regular_price);
+        $this->display_sale_price = $this->calculateDisplaySalePrice($salePrice, $this->real_sale_price);
+        $this->discount_percent   = $this->calculatePercentageDiscount($this->regular_price, $this->real_sale_price);
+        $this->savings_amount     = $this->regular_price - $this->real_sale_price;
+
+        $this->checkForSalePriceProblems();
+
+        return $this;
+    }
+
+    /**
+     * Gets item info from the point of sale system.
+     *
+     * @param string $upc
+     * @return ItemSale|null
+     */
+    protected function getPOSItem(string $upc): ?ItemSale
+    {
+        if (!empty($posItem = POS::getItem($upc))) {
+            return $posItem;
+        }
+
+        return null;
+    }
+
+    /**
+     * Calculate the actual sale price of an item, based on
+     * things like "4/$5" and also strip any formatting.
+     *
+     * @param $price
+     * @param $regularPrice
+     * @return string
+     */
+    protected function calculateRealSalePrice($price, $regularPrice): string
+    {
+        if (!empty($price)) {
+            if (strpos($price, '/') !== false) {
+                $price     = rtrim($price);
+                $pieces    = explode('/', $price);
+                $pieces[1] = ltrim($pieces[1], '$');
+
+                $priceCalc = $pieces[1] / (float) $pieces[0];
+
+                return $this->roundSalePrice($priceCalc);
+            } else {
+                $price = ltrim($price, '$');
+                if (is_numeric($price)) {
+                    $price = (float) $price;
+
+                    return $this->roundSalePrice($price);
+                }
+            }
+        }
+
+        return $this->roundSalePrice($regularPrice * 0.8);
+    }
+
+    /**
+     * Rounds a price to two decimal places.
+     *
+     * @param $price
+     * @return string
+     */
+    protected function roundSalePrice($price): string
+    {
+        if (!empty($price) && !is_string($price)) {
+            return number_format($price, 2);
+        }
+
+        return $price;
+    }
+
+    /**
+     * Determines if the given display price should be used,
+     * or if we should use the actual sale price instead.
+     *
+     * @param $displaySalePrice
+     * @param $realSalePrice
+     * @return string|null
+     */
+    protected function calculateDisplaySalePrice($displaySalePrice, $realSalePrice): ?string
+    {
+        if(is_numeric($displaySalePrice)) {
+            return '$'.$displaySalePrice;
+        }
+
+        if(!empty($displaySalePrice)) {
+            return $displaySalePrice;
+        }
+
+        return '$'.$realSalePrice;
+    }
+
+    /**
+     * Calculate the discount in percent.
+     *
+     * @param $regularPrice
+     * @param $realSalePrice
+     * @return float
+     */
+    protected function calculatePercentageDiscount($regularPrice, $realSalePrice): float
+    {
+        $percentage = round(((1.0000 - ($realSalePrice / $regularPrice)) * 100.0000), 4);
+
+        return $percentage;
+    }
+
+    /**
      * Set or calculate the discount percent.
      *
      * @return float
      */
-    protected function calculateDiscountPercent()
+    protected function calculateDiscountPercent(): float
     {
         return round(((1 - ($this->real_sale_price / $this->regular_price)) * 100), 4);
+    }
+
+    /**
+     * Sets the flags property if there are issues with the sale price.
+     */
+    protected function checkForSalePriceProblems()
+    {
+        if($this->isSalePriceLowerThanRegularPrice()) {
+            $this->flags = 'Item price is lower than sale price';
+        }
+    }
+
+    /**
+     * Checks if the calculated sale price is lower
+     * than the item's regular price in the POS.
+     *
+     * @return bool
+     */
+    protected function isSalePriceLowerThanRegularPrice(): bool
+    {
+        if($this->discount_percent > 0) {
+            return false;
+        }
+
+        return true;
     }
 }

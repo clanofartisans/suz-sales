@@ -4,7 +4,6 @@ namespace App;
 
 use App\Exceptions\InfraFileTestException;
 use App\Jobs\ParseInfraSheet;
-use App\POS\Facades\POS;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
@@ -47,6 +46,11 @@ class InfraSheet extends Model
         return $this->belongsToMany('App\ItemSale');
     }
 
+    /**
+     * Creates a "formatted_date" property that displays like "December 2020".
+     *
+     * @return string
+     */
     public function getFormattedDateAttribute()
     {
         return Carbon::create($this->year, $this->month)->format('F Y');
@@ -150,14 +154,23 @@ class InfraSheet extends Model
         return $text;
     }
 
+    /**
+     * Dispatches a job to parse the INFRA sheet asynchronously.
+     */
     public function queueParseSheet()
     {
         ParseInfraSheet::dispatch($this);
     }
 
+    /**
+     * Parses all items in the INFRA sheet and creates a sale for each.
+     *
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     */
     public function parseSheet()
     {
-        $workbook  = $this->loadWorkbook($this->filename);
+        $workbook  = $this->loadWorkbook(storage_path('app/'.$this->filename));
+
         $worksheet = $this->loadWorksheet($workbook);
 
         $dataHeaderRow = $this->findDataHeaderRow($worksheet);
@@ -200,97 +213,22 @@ class InfraSheet extends Model
             return;
         }
 
-        $pricingData = $this->calculatePricingData($infraItem);
-        $dateData    = $this->calculateDateData();
+        $dateData = $this->calculateDateData();
 
-        ItemSale::create(['upc'                => $infraItem['upc'],
-                          'brand'              => $infraItem['brand'],
-                          'desc'               => $infraItem['desc'],
-                          'size'               => $infraItem['size'],
-                          'regular_price'      => $pricingData['regular_price'],
-                          'display_sale_price' => $pricingData['display_sale_price'],
-                          'real_sale_price'    => $pricingData['real_sale_price'],
-                          'discount_percent'   => $pricingData['discount_percent'],
-                          'sale_category'      => $dateData['sale_category'],
-                          'sale_begin'         => $dateData['sale_begin'],
-                          'sale_end'           => $dateData['sale_end'],
-                          'expires_at'         => $dateData['expires_at']]);
+        $item = ItemSale::make(['upc'                => $infraItem['upc'],
+                                'brand'              => $infraItem['brand'],
+                                'desc'               => $infraItem['desc'],
+                                'size'               => $infraItem['size'],
+                                'sale_category'      => $dateData['sale_category'],
+                                'sale_begin'         => $dateData['sale_begin'],
+                                'sale_end'           => $dateData['sale_end'],
+                                'expires_at'         => $dateData['expires_at']]);
 
-            /*
-            InfraItem::create(['infrasheet_id'   => $infraSheetID,
-                               'upc'             => $this->zeroPadUPC($item['upc']),
-                               'brand_uc'        => strtoupper($item['brand']),
-                               'list_price'      => $this->fixPrecisionInfraSalePrice($item['price']),
-                               'list_price_calc' => $this->calcInfraSalePrice($item['price']),
-             * */
+        $item->calculatePricingData($infraItem['price']);
+
+        $item->save();
     }
 
-    /**
-     * Calculates pricing data for each INFRA item.
-     *
-     * @param array $infraItem
-     * @return array
-     */
-    protected function calculatePricingData(array $infraItem)
-    {
-        $data = [];
-
-        $posItem = POS::getItem($infraItem['upc']);
-
-        $data['regular_price'] = '';
-        $data['display_sale_price'] = $infraItem['price'];
-        $data['real_sale_price'] = $this->calculateRealSalePrice($infraItem['price']);
-        $data['discount_percent'] = '';
-    }
-
-    /**
-     * Calculate the actual sale price of an item, based on
-     * things like "4/$5" and also strip any formatting.
-     *
-     * @param $price
-     * @return string
-     */
-    protected function calculateRealSalePrice($price, $regularPrice)
-    {
-        if (!empty($price)) {
-            if (strpos($price, '/') !== false) {
-                $price     = rtrim($price);
-                $pieces    = explode('/', $price);
-                $pieces[1] = ltrim($pieces[1], '$');
-
-                $priceCalc = $pieces[1] / (float) $pieces[0];
-
-                return number_format($priceCalc, 2);
-            } else {
-                $price = ltrim($price, '$');
-                if (is_numeric($price)) {
-                    $price = (float) $price;
-
-                    return number_format($price, 2);
-                }
-            }
-        }
-
-        return '20%';
-    }
-
-    /**
-     * Calculate the discount in percent.
-     *
-     * @param $regularPrice
-     * @param $realSalePrice
-     * @return float
-     */
-    protected function calculatePercentageDiscount($regularPrice, $realSalePrice)
-    {
-        if ($realSalePrice == '20%') {
-            return 20.0000;
-        }
-
-        $percentage = round(((1.0000 - ($realSalePrice / $regularPrice)) * 100.0000), 4);
-
-        return $percentage;
-    }
 
     /**
      * Calculates date info for the INFRA sheet.
@@ -298,16 +236,16 @@ class InfraSheet extends Model
      * @return array
      * @throws \Exception
      */
-    protected function calculateDateData()
+    protected function calculateDateData(): array
     {
         $data = [];
 
         $data['sale_category'] = Carbon::create($this->year, $this->month)->format('F') . ' Savings';
 
-        $data['sale_begin'] = new Carbon("first day of $this->month $this->year");
-        $data['sale_end']   = new Carbon("last day of $this->month $this->year");
+        $data['sale_begin'] = new Carbon("first day of $this->formatted_date");
+        $data['sale_end']   = new Carbon("last day of $this->formatted_date");
 
-        $data['expires_at'] = $data['expires_at']->copy()->addDay();;
+        $data['expires_at'] = $data['sale_end']->copy()->addDay();;
 
         return $data;
     }
