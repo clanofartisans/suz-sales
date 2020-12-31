@@ -100,7 +100,7 @@ class ItemSale extends Model
      */
     public function infrasheet(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany('App\InfraSheet', 'infrasheet_itemsale', 'itemsale_id', 'infrasheet_id');
+        return $this->belongsToMany('App\InfraSheet');
     }
 
     /**

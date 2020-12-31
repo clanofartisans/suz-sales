@@ -227,6 +227,8 @@ class InfraSheet extends Model
         $item->calculatePricingData($infraItem['price']);
 
         $item->save();
+
+        $this->items()->attach($item);
     }
 
 

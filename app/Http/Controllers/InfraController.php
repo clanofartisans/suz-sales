@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\InfraSheetUploaded;
 use App\Exceptions\InfraFileTestException;
-use App\Exceptions\POSSystemException;
 use App\InfraSheet;
-use App\POS\Facades\POS;
+use App\ItemSale;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -43,6 +42,8 @@ class InfraController extends Controller
 
         if ($infrasheet instanceof InfraSheet) {
             InfraSheetUploaded::dispatch($infrasheet);
+
+            $infrasheet->queueParseSheet();
         }
 
         return redirect()->route('infra.index');
