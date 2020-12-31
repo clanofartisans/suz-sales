@@ -12,6 +12,7 @@ services:
 cache:
   directories:
     - node_modules
+    - vendor
   
 before_script:
   - cp .env.travis .env
