@@ -69,7 +69,7 @@
                                             <th class="text-nowrap text-center">Sale %</th>
                                             <th class="text-center"><i class="fa fa-thumbs-up" title="Approved" aria-hidden="true"></i></th>
                                             <th class="text-center"><i class="fa fa-share" title="Processed" aria-hidden="true"></i></th>
-                                            <th class="text-center"><i class="fa fa-file-image-o" title="Ready to Print" aria-hidden="true"></i></th>
+                                            <th class="text-center"><i class="far fa-file-image" title="Ready to Print" aria-hidden="true"></i></th>
                                             <th class="text-center"><i class="fa fa-print" title="Printed" aria-hidden="true"></i></th>
                                             <th class="text-center"><i class="fa fa-flag" title="Flags" aria-hidden="true"></i></th>
                                         </tr>
@@ -133,11 +133,11 @@
                                         <td class="text-nowrap text-center">
                                             @if ($item->imaged)
                                                 <button type="button" class="btn btn-xs print-bw" disabled="disabled" title="Ready to Print">
-                                                    <i class="fa fa-file-image-o" aria-hidden="true"></i>
+                                                    <i class="far fa-file-image" aria-hidden="true"></i>
                                                 </button>
                                             @else
                                                 <button type="button" class="btn btn-default btn-xs" disabled="disabled" title="Not Ready to Print">
-                                                    <i class="fa fa-file-image-o" aria-hidden="true"></i>
+                                                    <i class="far fa-file-image" aria-hidden="true"></i>
                                                 </button>
                                             @endif
                                         </td>
