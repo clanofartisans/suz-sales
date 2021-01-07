@@ -15,6 +15,7 @@ class CreateItemSalesTable extends Migration
     {
         Schema::create('item_sales', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('infra_sheet_id')->nullable();
             $table->string('upc');
             $table->string('brand');
             $table->string('desc');

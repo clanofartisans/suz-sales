@@ -96,11 +96,11 @@ class ItemSale extends Model
      * one INFRA sheet, not "belong to many". This is just the
      * simplest way to set up this relationship in Laravel.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function infrasheet(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function infrasheet(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsToMany('App\InfraSheet');
+        return $this->belongsTo(InfraSheet::class);
     }
 
     /**

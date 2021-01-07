@@ -39,11 +39,11 @@ class InfraSheet extends Model
     /**
      * The items that belong to this INFRA sheet.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function items()
+    public function items(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsToMany('App\ItemSale');
+        return $this->hasMany(ItemSale::class);
     }
 
     /**
@@ -226,9 +226,7 @@ class InfraSheet extends Model
 
         $item->calculatePricingData($infraItem['price']);
 
-        $item->save();
-
-        $this->items()->attach($item);
+        $this->items()->save($item);
     }
 
 
