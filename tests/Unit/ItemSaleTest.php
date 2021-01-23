@@ -54,15 +54,6 @@ class ItemSaleTest extends TestCase
         $this->assertEquals('Item not found in point of sale system', $sale->flags);
     }
 
-/*
- * regular_price
- * display_sale_price
- * real_sale_price
- * savings_amount
- * discount_percent
- * flags
- */
-
     /** @test */
     public function default_to_twenty_percent_discount_if_no_sale_price_specified()
     {
@@ -163,5 +154,31 @@ class ItemSaleTest extends TestCase
         $this->assertEquals('$4.56', $sale->display_sale_price);
         $this->assertEquals(4.56, $sale->real_sale_price);
         $this->assertEquals('Item price is lower than sale price', $sale->flags);
+    }
+
+    /** @test */
+    public function default_to_twenty_percent_discount_if_invalid_sale_price_specified()
+    {
+        $posData = factory(ItemSale::class)->create([
+            'regular_price' => 10.00
+        ]);
+
+        $sale = Mockery::mock(ItemSale::class)
+            ->shouldAllowMockingProtectedMethods()
+            ->makePartial();
+
+        $sale->shouldReceive('getPOSItem')
+            ->andReturn($posData)
+            ->once();
+
+        $sale->upc = $this->faker->upc;
+        $sale->calculatePricingData('$2/3'); // Real example of a typo price from an INFRA file
+
+        $this->assertEquals(10.00, $sale->regular_price);
+        $this->assertEquals('$2/3', $sale->display_sale_price); // Not 100% ideal
+        $this->assertEquals(8.00, $sale->real_sale_price);
+        $this->assertEquals(2.00, $sale->savings_amount);
+        $this->assertEquals(20.0, $sale->discount_percent);
+        $this->assertEquals(null, $sale->flags);
     }
 }

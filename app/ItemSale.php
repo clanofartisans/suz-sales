@@ -167,15 +167,21 @@ class ItemSale extends Model
      */
     protected function calculateRealSalePrice($price, $regularPrice): string
     {
+
         if (!empty($price)) {
             if (strpos($price, '/') !== false) {
-                $price     = rtrim($price);
-                $pieces    = explode('/', $price);
-                $pieces[1] = ltrim($pieces[1], '$');
+                try {
+                    $price     = rtrim($price);
+                    $pieces    = explode('/', $price);
+                    $pieces[1] = ltrim($pieces[1], '$');
 
-                $priceCalc = $pieces[1] / (float) $pieces[0];
+                    $priceCalc = $pieces[1] / (float) $pieces[0];
 
-                return $this->roundSalePrice($priceCalc);
+                    return $this->roundSalePrice($priceCalc);
+                }
+                catch (\Exception $e) {
+                    \Log::warning($e->getMessage(), $e->getTrace());
+                }
             } else {
                 $price = ltrim($price, '$');
                 if (is_numeric($price)) {
